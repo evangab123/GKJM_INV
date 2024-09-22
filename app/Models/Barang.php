@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Barang extends Model
+{
+    use HasFactory;
+
+    protected $table = 'barang';
+    protected $primaryKey = 'kode_barang';
+
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'kode_barang',
+        'merek_barang',
+        'harga_pembelian',
+        'tahun_pembelian',
+        'perolehan_barang',
+        'nilai_ekonomis_barang',
+        'jumlah',
+        'status_barang',
+        'keterangan',
+        'ruang_id',
+        'kondisi_id',
+        'kategori_barang_id',
+        'pengguna_id',
+    ];
+
+    public function ruang()
+    {
+        return $this->belongsTo(Ruang::class, 'ruang_id', 'ruang_id');
+    }
+
+    public function kondisi()
+    {
+        return $this->belongsTo(KondisiBarang::class, 'kondisi_id', 'kondisi_id');
+    }
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriBarang::class, 'kategori_barang_id', 'kategori_barang_id');
+    }
+}
