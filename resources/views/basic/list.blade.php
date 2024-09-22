@@ -1,12 +1,12 @@
 @extends('layouts.admin')
-
+@section('title', 'List Pengguna | Inventaris GKJM')
 @section('main-content')
     {{-- <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">{{ $title ?? __('Blank Page') }}</h1> --}}
 
     <!-- Main Content goes here -->
 
-    <a href="{{ route('basic.create') }}" class="btn btn-primary mb-3">New User</a>
+    <a href="{{ route('basic.create') }}" class="btn btn-primary mb-3">Buat Pengguna!</a>
 
     @if (session('message'))
         <div class="alert alert-success">

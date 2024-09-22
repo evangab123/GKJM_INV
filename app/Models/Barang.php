@@ -45,4 +45,8 @@ class Barang extends Model
     {
         return $this->belongsTo(KategoriBarang::class, 'kategori_barang_id', 'kategori_barang_id');
     }
+    public function keterangan()
+    {
+        return $this->belongsTo(DetilKeteranganBarang::class, 'kode_barang', 'kode_barang');
+    }
 }

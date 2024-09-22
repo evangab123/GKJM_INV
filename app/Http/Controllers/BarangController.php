@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\DetilKeteranganBarang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -127,5 +128,85 @@ class BarangController extends Controller
         $barang->update($data);
 
         return redirect()->route('barang.show', $kode_barang)->with('success', 'Barang updated successfully');
+    }
+    public function showKeterangan($kode_barang)
+    {
+        $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
+        $keteranganList = DetilKeteranganBarang::where('kode_barang', $kode_barang)->get();
+
+        return view('barang.detilketerangan', [
+            'barang' => $barang,
+            'keteranganList' => $keteranganList,
+            'isEditing' => false,
+        ]);
+    }
+    public function editKeterangan($id)
+    {
+        $keteranganToEdit = DetilKeteranganBarang::findOrFail($id);
+        $barang = Barang::where('kode_barang', $keteranganToEdit->kode_barang)->firstOrFail();
+
+        return view('barang.detilketerangan', [
+            'barang' => $barang,
+            'keteranganList' => DetilKeteranganBarang::where('kode_barang', $barang->kode_barang)->get(),
+            'keteranganToEdit' => $keteranganToEdit,
+            'isEditing' => true,
+        ]);
+    }
+
+    public function updateKeterangan(Request $request, $id)
+    {
+        $data = $request->validate([
+            'keterangan' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+        ]);
+
+        $keterangan = DetilKeteranganBarang::findOrFail($id);
+        $keterangan->update($data);
+
+        return redirect()->route('barang.keterangan', $keterangan->kode_barang)->with('success', 'Keterangan berhasil diperbarui');
+    }
+    public function storeKeterangan(Request $request, $id)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'keterangan' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+        ]);
+
+        // Create a new entry in the DetilKeteranganBarang table
+        DetilKeteranganBarang::create([
+            'kode_barang' => $id,
+            'keterangan' => $request->input('keterangan'),
+            'tanggal' => $request->input('tanggal'),
+        ]);
+
+        // Redirect back to the keterangan detail page for the specific barang
+        return redirect()->route('barang.keterangan', $id)->with('message', 'Keterangan berhasil ditambahkan!');
+    }
+    public function create()
+    {
+        $ruang = Ruang::all();
+        $kondisi = KondisiBarang::all();
+        $kategori = KategoriBarang::all();
+
+        return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
+    }
+    public function store(Request $request, $id)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'keterangan' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+        ]);
+
+        // Create a new entry in the DetilKeteranganBarang table
+        Barang::create([
+            'kode_barang' => $id,
+            'keterangan' => $request->input('keterangan'),
+            'tanggal' => $request->input('tanggal'),
+        ]);
+
+        // Redirect back to the keterangan detail page for the specific barang
+        return redirect()->route('barang.keterangan', $id)->with('message', 'Barang berhasil ditambahkan!');
     }
 }

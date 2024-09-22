@@ -14,11 +14,12 @@ class Pengguna extends Authenticatable
 
     protected $table = 'pengguna';
 
+
     protected $primaryKey = 'pengguna_id';
 
     public $incrementing = true;
     protected $keyType = 'int';
-    
+
     protected $fillable = [
         'nama_pengguna',
         'jabatan',

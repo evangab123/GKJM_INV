@@ -52,5 +52,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
 Route::get('/barang/{kode_barang}', [BarangController::class, 'show'])->name('barang.show');
 Route::put('/barang/{kode_barang}', [BarangController::class, 'update'])->name('barang.update');
+
 Route::put('/barang/{kode_barang}/edit', [BarangController::class, 'update_detail'])->name('barang.update_detail');
+Route::get('/barang/{kode_barang}/keterangan', [BarangController::class, 'showKeterangan'])->name('barang.keterangan');
+Route::get('/keterangan/{id}/edit', [BarangController::class, 'editKeterangan'])->name('keterangan.edit');
+Route::put('/keterangan/{id}', [BarangController::class, 'updateKeterangan'])->name('keterangan.update');
+Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan'])->name('keterangan.store');
+
 

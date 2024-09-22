@@ -79,10 +79,10 @@
 
                         <div class="pl-lg-4">
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <div class="form-group focused">
-                                        <label class="form-control-label" for="name">Name<span class="small text-danger">*</span></label>
-                                        <input type="text" id="name" class="form-control" name="name" placeholder="Name" value="{{ old('nama_pengguna', Auth::user()->nama_pengguna) }}">
+                                        <label class="form-control-label" for="nama_pengguna">Nama Pengguna<span class="small text-danger">*</span></label>
+                                        <input type="text" id="nama_pengguna" class="form-control" name="nama_pengguna" placeholder="Nama Lengkap" value="{{ old('nama_pengguna', Auth::user()->nama_pengguna) }}">
                                     </div>
                                 </div>
                                 {{-- <div class="col-lg-6">
@@ -143,3 +143,19 @@
     </div>
 
 @endsection
+@push('notif')
+@if (session('success'))
+<div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
+    {{ session('success') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
+@if (session('status'))
+    <div class="alert alert-success border-left-success" role="alert">
+        {{ session('status') }}
+    </div>
+@endif
+@endpush

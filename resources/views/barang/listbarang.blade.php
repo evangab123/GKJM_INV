@@ -8,26 +8,33 @@
 
     <!-- Main Content goes here -->
     <!-- Topbar Search -->
-    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" method="GET"
-        action="{{ route('barang.index') }}">
-        <div class="input-group">
-            <input type="text" class="form-control bg-light border-1 small mb-3" placeholder="Cari Barang..." aria-label="search"
-                aria-describedby="basic-addon2" name="search" value="{{ request('search') }}">
-            <div class="input-group-append">
-                <button class="btn btn-primary mb-3" type="submit">
-                    <i class="fas fa-search fa-sm"></i>
-                </button>
-                <a href="{{ route('barang.index') }}" class="btn btn-secondary mb-3">
-                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
-                </a>
-
+    <div class="d-flex justify-content-between mb-3">
+        <form class="d-none d-sm-inline-block form-inline" method="GET" action="{{ route('barang.index') }}">
+            <div class="input-group">
+                <input type="text" class="form-control bg-light border-1 small" placeholder="Cari Barang..."
+                    aria-label="search" aria-describedby="basic-addon2" name="search" value="{{ request('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                    <a href="{{ route('barang.index') }}" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </a>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
 
-    <div class="d-sm-inline-block mr-auto ml-md-3 my-2 my-md-0 mw-100">
-        <a href="#" class="btn btn-success">Tambah Barang</a>
+        <div>
+            <a href="{{ route('barang.create') }}" class="btn btn-success">
+                <i class="fa-solid fa-plus"></i> Tambah Barang!
+            </a>
+        </div>
+
     </div>
+
+
+
+
 
     <table class="table table-bordered table-stripped">
         <thead>
@@ -85,7 +92,8 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editModalLabel{{ $bar['kode_barang'] }}">Edit Barang <b>{{ $bar['kode_barang'] }}</b></h5>
+                                <h5 class="modal-title" id="editModalLabel{{ $bar['kode_barang'] }}">Edit Barang
+                                    <b>{{ $bar['kode_barang'] }}</b></h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -95,7 +103,7 @@
                                 <form action="/barang/{{ $bar['kode_barang'] }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                             
+
                                     {{-- <div class="form-group">
                                         <label for="merek_barang">Merek</label>
                                         <input type="text" class="form-control" id="merek_barang" name="merek_barang"
@@ -152,11 +160,12 @@
                                     </div> --}}
                                     <div class="form-group">
                                         <label for="ruang_id">Ruang</label>
-                                        <select class="form-control @error('ruang_id') is-invalid @enderror" name="ruang_id" id="ruang_id">
+                                        <select class="form-control @error('ruang_id') is-invalid @enderror" name="ruang_id"
+                                            id="ruang_id">
                                             <option value="">Pilih Ruang</option>
                                             @foreach ($ruang as $rua)
                                                 <option value="{{ $rua->ruang_id }}"
-                                                    {{ (old('ruang_id') == $rua->ruang_id  || (isset($bar) && $bar->ruang_id == $rua->ruang_id )) ? 'selected' : '' }}>
+                                                    {{ old('ruang_id') == $rua->ruang_id || (isset($bar) && $bar->ruang_id == $rua->ruang_id) ? 'selected' : '' }}>
                                                     {{ $rua->nama_ruang }}
                                                 </option>
                                             @endforeach
@@ -164,11 +173,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="kondisi_id">Kondisi</label>
-                                        <select class="form-control @error('kondisi_id') is-invalid @enderror" name="kondisi_id" id="kondisi_id">
+                                        <select class="form-control @error('kondisi_id') is-invalid @enderror"
+                                            name="kondisi_id" id="kondisi_id">
                                             <option value="">Pilih Kondisi</option>
                                             @foreach ($kondisi as $kon)
                                                 <option value="{{ $kon->kondisi_id }}"
-                                                    {{ (old('kondisi_id') == $kon->kondisi_id  || (isset($bar) && $bar->kondisi_id == $kon->kondisi_id )) ? 'selected' : '' }}>
+                                                    {{ old('kondisi_id') == $kon->kondisi_id || (isset($bar) && $bar->kondisi_id == $kon->kondisi_id) ? 'selected' : '' }}>
                                                     {{ $kon->deskripsi_kondisi }}
                                                 </option>
                                             @endforeach
@@ -176,12 +186,13 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="kategori_barang_id">Kategori</label>
-                                        <select class="form-control @error('kategori_barang_id') is-invalid @enderror" name="kategori_barang_id" id="kategori_barang_id">
+                                        <select class="form-control @error('kategori_barang_id') is-invalid @enderror"
+                                            name="kategori_barang_id" id="kategori_barang_id">
                                             <option value="">Pilih kategori</option>
                                             @foreach ($kategori as $kat)
                                                 <option value="{{ $kat->kategori_barang_id }}"
-                                                    {{ (old('kategori_barang_id') ==$kat->kategori_barang_id  || (isset($bar) && $bar->kategori_barang_id == $kat->kategori_barang_id )) ? 'selected' : '' }}>
-                                                    {{ $kat->nama_kategori}}
+                                                    {{ old('kategori_barang_id') == $kat->kategori_barang_id || (isset($bar) && $bar->kategori_barang_id == $kat->kategori_barang_id) ? 'selected' : '' }}>
+                                                    {{ $kat->nama_kategori }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -189,8 +200,8 @@
                                     <div class="form-group">
                                         <label for="status_barang">Status</label>
                                         <select class="form-control" id="status_barang" name="status_barang">
-                                            <option value="Ada"
-                                                {{ $bar['status_barang'] == 'Ada' ? 'selected' : '' }}>Ada
+                                            <option value="Ada" {{ $bar['status_barang'] == 'Ada' ? 'selected' : '' }}>
+                                                Ada
                                             </option>
                                             <option value="Dipinjam"
                                                 {{ $bar['status_barang'] == 'Dipinjam' ? 'selected' : '' }}>Dipinjam

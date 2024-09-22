@@ -22,16 +22,17 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:pengguna,email,' . Auth::user()->pengguna_id,
+            'nama_pengguna' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:pengguna,email,' . Auth::user()->pengguna_id . ',pengguna_id',
             'current_password' => 'nullable|required_with:new_password',
             'new_password' => 'nullable|min:8|max:12|required_with:current_password',
             'password_confirmation' => 'nullable|min:8|max:12|required_with:new_password|same:new_password'
         ]);
 
-        $user = Pengguna::findOrFail(Auth::user()->pengguna_id);
-        $user->name = $request->input('nama_pengguna');
+        // dd( Auth::user());
+        $user = Pengguna::find(Auth::user()->pengguna_id);
+
+        $user->nama_pengguna = $request->input('nama_pengguna');
         $user->email = $request->input('email');
 
         // Check if the user is updating their password
@@ -39,12 +40,12 @@ class ProfileController extends Controller
             if (Hash::check($request->input('current_password'), $user->password)) {
                 $user->password = Hash::make($request->input('new_password'));
             } else {
-                return redirect()->back()->withInput()->withErrors(['current_password' => 'Current password is incorrect']);
+                return redirect()->back()->withInput()->withErrors(['current_password' => 'Password Sekarang Salah']);
             }
         }
 
         $user->save();
 
-        return redirect()->route('profile')->with('message', 'Profile updated successfully!');
+        return redirect()->route('profile')->with('success', 'Profile Berhasil Diperbaharui!');
     }
 }
