@@ -229,9 +229,17 @@
             @endforeach
         </tbody>
     </table>
-    <div class="pagination">
-        {{ $barang->links() }}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="show-info">
+            Showing {{ $barang->firstItem() }} to {{ $barang->lastItem() }} of {{ $barang->total() }} Barang
+        </div>
+
+        <div class="pagination">
+            {{ $barang->links() }}
+        </div>
     </div>
+
+
 
     <!-- End of Main Content -->
 @endsection

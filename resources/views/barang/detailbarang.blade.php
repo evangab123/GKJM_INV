@@ -34,8 +34,9 @@
         <div class="col-md-4">
             <div class="card h-100">
                 <!-- Foto Barang -->
-                <img src="{{ asset('img/cover-forgot-password.png') }}" class="card-img-top img-fluid w-100 mb-3"
+                <img src="{{ asset('img/barang/' . $barang->path_gambar) }}" class="card-img-top img-fluid w-100 mb-3"
                     alt="Foto Barang" style="object-fit: cover; height: 300px;">
+
 
                 <!-- QR Code -->
                 {{-- <img src="{{ $qrCodeUrl }}" class="card-img-top img-fluid w-100" alt="QR Code"
@@ -57,7 +58,7 @@
                     <div class="card-body">
                         @if ($isEditing)
                             <!-- Form Edit -->
-                            <form action="{{ route('barang.update_detail', $barang->kode_barang) }}" method="POST">
+                            <form action="{{ route('barang.update_detail', $barang->kode_barang) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
@@ -175,11 +176,16 @@
                                                 </select>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <th>Foto Barang</th>
+                                            <td>
+                                                <input type="file" class="form-control" name="path_gambar">
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </form>
-                            <!-- Form untuk Menambahkan Detil Keterangan -->
                         @else
                             <!-- Detail Barang -->
                             <table class="table">

@@ -25,10 +25,6 @@
                             <input type="text" class="form-control" id="kode_barang" name="kode_barang" required>
                         </div>
                         <div class="form-group">
-                            <label for="nama_barang">Nama Barang</label>
-                            <input type="text" class="form-control" id="nama_barang" name="nama_barang" required>
-                        </div>
-                        <div class="form-group">
                             <label for="merek_barang">Merek Barang</label>
                             <input type="text" class="form-control" id="merek_barang" name="merek_barang" required>
                         </div>

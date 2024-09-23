@@ -26,7 +26,7 @@ class BarangController extends Controller
     {
         $query = Barang::with('ruang', 'kondisi', 'kategori');
         $kondisi = KondisiBarang::all();
-        $Ruang = Ruang::all();
+        $ruang = Ruang::all();
         $kategori = KategoriBarang::all();
 
         // Check if there's a search query
@@ -41,16 +41,18 @@ class BarangController extends Controller
             });
         }
 
-        $data = $query->paginate(7);
+        // Adding the search query to pagination links
+        $data = $query->paginate(7)->appends($request->only('search'));
 
         return view('barang.listbarang', [
             'title' => 'Daftar Barang',
             'barang' => $data,
             'kondisi' => $kondisi,
             'kategori' => $kategori,
-            'ruang' => $Ruang,
+            'ruang' => $ruang,
         ]);
     }
+
 
     public function edit($kode_barang)
     {
@@ -86,10 +88,7 @@ class BarangController extends Controller
 
     public function update(Request $request, $kode_barang)
     {
-        // Ambil form_type untuk menentukan validasi yang akan dipakai
-        $formType = $request->input('form_type');
 
-        // Buat validasi yang berbeda berdasarkan form_type
         $data = $request->validate([
             'jumlah' => 'required|numeric',
             'status_barang' => 'required|in:Ada,Dipinjam,Dipakai,Dihapus,Diperbaiki',
@@ -107,28 +106,65 @@ class BarangController extends Controller
     }
     public function update_detail(Request $request, $kode_barang)
     {
-        // Buat validasi yang berbeda berdasarkan form_type
-
-        $data = $request->validate([
+        // Validasi data
+        $request->validate([
             'merek_barang' => 'required|string|max:255',
+            'perolehan_barang' => 'required|string',
             'harga_pembelian' => 'required|numeric',
             'tahun_pembelian' => 'required|numeric',
             'nilai_ekonomis_barang' => 'required|numeric',
-            'perolehan_barang' => 'required|in:Hibah,Pembelian',
             'jumlah' => 'required|numeric',
-            'status_barang' => 'required|in:Ada,Dipinjam,Dipakai,Dihapus,Diperbaiki',
-            'keterangan' => 'required|string|max:255',
+            'keterangan' => 'nullable|string|max:255',
             'ruang_id' => 'required|exists:ruang,ruang_id',
             'kondisi_id' => 'required|exists:kondisibarang,kondisi_id',
             'kategori_barang_id' => 'required|exists:kategoribarang,kategori_barang_id',
+            'status_barang' => 'required|string',
+            'path_gambar' => 'nullable',
         ]);
 
-        // Update Barang dengan data yang sudah divalidasi
+        // Cari barang berdasarkan kode_barang
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
-        $barang->update($data);
+        // Mengunggah dan menyimpan foto jika ada
+        if ($request->hasFile('path_gambar')) {
 
-        return redirect()->route('barang.show', $kode_barang)->with('success', 'Barang updated successfully');
+            $file = $request->file('path_gambar');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img/barang'), $filename);
+
+            // Hapus foto lama jika ada
+            if ($barang->path_gambar && file_exists(public_path('img/barang/' . $barang->path_gambar))) {
+                unlink(public_path('img/barang/' . $barang->path_gambar));
+            }
+
+            // Simpan nama foto baru ke model
+            $barang->path_gambar = $filename;
+        }
+
+
+        // Update data barang dengan data baru
+        $barang->fill($request->only([
+            'merek_barang',
+            'perolehan_barang',
+            'harga_pembelian',
+            'tahun_pembelian',
+            'nilai_ekonomis_barang',
+            'jumlah',
+            'keterangan',
+            'ruang_id',
+            'kondisi_id',
+            'kategori_barang_id',
+            'status_barang',
+            'path_gambar',
+        ]));
+
+        // Jika path_gambar diupdate, simpan perubahan
+        $barang->save();
+
+        return redirect()->route('barang.show', $barang->kode_barang)
+            ->with('success', 'Detail barang berhasil diperbarui.');
     }
+
+
     public function showKeterangan($kode_barang)
     {
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
@@ -195,15 +231,45 @@ class BarangController extends Controller
     {
         // Validate the incoming request
         $request->validate([
-            'keterangan' => 'required|string|max:255',
-            'tanggal' => 'required|date',
+            'kode_barang' => 'required|string|max:255',
+            'merek_barang' => 'required|string|max:255',
+            'perolehan_barang' => 'required|date',
+            'harga_pembelian' => 'required|numeric',
+            'tahun_pembelian' => 'required|numeric',
+            'nilai_ekonomis_barang' => 'required|numeric',
+            'jumlah' => 'required|numeric',
+            'keterangan' => 'nullable|string',
+            'ruang_id' => 'required|exists:ruang,id',
+            'kondisi_id' => 'required|exists:kondisi_barang,id',
+            'kategori_barang_id' => 'required|exists:kategori_barang,id',
+            'foto_barang' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Create a new entry in the DetilKeteranganBarang table
+        // Handle the uploaded file
+        $pathFoto = null;
+        if ($request->hasFile('foto_barang')) {
+            $file = $request->file('foto_barang');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $filePath = 'img/barang/' . $filename;
+            $file->move(public_path('img/barang'), $filename);
+            $pathFoto = $filename;
+        }
+
+
+        // Create the new Barang entry
         Barang::create([
-            'kode_barang' => $id,
+            'kode_barang' => $request->input('kode_barang'),
+            'merek_barang' => $request->input('merek_barang'),
+            'perolehan_barang' => $request->input('perolehan_barang'),
+            'harga_pembelian' => $request->input('harga_pembelian'),
+            'tahun_pembelian' => $request->input('tahun_pembelian'),
+            'nilai_ekonomis_barang' => $request->input('nilai_ekonomis_barang'),
+            'jumlah' => $request->input('jumlah'),
             'keterangan' => $request->input('keterangan'),
-            'tanggal' => $request->input('tanggal'),
+            'ruang_id' => $request->input('ruang_id'),
+            'kondisi_id' => $request->input('kondisi_id'),
+            'kategori_barang_id' => $request->input('kategori_barang_id'),
+            'path_gambar' => $pathFoto,
         ]);
 
         // Redirect back to the keterangan detail page for the specific barang
