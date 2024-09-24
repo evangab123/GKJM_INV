@@ -67,7 +67,7 @@
                     <td>{{ $bar['keterangan'] }}</td>
                     <td>{{ $bar->ruang->nama_ruang ?? 'N/A' }}</td>
                     <td>{{ $bar->kondisi->deskripsi_kondisi ?? 'N/A' }}</td>
-                    <td>{{ $bar->kategori->nama_kategori ?? 'N/A' }}</td>
+                    <td>{{ $bar->kategori->nama_kategori?? 'N/A' }}</td>
                     <td>{{ $bar['status_barang'] }}</td>
                     <td>
                         <div class="d-flex">
@@ -80,7 +80,7 @@
                                 <i class="fas fa-trash"></i>
                             </button>
 
-                            <a href="/barang/{{ $bar['kode_barang'] }}" class="btn btn-info btn-custom">
+                            <a href="{{ route('barang.show', $bar['kode_barang']) }}" class="btn btn-info btn-custom">
                                 <i class="fas fa-info-circle"></i>
                             </a>
                         </div>
