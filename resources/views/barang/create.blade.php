@@ -18,15 +18,15 @@
                     <h5 class="card-title">Tambah Barang</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('barang.store') }}" method="POST">
+                    <form action="{{ route('barang.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="kode_barang">Kode Barang</label>
-                            <input type="text" class="form-control" id="kode_barang" name="kode_barang" required>
+                            <input type="text" class="form-control" id="kode_barang" name="kode_barang">
                         </div>
                         <div class="form-group">
                             <label for="merek_barang">Merek Barang</label>
-                            <input type="text" class="form-control" id="merek_barang" name="merek_barang" required>
+                            <input type="text" class="form-control" id="merek_barang" name="merek_barang">
                         </div>
                         <div class="form-group">
                             <label for="perolehan_barang">Perolehan</label>
@@ -37,20 +37,23 @@
                         </div>
                         <div class="form-group">
                             <label for="harga_pembelian">Harga Beli</label>
-                            <input type="number" class="form-control" id="harga_pembelian" name="harga_pembelian" required>
+                            <input type="number" class="form-control" id="harga_pembelian" name="harga_pembelian"
+                                onchange="calculateNilaiEkonomis()">
                         </div>
                         <div class="form-group">
                             <label for="tahun_pembelian">Tahun Beli</label>
-                            <input type="text" class="form-control" id="tahun_pembelian" name="tahun_pembelian" required>
+                            <input type="text" class="form-control" id="tahun_pembelian" name="tahun_pembelian"
+                                onchange="calculateNilaiEkonomis()">
                         </div>
+
                         <div class="form-group">
                             <label for="nilai_ekonomis_barang">Nilai Ekonomis</label>
                             <input type="number" class="form-control" id="nilai_ekonomis_barang"
-                                name="nilai_ekonomis_barang" required>
+                                name="nilai_ekonomis_barang" readonly>
                         </div>
                         <div class="form-group">
                             <label for="jumlah">Jumlah/Stok</label>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah" required>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah">
                         </div>
                         <div class="form-group">
                             <label for="keterangan">Keterangan</label>
@@ -81,11 +84,20 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="status_barang">Status</label>
+                            <select class="form-control" name="status_barang" id="status_barang">
+                                <option value="Ada">Ada</option>
+                                <option value="Dipinjam">Dipinjam</option>
+                                <option value="Diperbaiki">Diperbaiki</option>
+                                <option value="Dihapus">Dihapus</option>
+                                <option value="Dipakai">Dipakai</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="foto_barang">Foto Barang</label>
-                            <input type="file" class="form-control" name="foto_barang" accept="image/*" required>
+                            <input type="file" class="form-control" name="path_gambar" accept="image/*" id="foto_barang">
                         </div>
                         <button type="submit" class="btn btn-success">Tambah Barang</button>
-
                     </form>
                 </div>
             </div>
@@ -103,3 +115,28 @@
         </div>
     @endif
 @endpush
+
+<script>
+    function calculateNilaiEkonomis() {
+        const hargaPembelianInput = document.getElementById('harga_pembelian');
+        const tahunPembelianInput = document.getElementById('tahun_pembelian');
+        const nilaiEkonomisInput = document.getElementById('nilai_ekonomis_barang');
+
+        const hargaPembelian = parseFloat(hargaPembelianInput.value) || 0;
+        const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
+
+        const umurEkonomis = 10;
+        const nilaiSisa = 100;
+
+        const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
+
+        const currentYear = new Date().getFullYear();
+        const yearsUsed = currentYear - tahunPembelian;
+
+        let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed );
+        nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
+
+        nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
+    }
+</script>
+

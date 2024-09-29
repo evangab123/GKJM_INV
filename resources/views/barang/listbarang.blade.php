@@ -32,24 +32,20 @@
 
     </div>
 
-
-
-
-
     <table class="table table-bordered table-stripped">
         <thead>
             <tr>
                 <th>Kode</th>
                 <th>Merek</th>
-                <th>Perolehan</th>
-                <th>Harga Beli</th>
-                <th>Tahun Beli</th>
-                <th>Nilai Ekonomis</th>
-                <th>Jumlah/Stok</th>
-                <th>Keterangan</th>
+                {{-- <th>Perolehan</th> --}}
+                {{-- <th>Harga Beli</th> --}}
+                {{-- <th>Tahun Beli</th> --}}
+                {{-- <th>Nilai Ekonomis</th>
+                <th>Jumlah/Stok</th> --}}
+                {{-- <th>Keterangan</th> --}}
                 <th>Ruang</th>
-                <th>Kondisi</th>
-                <th>Kategori</th>
+                {{-- <th>Kondisi</th> --}}
+                {{-- <th>Kategori</th> --}}
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>
@@ -59,15 +55,15 @@
                 <tr>
                     <td>{{ $bar['kode_barang'] }}</td>
                     <td>{{ $bar['merek_barang'] }}</td>
-                    <td>{{ $bar['perolehan_barang'] }}</td>
-                    <td>Rp {{ number_format($bar['harga_pembelian'], 2, ',', '.') }}</td>
-                    <td>{{ $bar['tahun_pembelian'] }}</td>
-                    <td>Rp {{ number_format($bar['nilai_ekonomis_barang'], 2, ',', '.') }}</td>
-                    <td>{{ $bar['jumlah'] }}</td>
-                    <td>{{ $bar['keterangan'] }}</td>
+                    {{-- <td>{{ $bar['perolehan_barang'] }}</td> --}}
+                    {{-- <td>Rp {{ number_format($bar['harga_pembelian'], 2, ',', '.') }}</td> --}}
+                    {{-- <td>{{ $bar['tahun_pembelian'] }}</td> --}}
+                    {{-- <td>Rp {{ number_format($bar['nilai_ekonomis_barang'], 2, ',', '.') }}</td> --}}
+                    {{-- <td>{{ $bar['jumlah'] }}</td> --}}
+                    {{-- <td>{{ $bar['keterangan'] }}</td> --}}
                     <td>{{ $bar->ruang->nama_ruang ?? 'N/A' }}</td>
-                    <td>{{ $bar->kondisi->deskripsi_kondisi ?? 'N/A' }}</td>
-                    <td>{{ $bar->kategori->nama_kategori?? 'N/A' }}</td>
+                    {{-- <td>{{ $bar->kondisi->deskripsi_kondisi ?? 'N/A' }}</td> --}}
+                    {{-- <td>{{ $bar->kategori->nama_kategori?? 'N/A' }}</td> --}}
                     <td>{{ $bar['status_barang'] }}</td>
                     <td>
                         <div class="d-flex">

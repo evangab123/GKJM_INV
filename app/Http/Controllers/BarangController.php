@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\KategoriBarang;
 use App\Models\KondisiBarang;
 use App\Models\Ruang;
+use Illuminate\Support\Facades\Validator;
 
 
 class BarangController extends Controller
@@ -119,7 +120,7 @@ class BarangController extends Controller
             'kondisi_id' => 'required|exists:kondisibarang,kondisi_id',
             'kategori_barang_id' => 'required|exists:kategoribarang,kategori_barang_id',
             'status_barang' => 'required|string',
-            'path_gambar' => 'nullable',
+            'path_gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // Cari barang berdasarkan kode_barang
@@ -227,33 +228,42 @@ class BarangController extends Controller
 
         return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
     }
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
         // Validate the incoming request
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'kode_barang' => 'required|string|max:255',
             'merek_barang' => 'required|string|max:255',
-            'perolehan_barang' => 'required|date',
+            'perolehan_barang' => 'required|string',
             'harga_pembelian' => 'required|numeric',
             'tahun_pembelian' => 'required|numeric',
             'nilai_ekonomis_barang' => 'required|numeric',
             'jumlah' => 'required|numeric',
-            'keterangan' => 'nullable|string',
-            'ruang_id' => 'required|exists:ruang,id',
-            'kondisi_id' => 'required|exists:kondisi_barang,id',
-            'kategori_barang_id' => 'required|exists:kategori_barang,id',
+            'keterangan' => 'nullable|string|max:255',
+            'ruang_id' => 'required|exists:ruang,ruang_id',
+            'kondisi_id' => 'required|exists:kondisibarang,kondisi_id',
+            'kategori_barang_id' => 'required|exists:kategoribarang,kategori_barang_id',
+            'status_barang' => 'required|string',
             'foto_barang' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+
         ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         // Handle the uploaded file
         $pathFoto = null;
-        if ($request->hasFile('foto_barang')) {
-            $file = $request->file('foto_barang');
+        if ($request->hasFile('path_gambar')) {
+            $file = $request->file('path_gambar');
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $filePath = 'img/barang/' . $filename;
             $file->move(public_path('img/barang'), $filename);
             $pathFoto = $filename;
+
         }
+
 
 
         // Create the new Barang entry
@@ -269,10 +279,11 @@ class BarangController extends Controller
             'ruang_id' => $request->input('ruang_id'),
             'kondisi_id' => $request->input('kondisi_id'),
             'kategori_barang_id' => $request->input('kategori_barang_id'),
+            'status_barang' => $request->input('status_barang'),
             'path_gambar' => $pathFoto,
         ]);
 
         // Redirect back to the keterangan detail page for the specific barang
-        return redirect()->route('barang.keterangan', $id)->with('message', 'Barang berhasil ditambahkan!');
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
 }

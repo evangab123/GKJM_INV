@@ -15,20 +15,21 @@ class Barang extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+
     protected $fillable = [
         'kode_barang',
         'merek_barang',
+        'perolehan_barang',
         'harga_pembelian',
         'tahun_pembelian',
-        'perolehan_barang',
         'nilai_ekonomis_barang',
         'jumlah',
-        'status_barang',
         'keterangan',
         'ruang_id',
         'kondisi_id',
         'kategori_barang_id',
-        'pengguna_id',
+        'status_barang',
+        'path_gambar',
     ];
 
     public function ruang()

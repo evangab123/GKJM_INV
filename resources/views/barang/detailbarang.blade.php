@@ -179,7 +179,7 @@
                                         <tr>
                                             <th>Foto Barang</th>
                                             <td>
-                                                <input type="file" class="form-control" name="path_gambar">
+                                                <input type="file" class="form-control" name="path_gambar" accept="image/*">
                                             </td>
                                         </tr>
                                     </tbody>
