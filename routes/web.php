@@ -24,9 +24,11 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/profile', 'ProfileController@index')->name('profile');
 Route::put('/profile', 'ProfileController@update')->name('profile.update');
-Route::put('/basic/{pengguna}', [BasicController::class, 'update'])->name('basic.update');
-Route::get('/pengguna/{pengguna}', [PenggunaController::class, 'show'])->name('pengguna.show');
-Route::put('/pengguna/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update');
+// Route::put('/basic/{pengguna}', [BasicController::class, 'update'])->name('basic.update');
+// Route::put('/basic/{pengguna}/edit}', [BasicController::class, 'update'])->name('basic.edit');
+Route::put('/basic/create}', [BasicController::class, 'update'])->middleware('role:SuperAdmin')->name('basic.create');
+// Route::get('/pengguna/{pengguna}', [PenggunaController::class, 'show'])->name('pengguna.show');
+// Route::put('/pengguna/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update');
 
 
 Route::get('/about', function () {

@@ -22,6 +22,8 @@ class BasicController extends Controller
      */
     public function index(): View|Factory
     {
+        // dd(Auth::user()->role);
+        $this->authorize('role-check', 'SuperAdmin');
         return view('basic.list', [
             'title' => 'Master Data Pengguna',
             'pengguna' => Pengguna::paginate(10)
@@ -35,6 +37,7 @@ class BasicController extends Controller
      */
     public function create(): Factory|View
     {
+        $this->authorize('role-check', 'SuperAdmin');
         $roles = RolePengguna::all();
         return view('basic.create', [
             'title' => 'Buat Pengguna Inventaris',
@@ -51,6 +54,7 @@ class BasicController extends Controller
      */
     public function store(AddUserRequest $request): RedirectResponse
     {
+        $this->authorize('role-check', 'SuperAdmin');
         Pengguna::create([
             'nama_pengguna' => $request->input('nama_pengguna'),
             'jabatan' => $request->input('jabatan'),
@@ -74,22 +78,9 @@ class BasicController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    // public function edit(Pengguna $pengguna): Factory|View
-    // {
-    //     dd($pengguna->pengguna_id);
-    //     return view('basic.edit', [
-    //         'title' => 'Edit Pengguna',
-    //         'penggunaa' => $pengguna,
-    //     ]);
-    // }
     public function edit($pengguna_id): Factory|View
     {
+        $this->authorize('role-check', 'SuperAdmin');
         $user = Pengguna::find($pengguna_id);
         $roles = RolePengguna::all();
         $title = "Edit Pengguna"; // Atau judul sesuai konteks
@@ -124,6 +115,7 @@ class BasicController extends Controller
     //  }
     public function update(Request $request, Pengguna $pengguna): RedirectResponse
     {
+        $this->authorize('role-check', 'SuperAdmin');
         $pengguna->update([
             'nama_pengguna' => $request->input('nama_pengguna'),
             'email' => $request->input('email'),
@@ -142,6 +134,7 @@ class BasicController extends Controller
      */
     public function destroy(Pengguna $basic): RedirectResponse
     {
+        $this->authorize('role-check', 'SuperAdmin');
         if (Auth::id() == $basic->getKey()) {
             return redirect()->route('basic.index')->with('warning', 'Anda tidak dapat menghapus diri sendiri!');
         }
