@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-
+@section('title', 'Edit Pengguna | Inventaris GKJM')
 @section('main-content')
     {{-- <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">{{ $title ?? __('Blank Page') }}</h1> --}}
@@ -8,7 +8,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('basic.update',$user->pengguna_id)}}" method="post">
+            <form action="{{ route('pengguna.update',$user->pengguna_id)}}" method="post">
                 @csrf
                 @method('put')
 
@@ -70,7 +70,7 @@
 
 
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ route('basic.index') }}" class="btn btn-default">Back to list</a>
+                <a href="{{ route('pengguna.index') }}" class="btn btn-default">Back to list</a>
 
             </form>
         </div>

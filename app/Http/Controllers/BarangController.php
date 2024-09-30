@@ -236,7 +236,7 @@ class BarangController extends Controller
             'merek_barang' => 'required|string|max:255',
             'perolehan_barang' => 'required|string',
             'harga_pembelian' => 'required|numeric',
-            'tahun_pembelian' => 'required|numeric',
+            'tahun_pembelian' => 'required|numeric|',
             'nilai_ekonomis_barang' => 'required|numeric',
             'jumlah' => 'required|numeric',
             'keterangan' => 'nullable|string|max:255',

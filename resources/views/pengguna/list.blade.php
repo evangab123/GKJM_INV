@@ -6,7 +6,7 @@
 
     <!-- Main Content goes here -->
 
-    <a href="{{ route('basic.create') }}" class="btn btn-primary mb-3">Buat Pengguna!</a>
+    <a href="{{ route('pengguna.create') }}" class="btn btn-primary mb-3">Buat Pengguna!</a>
 
     @if (session('message'))
         <div class="alert alert-success">
@@ -33,10 +33,10 @@
                     <td>{{ $user->role->nama_role }}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('basic.edit', $user ->pengguna_id)}}" class="btn btn-sm btn-primary mr-2">
+                            <a href="{{ route('pengguna.edit', $user ->pengguna_id)}}" class="btn btn-sm btn-primary mr-2">
                                 <i class="fa-solid fa-pen-to-square"></i>Edit
                             </a>
-                            <form action="{{ route('basic.destroy', $user->pengguna_id) }}" method="post">
+                            <form action="{{ route('pengguna.destroy', $user->pengguna_id) }}" method="post">
                                 @csrf
                                 @method('delete')
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this?')">

@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BasicController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BarangController;
 
 /*
@@ -24,9 +24,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/profile', 'ProfileController@index')->name('profile');
 Route::put('/profile', 'ProfileController@update')->name('profile.update');
-// Route::put('/basic/{pengguna}', [BasicController::class, 'update'])->name('basic.update');
-// Route::put('/basic/{pengguna}/edit}', [BasicController::class, 'update'])->name('basic.edit');
-Route::put('/basic/create}', [BasicController::class, 'update'])->middleware('role:SuperAdmin')->name('basic.create');
+// Route::put('/pengguna/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update');
+// Route::put('/pengguna/{pengguna}/edit}', [PenggunaController::class, 'update'])->name('pengguna.edit');
+Route::put('/pengguna/create}', [PenggunaController::class, 'update'])->middleware('role:SuperAdmin')->name('pengguna.create');
 // Route::get('/pengguna/{pengguna}', [PenggunaController::class, 'show'])->name('pengguna.show');
 // Route::put('/pengguna/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update');
 
@@ -40,12 +40,19 @@ Route::get('/blank', function () {
 })->name('blank');
 
 Route::middleware('auth')->group(function () {
-    Route::resource('basic', BasicController::class);
+    Route::resource('pengguna', PenggunaController::class);
 });
 
-Route::get('/basic', [BasicController::class, 'index'])
+Route::get('/pengguna', [PenggunaController::class, 'index'])
     ->middleware('role:SuperAdmin')
-    ->name('basic.index');
+    ->name('pengguna.index');
+
+Route::middleware('auth')->group(function () {
+    Route::resource('role', RoleController::class);
+});
+Route::get('/role', [RoleController::class, 'index'])
+    ->middleware('role:SuperAdmin')
+    ->name('role.index');
 
 Route::middleware('auth')->group(function () {
     Route::resource('barang', BarangController::class);
@@ -60,5 +67,3 @@ Route::get('/barang/{kode_barang}/keterangan', [BarangController::class, 'showKe
 Route::get('/keterangan/{id}/edit', [BarangController::class, 'editKeterangan'])->name('keterangan.edit');
 Route::put('/keterangan/{id}', [BarangController::class, 'updateKeterangan'])->name('keterangan.update');
 Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan'])->name('keterangan.store');
-
-

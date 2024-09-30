@@ -26,6 +26,7 @@
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
 
     @stack('css')
 </head>
@@ -67,25 +68,38 @@
 
             <!-- Nav Pengguna -->
             @if (Auth::user()->role->nama_role === 'SuperAdmin')
-                <li class="nav-item {{ Nav::isRoute('basic.index') }}">
-                    <a class="nav-link" href="{{ route('basic.index') }}">
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePengguna"
+                        aria-expanded="true" aria-controls="collapsePengguna">
                         <i class="fas fa-fw fa-plus"></i>
                         <span>{{ __('Master Pengguna') }}</span>
                     </a>
+                    <div id="collapsePengguna" class="collapse" aria-labelledby="headingPengguna"
+                        data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Pengguna:</h6>
+                            <a class="collapse-item {{ Nav::isRoute('role.index') }}"
+                                href="{{ route('role.index') }}">Role Pengguna</a>
+                            <a class="collapse-item {{ Nav::isRoute('pengguna.index') }}"
+                                href="{{ route('pengguna.index') }}"> Pengguna</a>
+                        </div>
+                    </div>
                 </li>
             @endif
+
             <!-- Nav Item - Inventaris Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-list"></i>
-                    <span>Barang</span>
+                    <span>{{ __('Barang') }}</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">CRUD Barang:</h6>
-                        <a class="collapse-item" href={{ route('barang.index') }}>List Barang</a>
-                        <a class="collapse-item" href={{ route('barang.index') }}>Peminjaman Barang</a>
+                        <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
+                            href={{ route('barang.index') }}>List Barang</a>
+                        <a class="collapse-item" href={{ route('barang.index') }}>Penghapusan Barang</a>
                         <a class="collapse-item" href={{ route('barang.index') }}>Pemakaian Barang</a>
                     </div>
                 </div>
@@ -385,11 +399,11 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">Pilih "Keluar" dibawah Jika ingin keluar!.</div>
                 <div class="modal-footer">
-                    <button class="btn btn-link" type="button" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button class="btn btn-link" type="button" data-dismiss="modal">{{ __('Batal') }}</button>
                     <a class="btn btn-danger" href="{{ route('logout') }}"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Keluar') }}</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
@@ -403,6 +417,9 @@
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+
     @stack('js')
 </body>
 

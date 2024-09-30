@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('title', 'Buat Pengguna | Inventaris GKJM')
 
 @section('main-content')
     {{-- <!-- Page Heading -->
@@ -8,7 +9,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('basic.store') }}" method="post">
+            <form action="{{ route('pengguna.store') }}" method="post">
                 @csrf
 
                 <div class="form-group">
@@ -75,7 +76,7 @@
 
 
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ route('basic.index') }}" class="btn btn-default">Back to list</a>
+                <a href="{{ route('pengguna.index') }}" class="btn btn-default">Back to list</a>
 
             </form>
         </div>
