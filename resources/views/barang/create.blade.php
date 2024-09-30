@@ -20,10 +20,10 @@
                 <div class="card-body">
                     <form action="{{ route('barang.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="kode_barang">Kode Barang</label>
                             <input type="text" class="form-control" id="kode_barang" name="kode_barang">
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <label for="merek_barang">Merek Barang</label>
                             <input type="text" class="form-control" id="merek_barang" name="merek_barang">

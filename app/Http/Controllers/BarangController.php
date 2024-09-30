@@ -232,7 +232,7 @@ class BarangController extends Controller
     {
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
-            'kode_barang' => 'required|string|max:255',
+            // 'kode_barang' => 'required|string|max:255',
             'merek_barang' => 'required|string|max:255',
             'perolehan_barang' => 'required|string',
             'harga_pembelian' => 'required|numeric',
@@ -252,6 +252,38 @@ class BarangController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
+        #handle kode barang
+        // $ruang = Ruang::find($request->ruang_id);
+        $kategori = KategoriBarang::find($request->kategori_barang_id);
+
+        $tahunBeli = $request->tahun_pembelian;
+        $kategoriNama = $kategori->nama_kategori;
+
+        // Memisahkan nama kategori berdasarkan spasi
+        $kataArray = explode(' ', $kategoriNama);
+
+        // Mengambil huruf pertama dari setiap kata
+        $singkatanKategori = '';
+        foreach ($kataArray as $kata) {
+            $singkatanKategori .= strtoupper(substr($kata, 0, 1));
+        }
+
+        // Jika hanya ada satu kata, gunakan 3 huruf pertama
+        if (count($kataArray) == 1) {
+            $singkatanKategori = strtoupper(substr($kategoriNama, 0, 3));
+        }
+
+        $lastBarang = Barang::where('kategori_barang_id', $request->kategori_barang_id)
+            ->orderBy('kode_barang', 'desc')
+            ->first();
+
+        // Mengambil nomor urut terakhir untuk kategori yang sama
+        $nomorUrut = $lastBarang ? intval(substr($lastBarang->kode_barang, -4)) + 1 : 1;
+        $nomorUrutFormatted = str_pad($nomorUrut, 4, '0', STR_PAD_LEFT);
+
+        // Membentuk kode barang berdasarkan format yang diinginkan
+        $kodeBarang = "GKJM" . '-' . $tahunBeli . '-' . $singkatanKategori . '-' . $nomorUrutFormatted;
+
 
         // Handle the uploaded file
         $pathFoto = null;
@@ -261,14 +293,12 @@ class BarangController extends Controller
             $filePath = 'img/barang/' . $filename;
             $file->move(public_path('img/barang'), $filename);
             $pathFoto = $filename;
-
         }
-
 
 
         // Create the new Barang entry
         Barang::create([
-            'kode_barang' => $request->input('kode_barang'),
+            'kode_barang' => $kodeBarang,
             'merek_barang' => $request->input('merek_barang'),
             'perolehan_barang' => $request->input('perolehan_barang'),
             'harga_pembelian' => $request->input('harga_pembelian'),

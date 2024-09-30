@@ -91,17 +91,17 @@
                                         <tr>
                                             <th>Harga Beli</th>
                                             <td><input type="text" class="form-control" name="harga_pembelian"
-                                                    value="{{ $barang->harga_pembelian }}"></td>
+                                                    value="{{ $barang->harga_pembelian }}"  onchange="calculateNilaiEkonomis()" ></td>
                                         </tr>
                                         <tr>
                                             <th>Tahun Beli</th>
                                             <td><input type="text" class="form-control" name="tahun_pembelian"
-                                                    value="{{ $barang->tahun_pembelian }}"></td>
+                                                    value="{{ $barang->tahun_pembelian }}"  onchange="calculateNilaiEkonomis()"></td>
                                         </tr>
                                         <tr>
                                             <th>Nilai Ekonomis</th>
                                             <td><input type="text" class="form-control" name="nilai_ekonomis_barang"
-                                                    value="{{ $barang->nilai_ekonomis_barang }}"></td>
+                                                    value="{{ $barang->nilai_ekonomis_barang }}" readonly></td>
                                         </tr>
                                         <tr>
                                             <th>Jumlah/Stok</th>
@@ -266,3 +266,26 @@
             </div>
         @endif
     @endpush
+    <script>
+        function calculateNilaiEkonomis() {
+            const hargaPembelianInput = document.getElementById('harga_pembelian');
+            const tahunPembelianInput = document.getElementById('tahun_pembelian');
+            const nilaiEkonomisInput = document.getElementById('nilai_ekonomis_barang');
+
+            const hargaPembelian = parseFloat(hargaPembelianInput.value) || 0;
+            const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
+
+            const umurEkonomis = 10;
+            const nilaiSisa = 100;
+
+            const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
+
+            const currentYear = new Date().getFullYear();
+            const yearsUsed = currentYear - tahunPembelian;
+
+            let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed );
+            nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
+
+            nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
+        }
+    </script>

@@ -99,40 +99,6 @@
                                 <form action="/barang/{{ $bar['kode_barang'] }}" method="POST">
                                     @csrf
                                     @method('PUT')
-
-                                    {{-- <div class="form-group">
-                                        <label for="merek_barang">Merek</label>
-                                        <input type="text" class="form-control" id="merek_barang" name="merek_barang"
-                                            value="{{ $bar['merek_barang'] }}" required>
-                                    </div> --}}
-                                    {{-- <div class="form-group">
-                                        <label for="harga_pembelian">Harga Beli</label>
-                                        <input type="text" class="form-control" id="harga_pembelian"
-                                            name="harga_pembelian" value="{{ $bar['harga_pembelian'] }}" required>
-                                    </div> --}}
-                                    {{-- <div class="form-group">
-                                        <label for="tahun_pembelian">Tahun Beli</label>
-                                        <input type="text" class="form-control" id="tahun_pembelian"
-                                            name="tahun_pembelian" value="{{ $bar['tahun_pembelian'] }}" required>
-                                    </div> --}}
-                                    {{-- <div class="form-group">
-                                        <label for="perolehan_barang">Perolehan</label>
-                                        <select class="form-control" id="perolehan_barang" name="perolehan_barang">
-                                            <option value="Hibah"
-                                                {{ $bar['perolehan_barang'] == 'Hibah' ? 'selected' : '' }}>Hibah
-                                            </option>
-                                            <option value="Pembelian"
-                                                {{ $bar['perolehan_barang'] == 'Pembelian' ? 'selected' : '' }}>
-                                                Pembelian
-                                            </option>
-                                        </select>
-                                    </div> --}}
-                                    {{-- <div class="form-group">
-                                        <label for="nilai_ekonomis_barang">Nilai Ekonomis</label>
-                                        <input type="text" class="form-control" id="nilai_ekonomis_barang"
-                                            name="nilai_ekonomis_barang" value="{{ $bar['nilai_ekonomis_barang'] }}"
-                                            required>
-                                    </div> --}}
                                     <div class="form-group">
                                         <label for="jumlah">Jumlah/Stok</label>
                                         <input type="text" class="form-control" id="jumlah" name="jumlah"
@@ -143,17 +109,6 @@
                                         <input type="textbox" class="form-control" id="keterangan" name="keterangan"
                                             value="{{ $bar['keterangan'] }}" required>
                                     </div>
-                                    {{-- <div class="form-group">
-                                        <label for="ruang_id">Ruang</label>
-                                        <select class="form-control" id="ruang_id" name="ruang_id">
-                                            @foreach ($ruang as $rua)
-                                                <option value="{{ $rua->id}}"
-                                                    {{ $rua->id == old('ruang_id', $bar['ruang_id'] ?? '') ? 'selected' : '' }}>
-                                                    {{ $rua->nama_ruang }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div> --}}
                                     <div class="form-group">
                                         <label for="ruang_id">Ruang</label>
                                         <select class="form-control @error('ruang_id') is-invalid @enderror" name="ruang_id"
@@ -227,7 +182,7 @@
     </table>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="show-info">
-            Showing {{ $barang->firstItem() }} to {{ $barang->lastItem() }} of {{ $barang->total() }} Barang
+            Melihat {{ $barang->firstItem() }} to {{ $barang->lastItem() }} of {{ $barang->total() }} Barang
         </div>
 
         <div class="pagination">

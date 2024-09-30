@@ -16,7 +16,7 @@ class BarangSeeder extends Seeder
      */
     public function run()
     {
-        Barang::factory()->count(100)->create();
+        // Barang::factory()->count(100)->create();
         // DB::table('barang')->insert([
         //     [
         //         'kode_barang' => 'BRG-001',
