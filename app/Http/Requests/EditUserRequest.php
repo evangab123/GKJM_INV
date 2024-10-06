@@ -23,15 +23,12 @@ class EditUserRequest extends FormRequest
      */
     public function rules()
     {
-
         return [
             'nama_pengguna' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:pengguna,email,'.$this->pengguna_id,
+            'jabatan' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255|unique:pengguna,email,' . $this->pengguna_id . ',pengguna_id',
             'password' => 'nullable|string|min:8|confirmed',
-            'role_id' => 'required|exists:RolePengguna,role_id',
+            'role_id' => 'required|exists:roles,id',
         ];
     }
-
-
-
 }

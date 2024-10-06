@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('RolePengguna', function (Blueprint $table) {
-            $table->id('role_id');
-            // $table->enum('nama_role', ['SuperAdmin','Majelis','AdminRuang','Pengguna']);
-            $table->string('nama_role');
-            $table->string('slug');
-            $table->timestamps();
-        });
-
+        // Schema::create('RolePengguna', function (Blueprint $table) {
+        //     $table->id('role_id');
+        //     // $table->enum('nama_role', ['SuperAdmin','Majelis','AdminRuang','Pengguna']);
+        //     $table->string('nama_role');
+        //     $table->string('slug');
+        //     $table->timestamps();
+        // });
 
         Schema::create('Pengguna', function (Blueprint $table) {
             $table->id('pengguna_id');
@@ -30,30 +29,11 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            $table->unsignedBigInteger('role_id');
-            $table->unsignedBigInteger('permission_id');
-            $table->foreign('role_id')->references('role_id')->on('RolePengguna')
-                ->onUpdate('cascade');
-            $table->foreign('permission_id')->references('permission_id')->on('Permissions')
-                ->onUpdate('cascade');
+            // $table->unsignedBigInteger('role_id');
+            // $table->foreign('role_id')->references('role_id')->on('RolePengguna')
+            //     ->onUpdate('cascade');
         });
 
-
-
-
-        Schema::create('Permissions', function (Blueprint $table) {
-            $table->id('permission_id');
-            $table->string('nama_permission');
-            $table->string('slug');
-            $table->timestamps();
-        });
-
-        Schema::create('Permissions', function (Blueprint $table) {
-            $table->id('permission_id');
-            $table->string('nama_permission');
-            $table->string('slug');
-            $table->timestamps();
-        });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

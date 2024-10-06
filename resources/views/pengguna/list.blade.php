@@ -19,6 +19,7 @@
             <tr>
                 <th>No</th>
                 <th>Nama</th>
+                <th>Jabatan</th>
                 <th>Email</th>
                 <th>Role Pengguna</th>
                 <th>Aksi</th>
@@ -29,8 +30,9 @@
                 <tr>
                     <td scope="row">{{ $loop->iteration }}</td>
                     <td>{{ $user->nama_pengguna }}</td>
+                    <td>{{ $user->jabatan }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ $user->role->nama_role }}</td>
+                    <td>{{$user->getRoleNames()->first()}}</td>
                     <td>
                         <div class="d-flex">
                             <a href="{{ route('pengguna.edit', $user ->pengguna_id)}}" class="btn btn-sm btn-primary mr-2">

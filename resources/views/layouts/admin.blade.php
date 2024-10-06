@@ -26,7 +26,8 @@
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
 
     @stack('css')
 </head>
@@ -67,7 +68,7 @@
             </div>
 
             <!-- Nav Pengguna -->
-            @if (Auth::user()->role->nama_role === 'SuperAdmin')
+            @if (Auth::user()->hasRole('Super Admin'))
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePengguna"
                         aria-expanded="true" aria-controls="collapsePengguna">
@@ -81,11 +82,12 @@
                             <a class="collapse-item {{ Nav::isRoute('role.index') }}"
                                 href="{{ route('role.index') }}">Role Pengguna</a>
                             <a class="collapse-item {{ Nav::isRoute('pengguna.index') }}"
-                                href="{{ route('pengguna.index') }}"> Pengguna</a>
+                                href="{{ route('pengguna.index') }}">Pengguna</a>
                         </div>
                     </div>
                 </li>
             @endif
+
 
             <!-- Nav Item - Inventaris Collapse Menu -->
             <li class="nav-item">

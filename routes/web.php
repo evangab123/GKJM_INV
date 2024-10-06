@@ -24,12 +24,6 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/profile', 'ProfileController@index')->name('profile');
 Route::put('/profile', 'ProfileController@update')->name('profile.update');
-// Route::put('/pengguna/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update');
-// Route::put('/pengguna/{pengguna}/edit}', [PenggunaController::class, 'update'])->name('pengguna.edit');
-Route::put('/pengguna/create}', [PenggunaController::class, 'update'])->middleware('role:SuperAdmin')->name('pengguna.create');
-// Route::get('/pengguna/{pengguna}', [PenggunaController::class, 'show'])->name('pengguna.show');
-// Route::put('/pengguna/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update');
-
 
 Route::get('/about', function () {
     return view('about');
@@ -39,31 +33,48 @@ Route::get('/blank', function () {
     return view('blank');
 })->name('blank');
 
+// Rute yang memerlukan autentikasi
 Route::middleware('auth')->group(function () {
-    Route::resource('pengguna', PenggunaController::class);
+    Route::resource('pengguna', PenggunaController::class)
+        ->middleware('role:Super Admin'); // hanya Super Admin yang bisa mengelola pengguna
+
+    Route::resource('role', RoleController::class)
+        ->middleware('role:Super Admin'); // hanya Super Admin yang bisa mengelola role
+
+    Route::resource('barang', BarangController::class)
+        ->middleware('role:Super Admin|Admin Ruang'); // Super Admin dan Admin Ruang bisa mengelola barang
 });
 
+// Rute spesifik dengan middleware role
 Route::get('/pengguna', [PenggunaController::class, 'index'])
-    ->middleware('role:SuperAdmin')
+    ->middleware('role:Super Admin')
     ->name('pengguna.index');
 
-Route::middleware('auth')->group(function () {
-    Route::resource('role', RoleController::class);
-});
 Route::get('/role', [RoleController::class, 'index'])
-    ->middleware('role:SuperAdmin')
+    ->middleware('role:Super Admin')
     ->name('role.index');
 
-Route::middleware('auth')->group(function () {
-    Route::resource('barang', BarangController::class);
-});
-
+// Rute barang
 Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
 Route::get('/barang/{kode_barang}', [BarangController::class, 'show'])->name('barang.show');
-Route::put('/barang/{kode_barang}', [BarangController::class, 'update'])->name('barang.update');
 
-Route::put('/barang/{kode_barang}/edit', [BarangController::class, 'update_detail'])->name('barang.update_detail');
-Route::get('/barang/{kode_barang}/keterangan', [BarangController::class, 'showKeterangan'])->name('barang.keterangan');
-Route::get('/keterangan/{id}/edit', [BarangController::class, 'editKeterangan'])->name('keterangan.edit');
-Route::put('/keterangan/{id}', [BarangController::class, 'updateKeterangan'])->name('keterangan.update');
-Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan'])->name('keterangan.store');
+// Middleware untuk mengelola barang yang dapat diakses oleh role tertentu
+Route::put('/barang/{kode_barang}', [BarangController::class, 'update'])
+    ->middleware('role:Super Admin|Admin Ruang') // Hanya Super Admin dan Admin Ruang yang bisa update
+    ->name('barang.update');
+
+Route::put('/barang/{kode_barang}/edit', [BarangController::class, 'update_detail'])
+    ->middleware('role:Super Admin|Admin Ruang') // Hanya Super Admin dan Admin Ruang yang bisa edit
+    ->name('barang.update_detail');
+
+Route::get('/barang/{kode_barang}/keterangan', [BarangController::class, 'showKeterangan'])
+    ->name('barang.keterangan');
+
+Route::get('/keterangan/{id}/edit', [BarangController::class, 'editKeterangan'])
+    ->name('keterangan.edit');
+
+Route::put('/keterangan/{id}', [BarangController::class, 'updateKeterangan'])
+    ->name('keterangan.update');
+
+Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan'])
+    ->name('keterangan.store');

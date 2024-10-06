@@ -25,10 +25,10 @@ class AddUserRequest extends FormRequest
     {
         return [
             'nama_pengguna' => 'required|string|max:255',
-            // 'jabatan' => 'nullable|string|max:255',
+            'jabatan' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:pengguna,email',
             'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'required|exists:RolePengguna,role_id',
+            'role_id' => 'required|exists:roles,id',
         ];
     }
 }

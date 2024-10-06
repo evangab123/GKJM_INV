@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RolePengguna;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -22,7 +22,7 @@ class RoleController extends Controller
         // dd(Auth::user()->role);
         return view('role.list', [
             'title' => 'Master Data Role',
-            'Roles' => RolePengguna::paginate(10)
+            'Roles' => Role::paginate(10)
         ]);
     }
 
@@ -33,7 +33,7 @@ class RoleController extends Controller
      */
     public function create(): Factory|View
     {
-        $roles = RolePengguna::all();
+        $roles = Role::all();
         return view('role.create', [
             'roles' => $roles,
         ]);

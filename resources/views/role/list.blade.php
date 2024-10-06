@@ -27,7 +27,7 @@
             @foreach ($Roles as $Role)
                 <tr>
                     <td scope="row">{{ $loop->iteration }}</td>
-                    <td>{{ $Role->nama_role }}</td>
+                    <td>{{ $Role->name }}</td>
                     <td>
 
                     </td>

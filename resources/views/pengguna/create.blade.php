@@ -21,14 +21,15 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                {{-- <div class="form-group">
+                <div class="form-group">
                     <label for="jabatan">Jabatan</label>
                     <input type="text" class="form-control @error('jabatan') is-invalid @enderror" name="jabatan"
                         id="jabatan" placeholder="Jabatan..." autocomplete="off" value="{{ old('jabatan') }}">
                     @error('jabatan')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
-                </div> --}}
+                </div>
+
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror" name="email"
@@ -57,14 +58,13 @@
                     @enderror
                 </div>
 
-
                 <div class="form-group">
                     <label for="role_id">Role</label>
                     <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id">
                         <option value="">Pilih Role Pengguna</option>
                         @foreach ($roles as $role)
-                            <option value="{{ $role->role_id }}" {{ old('role_id') == $role->role_id ? 'selected' : '' }}>
-                                {{ $role->nama_role }}
+                            <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                {{ $role->name }}
                             </option>
                         @endforeach
                     </select>
@@ -72,8 +72,6 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-
-
 
                 <button type="submit" class="btn btn-primary">Save</button>
                 <a href="{{ route('pengguna.index') }}" class="btn btn-default">Back to list</a>

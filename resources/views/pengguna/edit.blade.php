@@ -11,7 +11,7 @@
             <form action="{{ route('pengguna.update',$user->pengguna_id)}}" method="post">
                 @csrf
                 @method('put')
-
+                <input type="hidden" name="pengguna_id" value="{{ $user->pengguna_id }}">
                 <div class="form-group">
                   <label for="nama_pengguna">Nama Lengkap</label>
                   <input type="text" class="form-control @error('nama_pengguna') is-invalid @enderror" name="nama_pengguna" id="nama_pengguna" placeholder="Nama Lengkap" autocomplete="off" value="{{ old('nama_pengguna') ?? $user->nama_pengguna}}">
@@ -20,13 +20,13 @@
                   @enderror
                 </div>
 
-                {{-- <div class="form-group">
-                  <label for="last_name">Last Name</label>
-                  <input type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" id="last_name" placeholder="Last name" autocomplete="off" value="{{ old('last_name') ?? $pengguna->last_name }}">
-                  @error('last_name')
-                    <span class="text-danger">{{ $message }}</span>
-                  @enderror
-                </div> --}}
+                <div class="form-group">
+                    <label for="jabatan">Jabatan</label>
+                    <input type="text" class="form-control @error('jabatan') is-invalid @enderror" name="jabatan" id="jabatan" placeholder="Jabatan" autocomplete="off" value="{{ old('jabatan') ?? $user->jabatan }}">
+                    @error('jabatan')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
 
                 <div class="form-group">
                   <label for="email">Email</label>
@@ -58,14 +58,17 @@
                 <div class="form-group">
                     <label for="role_id">Role</label>
                     <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id">
-                        <option value="">Pilih Role Pengguna</option>
+                        <option value="" disabled>Pilih Role Pengguna</option>
                         @foreach ($roles as $role)
-                            <option value="{{ $role->role_id }}"
-                                {{ (old('role_id') == $role->role_id || (isset($user) && $user->role_id == $role->role_id)) ? 'selected' : '' }}>
-                                {{ $role->nama_role }}
+                            <option value="{{ $role->id }}"
+                                {{ (old('role_id') == $role->id || (isset($user) && $user->hasRole($role->name))) ? 'selected' : '' }}>
+                                {{ $role->name }}
                             </option>
                         @endforeach
                     </select>
+                    @error('role_id')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
 
