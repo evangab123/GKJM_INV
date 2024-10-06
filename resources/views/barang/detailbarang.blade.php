@@ -58,7 +58,8 @@
                     <div class="card-body">
                         @if ($isEditing)
                             <!-- Form Edit -->
-                            <form action="{{ route('barang.update_detail', $barang->kode_barang) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('barang.update_detail', $barang->kode_barang) }}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
@@ -90,13 +91,19 @@
                                         </tr>
                                         <tr>
                                             <th>Harga Beli</th>
-                                            <td><input type="text" class="form-control" name="harga_pembelian"
-                                                    value="{{ $barang->harga_pembelian }}"  onchange="calculateNilaiEkonomis()" ></td>
+                                            <td>
+                                                <input type="text" class="form-control" name="harga_pembelian"
+                                                    value="{{ $barang->harga_pembelian }}"
+                                                    onchange="calculateNilaiEkonomis()">
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Tahun Beli</th>
-                                            <td><input type="text" class="form-control" name="tahun_pembelian"
-                                                    value="{{ $barang->tahun_pembelian }}"  onchange="calculateNilaiEkonomis()"></td>
+                                            <td>
+                                                <input type="text" class="form-control" name="tahun_pembelian"
+                                                    value="{{ $barang->tahun_pembelian }}"
+                                                    onchange="calculateNilaiEkonomis()">
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Nilai Ekonomis</th>
@@ -179,7 +186,8 @@
                                         <tr>
                                             <th>Foto Barang</th>
                                             <td>
-                                                <input type="file" class="form-control" name="path_gambar" accept="image/*">
+                                                <input type="file" class="form-control" name="path_gambar"
+                                                    accept="image/*">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -268,22 +276,27 @@
     @endpush
     <script>
         function calculateNilaiEkonomis() {
-            const hargaPembelianInput = document.getElementById('harga_pembelian');
-            const tahunPembelianInput = document.getElementById('tahun_pembelian');
-            const nilaiEkonomisInput = document.getElementById('nilai_ekonomis_barang');
+
+            const hargaPembelianInput = document.querySelector('input[name="harga_pembelian"]');
+            const tahunPembelianInput = document.querySelector('input[name="tahun_pembelian"]');
+            const nilaiEkonomisInput = document.querySelector('input[name="nilai_ekonomis_barang"]');
 
             const hargaPembelian = parseFloat(hargaPembelianInput.value) || 0;
             const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
 
+
             const umurEkonomis = 10;
             const nilaiSisa = 100;
+
 
             const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
 
             const currentYear = new Date().getFullYear();
             const yearsUsed = currentYear - tahunPembelian;
 
-            let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed );
+
+            let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed);
+
             nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
 
             nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);

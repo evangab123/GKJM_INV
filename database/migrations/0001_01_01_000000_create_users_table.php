@@ -19,12 +19,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('Permissions', function (Blueprint $table) {
-            $table->id('permission_id');
-            $table->string('nama_permission');
-            $table->string('slug');
-            $table->timestamps();
-        });
 
         Schema::create('Pengguna', function (Blueprint $table) {
             $table->id('pengguna_id');
@@ -44,6 +38,23 @@ return new class extends Migration
                 ->onUpdate('cascade');
         });
 
+
+
+
+        Schema::create('Permissions', function (Blueprint $table) {
+            $table->id('permission_id');
+            $table->string('nama_permission');
+            $table->string('slug');
+            $table->timestamps();
+        });
+
+        Schema::create('Permissions', function (Blueprint $table) {
+            $table->id('permission_id');
+            $table->string('nama_permission');
+            $table->string('slug');
+            $table->timestamps();
+        });
+
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
@@ -58,6 +69,8 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+
     }
 
     /**

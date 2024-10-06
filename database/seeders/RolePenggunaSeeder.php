@@ -16,13 +16,13 @@ class RolePenggunaSeeder extends Seeder
     public function run()
     {
         DB::table('RolePengguna')->insert([
-            ['nama_role' => 'SuperAdmin','slug'=>'Nice','created_at' => Carbon::now(),
+            ['nama_role' => 'Super Admin','slug'=>'super-admin','created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),],
-            ['nama_role' => 'Majelis','slug'=>'Nice','created_at' => Carbon::now(),
+            ['nama_role' => 'Majelis','slug'=>'majelis','created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),],
-            ['nama_role' => 'AdminRuang','slug'=>'Nice','created_at' => Carbon::now(),
+            ['nama_role' => 'Admin Ruang','slug'=>'admin-ruang-1','created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),],
-            ['nama_role' => 'Pengguna','slug'=>'Nice','created_at' => Carbon::now(),
+            ['nama_role' => 'Pengguna','slug'=>'pengguna','created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),],
         ]);
     }

@@ -14,7 +14,7 @@
                 <div class="form-group">
                     <label for="nama_role">Nama Role</label>
                     <input type="text" class="form-control @error('nama_role') is-invalid @enderror" name="nama_role"
-                        id="nama_role" placeholder="Nama Role..." autocomplete="off" value="{{ old('nama_role') }}">
+                        id="nama_role" placeholder="Nama Role..." autocomplete="off" value="{{ old('nama_role') }}" onchange="generateSlug()">
                     @error('nama_role')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
@@ -23,7 +23,7 @@
                 <div class="form-group">
                     <label for="nama_role_slug">Nama Role Slug</label>
                     <input type="text" class="form-control @error('nama_role_slug') is-invalid @enderror"
-                        name="nama_role_slug" id="nama_role_slug" placeholder="nama_role_slug..." autocomplete="off"
+                        name="nama_role_slug" id="nama_role_slug" placeholder="nama-role-slug..." autocomplete="off"
                         value="{{ old('nama_role_slug') }}" readonly>
                     @error('nama_role_slug')
                         <span class="text-danger">{{ $message }}</span>
@@ -111,3 +111,13 @@
     }
 </style>
 
+<script>
+    function generateSlug() {
+        var namaRole = document.getElementById('nama_role').value;
+        var slug = namaRole.toLowerCase()
+                            .replace(/[^\w\s]/g, '') // Menghapus karakter non-alphanumeric
+                            .replace(/\s+/g, '-') // Mengganti spasi dengan tanda hubung
+                            .trim(); // Menghilangkan spasi di awal/akhir
+        document.getElementById('nama_role_slug').value = slug;
+    }
+</script>

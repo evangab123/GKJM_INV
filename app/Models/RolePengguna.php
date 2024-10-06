@@ -9,18 +9,16 @@ class RolePengguna extends Model
 {
     use HasFactory;
 
-    // Nama tabel di database
     protected $table = 'RolePengguna';
 
-    // Primary key yang digunakan
     protected $primaryKey = 'role_id';
 
-    // Fields yang dapat diisi (mass assignable)
+
     protected $fillable = [
         'nama_role',
+        'slug'
     ];
 
-    // Jika tidak menggunakan timestamp, bisa disable
     public $timestamps = true;
 
     // Relasi ke model Pengguna

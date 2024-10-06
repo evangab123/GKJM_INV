@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Pengguna;
+use App\Models\RolePengguna;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -15,11 +16,11 @@ class PenggunaFactory extends Factory
     {
         return [
             'nama_pengguna' => $this->faker->name,
-            'jabatan' => $this->faker->word,
+            // 'jabatan' => $this->faker->word,
             'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->faker->boolean ? now() : null,
-            'password' => Hash::make('password'), // Use a default password or generate a random one
-            'role_id' => $this->faker->numberBetween(1, 4), // Adjust as needed based on your roles
+            'password' => Hash::make('password'),
+            'role_id' => RolePengguna::inRandomOrder()->first()->id,
             'created_at' => now(),
             'updated_at' => now(),
         ];
