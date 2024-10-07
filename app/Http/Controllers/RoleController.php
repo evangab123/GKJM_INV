@@ -3,39 +3,74 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Contracts\View\View;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Http\RedirectResponse;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Contracts\View\Factory;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(): View|Factory
+
+    public function index()
     {
-        // dd(Auth::user()->role);
         return view('role.list', [
             'title' => 'Master Data Role',
-            'Roles' => Role::paginate(10)
+            'Roles' => Role::paginate(10),
+            'permission' => Permission::all()
         ]);
     }
 
-        /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(): Factory|View
+    public function create()
     {
-        $roles = Role::all();
-        return view('role.create', [
-            'roles' => $roles,
+        $permissions = Permission::all();
+        return view('role.create', compact('permissions'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama_role' => 'required|string|max:255|unique:roles,name',
+            'permissions' => 'required|array|min:1', // Minimal 1 permission
+            'permissions.*' => 'exists:permissions,name', // Validasi untuk setiap permission
         ]);
+
+        $role = Role::create(['name' => $request->input('nama_role'),]);
+
+        $role->syncPermissions($request->input('permissions'));
+
+        return redirect()->route('role.index')->with('success', 'Role berhasil dibuat dengan permission.');
+    }
+
+    public function edit($id)
+    {
+        $role = Role::find($id);
+        $permissions = Permission::all(); // Assuming you are also fetching permissions
+
+        return view('role.edit', compact('role', 'permissions'));
+    }
+
+
+    public function update(Request $request, Role $role)
+    {
+        // Validasi input
+        $request->validate([
+            'nama_role' => 'required|string|max:255|unique:roles,name,' . $role->id,
+        ]);
+
+        $role->name = $request->nama_role;
+        $role->save();
+
+        return redirect()->route('role.index')->with('message', 'Role dan Hak/Permission berhasil diupdate!');
+    }
+
+    function givePermission(Request $request, Role $role)
+    {
+        $permisiId = $request->input('permissions');
+        $perm = Permission::find($permisiId);
+
+        if($role->hasPermissionTo($request->permissions)){
+            return back()->with('warning','Sudah memiliki hak');
+        }
+        $role->givePermissionTo($request->permissions);
+        return back()->with('success','Hak Role sudah diperbaharui');
     }
 }

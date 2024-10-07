@@ -68,21 +68,30 @@
             </div>
 
             <!-- Nav Pengguna -->
-            @if (Auth::user()->hasRole('Super Admin'))
+            @if (Auth::check() && Auth::user()->hasRole('Super Admin'))
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePengguna"
-                        aria-expanded="true" aria-controls="collapsePengguna">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseData"
+                        aria-expanded="true" aria-controls="collapseData">
                         <i class="fas fa-fw fa-plus"></i>
-                        <span>{{ __('Master Pengguna') }}</span>
+                        <span>{{ __('Master Data') }}</span>
                     </a>
-                    <div id="collapsePengguna" class="collapse" aria-labelledby="headingPengguna"
+                    <div id="collapseData" class="collapse" aria-labelledby="headingData"
                         data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Pengguna:</h6>
+                            <h6 class="collapse-header">{{ __('Pengguna:') }}</h6>
                             <a class="collapse-item {{ Nav::isRoute('role.index') }}"
-                                href="{{ route('role.index') }}">Role Pengguna</a>
+                                href="{{ route('role.index') }}">{{ __('Role Pengguna') }}</a>
+                                <a class="collapse-item {{ Nav::isRoute('hak.index') }}"
+                                href="{{ route('hak.index') }}">{{ __('Hak Role ') }}</a>
                             <a class="collapse-item {{ Nav::isRoute('pengguna.index') }}"
-                                href="{{ route('pengguna.index') }}">Pengguna</a>
+                                href="{{ route('pengguna.index') }}">{{ __('Daftar Pengguna') }}</a>
+                        </div>
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">{{ __('Barang:') }}</h6>
+                            <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
+                                href="{{ '#' }}">{{ __('Tambah Kategori') }}</a>
+                            <a class="collapse-item {{ Nav::isRoute('ruang.index') }}"
+                                href="{{ '#' }}">{{ __('Tambah Ruang') }}</a>
                         </div>
                     </div>
                 </li>
@@ -98,11 +107,11 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">CRUD Barang:</h6>
+                        <h6 class="collapse-header">{{ __('CRUD Barang') }}:</h6>
                         <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
-                            href={{ route('barang.index') }}>List Barang</a>
-                        <a class="collapse-item" href={{ route('barang.index') }}>Penghapusan Barang</a>
-                        <a class="collapse-item" href={{ route('barang.index') }}>Pemakaian Barang</a>
+                            href={{ route('barang.index') }}>{{ __('List Barang') }}</a>
+                        <a class="collapse-item" href={{ route('barang.index') }}>{{ __('Penghapusan Barang') }}</a>
+                        <a class="collapse-item" href={{ route('barang.index') }}>{{ __('Pemakaian Barang') }}</a>
                     </div>
                 </div>
             </li>

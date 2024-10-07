@@ -1,10 +1,11 @@
 @extends('layouts.admin')
-@section('title', 'List Pengguna | Inventaris GKJM')
+@section('title', 'List Hak | Inventaris GKJM')
 
 @section('main-content')
 
     <div class="container-fluid">
-        <a href="{{ route('pengguna.create') }}" class="btn btn-primary mb-3">Buat Pengguna!</a>
+
+        <a href="{{ route('hak.create') }}" class="btn btn-primary mb-3">Buat Hak!</a>
 
         @if (session('message'))
             <div class="alert alert-success">
@@ -14,7 +15,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Pengguna') }}</h6>
+                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Hak') }}</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -23,29 +24,25 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Jabatan</th>
-                                <th>Email</th>
-                                <th>Role Pengguna</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($pengguna as $user)
+                            @foreach ($permissions as $permisi)
                                 <tr>
                                     <td scope="row">{{ $loop->iteration }}</td>
-                                    <td>{{ $user->nama_pengguna }}</td>
-                                    <td>{{ $user->jabatan }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->getRoleNames()->first() }}</td>
+                                    <td>{{ $permisi->name }}</td>
                                     <td>
                                         <div class="d-flex">
-                                            <a href="{{ route('pengguna.edit', $user->pengguna_id) }}" class="btn btn-sm btn-primary mr-2">
+                                            <a href="{{ route('hak.edit', $permisi->id) }}"
+                                                class="btn btn-sm btn-primary mr-2">
                                                 <i class="fa-solid fa-pen-to-square"></i> Edit
                                             </a>
-                                            <form action="{{ route('pengguna.destroy', $user->pengguna_id) }}" method="post">
+                                            <form action="{{ route('hak.destroy', $permisi->id) }}" method="post">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this?')">
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Are you sure to delete this?')">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </form>
@@ -59,7 +56,7 @@
             </div>
         </div>
 
-        {{ $pengguna->links() }}
+        {{ $Roles->links() }}
     </div>
 
 @endsection

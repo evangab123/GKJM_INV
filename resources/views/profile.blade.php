@@ -30,7 +30,7 @@
                         <div class="col-lg-12">
                             <div class="text-center">
                                 <h5 class="font-weight-bold">{{  Auth::user()->nama_pengguna }}</h5>
-                                <p>{{  Auth::user()->role->nama_role }}</p>
+                                <p>{{  Auth::user()->getRoleNames()->first()}}</p>
                             </div>
                         </div>
                     </div>
@@ -71,8 +71,7 @@
                 <div class="card-body">
 
                     <form method="POST" action="{{ route('profile.update') }}" autocomplete="off">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
+                        @csrf
                         <input type="hidden" name="_method" value="PUT">
 
                         <h6 class="heading-small text-muted mb-4">User information</h6>

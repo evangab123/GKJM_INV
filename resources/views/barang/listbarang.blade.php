@@ -3,12 +3,9 @@
 @section('title', 'List Barang | Inventaris GKJM')
 
 @section('main-content')
-    <!-- Page Heading -->
-    {{-- <h1 class="h3 mb-4 text-gray-800">{{ __('List Barang') }}</h1> --}}
-
     <!-- Main Content goes here -->
-    <!-- Topbar Search -->
     <div class="d-flex justify-content-between mb-3">
+        <!-- Search Form -->
         <form class="d-none d-sm-inline-block form-inline" method="GET" action="{{ route('barang.index') }}">
             <div class="input-group">
                 <input type="text" class="form-control bg-light border-1 small" placeholder="Cari Barang..."
@@ -24,28 +21,21 @@
             </div>
         </form>
 
+        <!-- Add New Item Button -->
         <div>
             <a href="{{ route('barang.create') }}" class="btn btn-success">
                 <i class="fa-solid fa-plus"></i> Tambah Barang!
             </a>
         </div>
-
     </div>
 
-    <table class="table table-bordered table-stripped">
+    <!-- Table -->
+    <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Kode</th>
                 <th>Merek</th>
-                {{-- <th>Perolehan</th> --}}
-                {{-- <th>Harga Beli</th> --}}
-                {{-- <th>Tahun Beli</th> --}}
-                {{-- <th>Nilai Ekonomis</th>
-                <th>Jumlah/Stok</th> --}}
-                {{-- <th>Keterangan</th> --}}
                 <th>Ruang</th>
-                {{-- <th>Kondisi</th> --}}
-                {{-- <th>Kategori</th> --}}
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>
@@ -55,117 +45,67 @@
                 <tr>
                     <td>{{ $bar['kode_barang'] }}</td>
                     <td>{{ $bar['merek_barang'] }}</td>
-                    {{-- <td>{{ $bar['perolehan_barang'] }}</td> --}}
-                    {{-- <td>Rp {{ number_format($bar['harga_pembelian'], 2, ',', '.') }}</td> --}}
-                    {{-- <td>{{ $bar['tahun_pembelian'] }}</td> --}}
-                    {{-- <td>Rp {{ number_format($bar['nilai_ekonomis_barang'], 2, ',', '.') }}</td> --}}
-                    {{-- <td>{{ $bar['jumlah'] }}</td> --}}
-                    {{-- <td>{{ $bar['keterangan'] }}</td> --}}
                     <td>{{ $bar->ruang->nama_ruang ?? 'N/A' }}</td>
-                    {{-- <td>{{ $bar->kondisi->deskripsi_kondisi ?? 'N/A' }}</td> --}}
-                    {{-- <td>{{ $bar->kategori->nama_kategori?? 'N/A' }}</td> --}}
                     <td>{{ $bar['status_barang'] }}</td>
                     <td>
                         <div class="d-flex">
-                            <button type="button" class="btn btn-primary btn-custom" data-toggle="modal"
+                            <!-- Edit Button -->
+                            <button type="button" class="btn btn-primary btn-sm mr-2" data-toggle="modal"
                                 data-target="#editModal{{ $bar['kode_barang'] }}">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-custom" data-dismiss="modal">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <!-- Delete Button -->
+                            <form action="{{ route('barang.destroy', $bar['kode_barang']) }}" method="POST" class="mr-2">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this item?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
 
-                            <a href="{{ route('barang.show', $bar['kode_barang']) }}" class="btn btn-info btn-custom">
-                                <i class="fas fa-info-circle"></i>
+                            <!-- Detail Button -->
+                            <a href="{{ route('barang.show', $bar['kode_barang']) }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-info-circle"></i> Detail
                             </a>
                         </div>
-
                     </td>
                 </tr>
+
+                <!-- Edit Modal -->
                 <div class="modal fade" id="editModal{{ $bar['kode_barang'] }}" tabindex="-1" role="dialog"
                     aria-labelledby="editModalLabel{{ $bar['kode_barang'] }}" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editModalLabel{{ $bar['kode_barang'] }}">Edit Barang
-                                    <b>{{ $bar['kode_barang'] }}</b></h5>
+                                <h5 class="modal-title" id="editModalLabel{{ $bar['kode_barang'] }}">Edit Barang - {{ $bar['kode_barang'] }}</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <!-- Edit form -->
-                                <form action="/barang/{{ $bar['kode_barang'] }}" method="POST">
+                                <form action="{{ route('barang.update', $bar['kode_barang']) }}" method="POST">
                                     @csrf
                                     @method('PUT')
+                                    <!-- Form fields -->
                                     <div class="form-group">
                                         <label for="jumlah">Jumlah/Stok</label>
-                                        <input type="text" class="form-control" id="jumlah" name="jumlah"
+                                        <input type="number" class="form-control" id="jumlah" name="jumlah"
                                             value="{{ $bar['jumlah'] }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="keterangan">Keterangan</label>
-                                        <input type="textbox" class="form-control" id="keterangan" name="keterangan"
-                                            value="{{ $bar['keterangan'] }}" required>
+                                        <textarea class="form-control" id="keterangan" name="keterangan" rows="3">{{ $bar['keterangan'] }}</textarea>
                                     </div>
                                     <div class="form-group">
                                         <label for="ruang_id">Ruang</label>
-                                        <select class="form-control @error('ruang_id') is-invalid @enderror" name="ruang_id"
-                                            id="ruang_id">
+                                        <select class="form-control" name="ruang_id" id="ruang_id">
                                             <option value="">Pilih Ruang</option>
                                             @foreach ($ruang as $rua)
-                                                <option value="{{ $rua->ruang_id }}"
-                                                    {{ old('ruang_id') == $rua->ruang_id || (isset($bar) && $bar->ruang_id == $rua->ruang_id) ? 'selected' : '' }}>
+                                                <option value="{{ $rua->ruang_id }}" {{ $bar->ruang_id == $rua->ruang_id ? 'selected' : '' }}>
                                                     {{ $rua->nama_ruang }}
                                                 </option>
                                             @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="kondisi_id">Kondisi</label>
-                                        <select class="form-control @error('kondisi_id') is-invalid @enderror"
-                                            name="kondisi_id" id="kondisi_id">
-                                            <option value="">Pilih Kondisi</option>
-                                            @foreach ($kondisi as $kon)
-                                                <option value="{{ $kon->kondisi_id }}"
-                                                    {{ old('kondisi_id') == $kon->kondisi_id || (isset($bar) && $bar->kondisi_id == $kon->kondisi_id) ? 'selected' : '' }}>
-                                                    {{ $kon->deskripsi_kondisi }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="kategori_barang_id">Kategori</label>
-                                        <select class="form-control @error('kategori_barang_id') is-invalid @enderror"
-                                            name="kategori_barang_id" id="kategori_barang_id">
-                                            <option value="">Pilih kategori</option>
-                                            @foreach ($kategori as $kat)
-                                                <option value="{{ $kat->kategori_barang_id }}"
-                                                    {{ old('kategori_barang_id') == $kat->kategori_barang_id || (isset($bar) && $bar->kategori_barang_id == $kat->kategori_barang_id) ? 'selected' : '' }}>
-                                                    {{ $kat->nama_kategori }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="status_barang">Status</label>
-                                        <select class="form-control" id="status_barang" name="status_barang">
-                                            <option value="Ada" {{ $bar['status_barang'] == 'Ada' ? 'selected' : '' }}>
-                                                Ada
-                                            </option>
-                                            <option value="Dipinjam"
-                                                {{ $bar['status_barang'] == 'Dipinjam' ? 'selected' : '' }}>Dipinjam
-                                            </option>
-                                            <option value="Diperbaiki"
-                                                {{ $bar['status_barang'] == 'Diperbaiki' ? 'selected' : '' }}>Diperbaiki
-                                            </option>
-                                            <option value="Dihapus"
-                                                {{ $bar['status_barang'] == 'Dihapus' ? 'selected' : '' }}>Dihapus
-                                            </option>
-                                            <option value="Dipakai"
-                                                {{ $bar['status_barang'] == 'Dipakai' ? 'selected' : '' }}>Dipakai
-                                            </option>
                                         </select>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Update</button>
@@ -180,17 +120,16 @@
             @endforeach
         </tbody>
     </table>
+
+    <!-- Pagination and Info -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="show-info">
-            Melihat {{ $barang->firstItem() }} to {{ $barang->lastItem() }} of {{ $barang->total() }} Barang
+            Melihat {{ $barang->firstItem() }} hingga {{ $barang->lastItem() }} dari total {{ $barang->total() }} Barang
         </div>
-
         <div class="pagination">
             {{ $barang->links() }}
         </div>
     </div>
-
-
 
     <!-- End of Main Content -->
 @endsection

@@ -1,31 +1,18 @@
 @extends('layouts.admin')
-@section('title', 'Buat Role | Inventaris GKJM')
+@section('title', 'Buat Hak/Permission | Inventaris GKJM')
 
 @section('main-content')
-    {{-- <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">{{ $title ?? __('Blank Page') }}</h1> --}}
-
-    <!-- Main Content goes here -->
+    <!-- Main Content -->
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('role.store') }}" method="post">
+            <form action="{{ route('hak.store') }}" method="post">
                 @csrf
 
                 <div class="form-group">
-                    <label for="nama_role">Nama Role</label>
-                    <input type="text" class="form-control @error('nama_role') is-invalid @enderror" name="nama_role"
-                        id="nama_role" placeholder="Nama Role..." autocomplete="off" value="{{ old('nama_role') }}" onchange="generateSlug()">
-                    @error('nama_role')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="nama_role_slug">Nama Role Slug</label>
-                    <input type="text" class="form-control @error('nama_role_slug') is-invalid @enderror"
-                        name="nama_role_slug" id="nama_role_slug" placeholder="nama-role-slug..." autocomplete="off"
-                        value="{{ old('nama_role_slug') }}" readonly>
-                    @error('nama_role_slug')
+                    <label for="nama_permission">Nama Hak/Permission</label>
+                    <input type="text" class="form-control @error('nama_permission') is-invalid @enderror" name="nama_permission"
+                        id="nama_permission" placeholder="Nama Hak..." autocomplete="off" value="{{ old('nama_permission') }}">
+                    @error('nama_permission')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
@@ -40,14 +27,11 @@
                     @enderror
                 </div> --}}
 
-
                 <button type="submit" class="btn btn-primary">Simpan</button>
-                <a href="{{ route('role.index') }}" class="btn btn-default">Kembali ke list</a>
-
+                <a href="{{ route('hak.index') }}" class="btn btn-default">Kembali ke list</a>
             </form>
         </div>
     </div>
-
     <!-- End of Main Content -->
 @endsection
 
@@ -76,6 +60,7 @@
         </div>
     @endif
 @endpush
+
 <script>
     $(document).ready(function() {
         $('#permissions').tagsinput({
@@ -110,4 +95,3 @@
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus shadow */
     }
 </style>
-

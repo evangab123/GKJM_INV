@@ -1,58 +1,76 @@
 @extends('layouts.admin')
 @section('title', 'List Roles | Inventaris GKJM')
+
 @section('main-content')
-    {{-- <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">{{ $title ?? __('Blank Page') }}</h1> --}}
 
-    <!-- Main Content goes here -->
+    <div class="container-fluid">
 
-    <a href="{{ route('role.create') }}" class="btn btn-primary mb-3">Buat Role Pengguna!</a>
+        <a href="{{ route('role.create') }}" class="btn btn-primary mb-3">Buat Role Pengguna!</a>
 
-    @if (session('message'))
-        <div class="alert alert-success">
-            {{ session('message') }}
+        @if (session('message'))
+            <div class="alert alert-success">
+                {{ session('message') }}
+            </div>
+        @endif
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">{{ __('Role List') }}</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Hak</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($Roles as $Role)
+                                <tr>
+                                    <td scope="row">{{ $loop->iteration }}</td>
+                                    <td>{{ $Role->name }}</td>
+                                    <td>
+                                        @if ($Role->permissions->count())
+                                            <ul>
+                                                @foreach ($Role->permissions as $permission)
+                                                    <li>{{ $permission->name }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            <span class="text-muted">Tidak ada hak</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <a href="{{ route('role.edit', $Role->id) }}"
+                                                class="btn btn-sm btn-primary mr-2">
+                                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                                            </a>
+                                            <form action="{{ route('role.destroy', $Role->id) }}" method="post">
+                                                @csrf
+                                                @method('delete')
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Are you sure to delete this?')">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    @endif
 
-    <table class="table table-bordered table-stripped">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Permission</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($Roles as $Role)
-                <tr>
-                    <td scope="row">{{ $loop->iteration }}</td>
-                    <td>{{ $Role->name }}</td>
-                    <td>
+        {{ $Roles->links() }}
+    </div>
 
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <a href="#" class="btn btn-sm btn-primary mr-2">
-                                <i class="fa-solid fa-pen-to-square"></i>Edit
-                            </a>
-                            <form action="#" method="post">
-                                @csrf
-                                @method('delete')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this?')">
-                                    <i class="fas fa-trash"></i>Delete
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    {{ $Roles->links() }}
-
-    <!-- End of Main Content -->
 @endsection
 
 @push('notif')

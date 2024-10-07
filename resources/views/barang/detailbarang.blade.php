@@ -18,7 +18,7 @@
                 </a>
             @else
                 <!-- Tombol Edit -->
-                @if (Auth::user()->role->nama_role === 'SuperAdmin')
+                @if (Auth::user()->hasRole('Super Admin'))
                     <a href="{{ route('barang.edit', $barang->kode_barang) }}" class="btn btn-primary ml-2">
                         <i class="fa-solid fa-pen-to-square"></i> Edit
                     </a>

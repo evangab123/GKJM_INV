@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('role', RoleController::class)
         ->middleware('role:Super Admin'); // hanya Super Admin yang bisa mengelola role
 
+    Route::resource('hak', PermissionController::class)
+        ->middleware('role:Super Admin');
+
     Route::resource('barang', BarangController::class)
         ->middleware('role:Super Admin|Admin Ruang'); // Super Admin dan Admin Ruang bisa mengelola barang
 });
@@ -53,6 +57,14 @@ Route::get('/pengguna', [PenggunaController::class, 'index'])
 Route::get('/role', [RoleController::class, 'index'])
     ->middleware('role:Super Admin')
     ->name('role.index');
+
+Route::get('/hak',  [PermissionController::class, 'index'])
+    ->middleware('role:Super Admin')
+    ->name('hak.index');
+
+Route::post('/role/{role}/permissions', [RoleController::class, 'givePermission'])
+    ->middleware('role:Super Admin')
+    ->name('role.permissions');
 
 // Rute barang
 Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
