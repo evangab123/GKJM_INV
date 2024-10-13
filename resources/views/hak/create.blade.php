@@ -2,96 +2,83 @@
 @section('title', 'Buat Hak/Permission | Inventaris GKJM')
 
 @section('main-content')
-    <!-- Main Content -->
     <div class="card">
         <div class="card-body">
+            <h2 class="text-info mb-3">Petunjuk: Nama yang disimpan adalah slug</h2>
+            <p class="text-muted mb-4">Silakan masukkan sesuai form. Slug akan otomatis dihasilkan berdasarkan pilihan Anda.
+            </p>
+
             <form action="{{ route('hak.store') }}" method="post">
                 @csrf
 
+                <!-- Select Tindakan -->
                 <div class="form-group">
-                    <label for="nama_permission">Nama Hak/Permission</label>
-                    <input type="text" class="form-control @error('nama_permission') is-invalid @enderror" name="nama_permission"
-                        id="nama_permission" placeholder="Nama Hak..." autocomplete="off" value="{{ old('nama_permission') }}">
-                    @error('nama_permission')
+                    <label for="tindakan">Tindakan</label>
+                    <select name="tindakan" id="tindakan" class="form-control" required onchange="generateSlug()">
+                        <option value="">Pilih Tindakan...</option>
+                        <option value="buat">Buat</option>
+                        <option value="hapus">Hapus</option>
+                        <option value="perbarui">Perbarui</option>
+                        <option value="lihat">Lihat</option>
+                    </select>
+                </div>
+
+                <!-- Select Entitas -->
+                <div class="form-group">
+                    <label for="entitas">Entitas</label>
+                    <select name="entitas" id="entitas" class="form-control" required onchange="generateSlug()">
+                        <option value="">Pilih Entitas...</option>
+                        <option value="barang">Barang</option>
+                        <option value="pengadaan">Pengadaan</option>
+                        <option value="pemakai">Pemakai</option>
+                        <option value="peminjam">Peminjam</option>
+                    </select>
+                </div>
+
+                <!-- Select Ruangan -->
+                <div class="form-group">
+                    <label for="ruangan">Ruang</label>
+                    <select name="ruangan" id="ruangan" class="form-control" required onchange="generateSlug()">
+                        <option disabled="true">Pilih Ruang...</option>
+                        <option value="semua" style="color:rgb(214, 22, 22);">Semua Ruangan</option>
+                        @foreach ($ruangs as $ruangan)
+                            <option value="{{ $ruangan->nama_ruang }}">{{ $ruangan->nama_ruang }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Input Slug Hak -->
+                <div class="form-group">
+                    <label for="nama_hak_slug">Slug Hak</label>
+                    <input type="text" class="form-control @error('nama_hak_slug') is-invalid @enderror"
+                        name="nama_hak_slug" id="nama_hak_slug" placeholder="slug-hak..." autocomplete="off" readonly required>
+                    @error('nama_hak_slug')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-
-                {{-- <div class="form-group">
-                    <label for="permissions">Hak</label>
-                    <input type="text" class="form-control @error('permissions') is-invalid @enderror" name="permissions"
-                        id="permissions" data-role="tagsinput" placeholder="Hak gunakan Koma (,) untuk banyak isian!"
-                        autocomplete="off" value="{{ old('permissions') }}">
-                    @error('permissions')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div> --}}
 
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 <a href="{{ route('hak.index') }}" class="btn btn-default">Kembali ke list</a>
             </form>
         </div>
     </div>
-    <!-- End of Main Content -->
 @endsection
 
-@push('notif')
-    @if (session('success'))
-        <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    @if (session('warning'))
-        <div class="alert alert-warning border-left-warning alert-dismissible fade show" role="alert">
-            {{ session('warning') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    @if (session('status'))
-        <div class="alert alert-success border-left-success" role="alert">
-            {{ session('status') }}
-        </div>
-    @endif
-@endpush
-
 <script>
-    $(document).ready(function() {
-        $('#permissions').tagsinput({
-            delimiter: [','], // Allow commas as delimiters
-            maxTags: 10 // Optional: set a maximum number of tags
-        });
-    });
+    function generateSlug() {
+        const tindakan = document.querySelector('#tindakan').value;
+        const entitas = document.querySelector('#entitas').value;
+        const ruangan = document.querySelector('#ruangan').value;
+
+        // Membuat slug dari pilihan
+        const slugTindakan = tindakan ? tindakan.toLowerCase() : '';
+        const slugEntitas = entitas ? entitas.toLowerCase() : '';
+        const slugRuang = ruangan ? ruangan.toLowerCase() : '';
+
+        // Menggabungkan semua slug
+        const finalSlug = [slugTindakan, slugEntitas, slugRuang].filter(Boolean).join('-');
+
+        // Memperbarui nilai input slug
+        document.querySelector('#nama_hak_slug').value = finalSlug;
+    }
 </script>
-
-<style>
-    /* Change the background and text color of the tags input */
-    .bootstrap-tagsinput {
-        background-color: #f8f9fa; /* Light grey background */
-        border: 1px solid #ced4da; /* Border color */
-        border-radius: .25rem; /* Border radius */
-        width: 100%
-    }
-
-    /* Change the color of the tags */
-    .bootstrap-tagsinput .tag {
-        background-color: #8894a1; /* Change tag color */
-        color: white; /* Change tag text color */
-        border-radius: 4px; /* Tag border radius */
-        padding: 5px 10px; /* Padding for tags */
-        margin-right: 5px; /* Space between tags */
-        line-height: 1px;
-    }
-
-    /* Change the input field color when focused */
-    #permissions:focus {
-        border-color: #47494a; /* Change border color on focus */
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus shadow */
-    }
-</style>

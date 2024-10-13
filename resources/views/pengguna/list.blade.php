@@ -26,6 +26,7 @@
                                 <th>Jabatan</th>
                                 <th>Email</th>
                                 <th>Role Pengguna</th>
+                                <th>Hak yang dimiliki</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -37,6 +38,7 @@
                                     <td>{{ $user->jabatan }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->getRoleNames()->first() }}</td>
+                                    <td>{{ $user->permission }}</td>
                                     <td>
                                         <div class="d-flex">
                                             <a href="{{ route('pengguna.edit', $user->pengguna_id) }}" class="btn btn-sm btn-primary mr-2">

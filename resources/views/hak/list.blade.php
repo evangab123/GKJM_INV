@@ -34,10 +34,6 @@
                                     <td>{{ $permisi->name }}</td>
                                     <td>
                                         <div class="d-flex">
-                                            <a href="{{ route('hak.edit', $permisi->id) }}"
-                                                class="btn btn-sm btn-primary mr-2">
-                                                <i class="fa-solid fa-pen-to-square"></i> Edit
-                                            </a>
                                             <form action="{{ route('hak.destroy', $permisi->id) }}" method="post">
                                                 @csrf
                                                 @method('delete')

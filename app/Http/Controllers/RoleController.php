@@ -73,4 +73,16 @@ class RoleController extends Controller
         $role->givePermissionTo($request->permissions);
         return back()->with('success','Hak Role sudah diperbaharui');
     }
+    public function removePermission($roleId, $permissionId)
+    {
+        $role = Role::findById($roleId);
+        $permission = Permission::findById($permissionId);
+
+        if ($role && $permission) {
+            $role->revokePermissionTo($permission); // Menghapus permission dari role
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 404);
+    }
 }

@@ -54,7 +54,7 @@
                                                 @csrf
                                                 @method('delete')
                                                 <button type="submit" class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Are you sure to delete this?')">
+                                                    onclick="return confirm('Anda yakin ingin menghapus hak ini dari role tersebut?')">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </form>

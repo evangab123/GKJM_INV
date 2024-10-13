@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:Super Admin');
 
     Route::resource('barang', BarangController::class)
-        ->middleware('role:Super Admin|Admin Ruang'); // Super Admin dan Admin Ruang bisa mengelola barang
+        ->middleware('role:Super Admin'); // Super Admin
 });
 
 // Rute spesifik dengan middleware role
@@ -66,27 +66,37 @@ Route::post('/role/{role}/permissions', [RoleController::class, 'givePermission'
     ->middleware('role:Super Admin')
     ->name('role.permissions');
 
+
+Route::delete('/roles/{role}/permissions/{permission}', [RoleController::class, 'removePermission'])
+    ->middleware('role:Super Admin')
+    ->name('roles.permissions.destroy');
+
+
 // Rute barang
 Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
 Route::get('/barang/{kode_barang}', [BarangController::class, 'show'])->name('barang.show');
 
 // Middleware untuk mengelola barang yang dapat diakses oleh role tertentu
 Route::put('/barang/{kode_barang}', [BarangController::class, 'update'])
-    ->middleware('role:Super Admin|Admin Ruang') // Hanya Super Admin dan Admin Ruang yang bisa update
+    ->middleware('role:Super Admin')
     ->name('barang.update');
 
 Route::put('/barang/{kode_barang}/edit', [BarangController::class, 'update_detail'])
-    ->middleware('role:Super Admin|Admin Ruang') // Hanya Super Admin dan Admin Ruang yang bisa edit
+    ->middleware('role:Super Admin')
     ->name('barang.update_detail');
 
 Route::get('/barang/{kode_barang}/keterangan', [BarangController::class, 'showKeterangan'])
+    ->middleware('role:Super Admin')
     ->name('barang.keterangan');
 
 Route::get('/keterangan/{id}/edit', [BarangController::class, 'editKeterangan'])
+    ->middleware('role:Super Admin')
     ->name('keterangan.edit');
 
 Route::put('/keterangan/{id}', [BarangController::class, 'updateKeterangan'])
+    ->middleware('role:Super Admin')
     ->name('keterangan.update');
 
 Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan'])
+    ->middleware('role:Super Admin')
     ->name('keterangan.store');

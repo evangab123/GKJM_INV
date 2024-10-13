@@ -5,9 +5,11 @@
     <!-- Main Content -->
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('role.update', $role->id) }}" method="post">
+            <!-- Form untuk update Role -->
+            <form action="{{ route('role.update', $role->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+
                 <!-- Nama Role -->
                 <div class="form-group">
                     <label for="nama_role">Nama Role</label>
@@ -18,29 +20,54 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                <!-- Submit button -->
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
 
+                <!-- Submit button untuk simpan perubahan -->
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
             </form>
-            <form action="{{ route('role.permissions', $role->id) }}" method="post">
+
+            <!-- Daftar Permissions -->
+            <div id="permissions-list" class="mt-4 md-4">
+                <h5>Daftar Hak Akses yang dimiliki Role:</h5>
+
+                @foreach ($role->permissions as $permission)
+                    <form action="{{ route('roles.permissions.destroy', [$role->id, $permission->id]) }}" method="POST"
+                        style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Apakah kamu yakin ingin menghapus permission ini dari role?')">
+                            {{ $permission->name }} <i class="fas fa-times"></i>
+                        </button>
+                    </form>
+                @endforeach
+                <h6 class="mt-4 md-4">Petunjuk: Klik Role yang mau dihapus...</h6>
+            </div>
+
+            <!-- Form untuk menambah Permission -->
+            <form action="{{ route('role.permissions', $role->id) }}" method="POST" class="mt-4">
                 @csrf
+
                 <!-- Select Permissions -->
                 <div class="form-group">
-                    <label for="permissions">Permissions</label>
+                    <label for="permissions">Tambah Permission</label>
                     <select name="permissions" id="permissions" class="form-control">
                         @foreach ($permissions as $permission)
-                            <option value="{{ $permission->name}}">
+                            <option value="{{ $permission->name }}">
                                 {{ $permission->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
-                <!-- Submit button -->
+
+                <!-- Submit button untuk tambah permission -->
                 <button type="submit" class="btn btn-primary">Tambah Hak Akses</button>
             </form>
         </div>
+
+        <!-- Tombol kembali -->
         <a href="{{ route('role.index') }}" class="btn btn-default">Kembali ke list</a>
     </div>
+    <!-- End of Main Content -->
     <!-- End of Main Content -->
 @endsection
 
