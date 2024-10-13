@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 
@@ -53,6 +54,7 @@ class PenggunaController extends Controller
      */
     public function store(AddUserRequest $request): RedirectResponse
     {
+
         $pengguna = Pengguna::create([
             'nama_pengguna' => $request->input('nama_pengguna'),
             'jabatan' => $request->input('jabatan'),
@@ -62,14 +64,23 @@ class PenggunaController extends Controller
 
         // Assign role using the role ID
         if ($request->input('role_id')) {
-            $role = Role::findById($request->input('role_id')); // Find the role by ID
-            $pengguna->assignRole($role); // Assign the role to the user
+            $role = Role::findById($request->input('role_id'));
+            $pengguna->assignRole($role);
+            if ($request->has('permissions')) {
+                $permissionsToSync = [];
+                foreach ($request->input('permissions') as $permission) {
+                    if (Permission::where('name', $permission)->exists()) {
+                        $permissionsToSync[] = $permission;
+                    }
+                }
+
+                // Sync the valid permissions with the user
+                $pengguna->syncPermissions($permissionsToSync);
+            }
         }
 
         return redirect()->route('pengguna.index')->with('message', 'Pengguna berhasil ditambahkan!');
     }
-
-
 
     /**
      * Display the specified resource.
@@ -77,10 +88,10 @@ class PenggunaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
-    }
+    // public function show($id)
+    // {
+    //     //
+    // }
 
     public function edit($pengguna_id): Factory|View
     {
@@ -107,7 +118,7 @@ class PenggunaController extends Controller
         $pengguna->update([
             'nama_pengguna' => $request->input('nama_pengguna'),
             'email' => $request->input('email'),
-            'jabatan'=>$request->input('jabatan'),
+            'jabatan' => $request->input('jabatan'),
             'password' => $request->filled('password') ? Hash::make($request->input('password')) : $pengguna->password,
         ]);
 
@@ -116,6 +127,9 @@ class PenggunaController extends Controller
 
         if ($role) {
             $pengguna->syncRoles([$role->name]);
+            $permissions = $role->permissions->pluck('name')->toArray();
+            $newPermissions = $request->input('permissions'); // Retrieve permissions from the request
+            $pengguna->syncPermissions($newPermissions);
         } else {
             return redirect()->back()->withErrors(['role_id' => 'Selected role does not exist.']);
         }
@@ -141,5 +155,21 @@ class PenggunaController extends Controller
         $pengguna->delete();
 
         return redirect()->route('pengguna.index')->with('message', 'Pengguna Berhasil Dihapus!');
+    }
+    public function getPermissionsByUser(Request $request,Pengguna $pengguna)
+    {
+        $roleId = $request->query('roleId'); // Get roleId from the query
+        $role = Role::find($roleId);
+
+        // Get permissions for the role
+        $rolePermissions = $role ? $role->permissions : [];
+        // Get current permissions assigned to the user
+        $userPermissions = $pengguna->permissions;
+
+        return response()->json([
+            'permissions' => $rolePermissions, // Permissions based on the role
+            'userPermissions' => $userPermissions, // Current permissions assigned to the user
+            'pengguna'=>$pengguna,
+        ]);
     }
 }

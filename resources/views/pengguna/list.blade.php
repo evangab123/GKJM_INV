@@ -38,16 +38,29 @@
                                     <td>{{ $user->jabatan }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->getRoleNames()->first() }}</td>
-                                    <td>{{ $user->permission }}</td>
+                                    <td>
+                                        @if ($user->permissions->count())
+                                            <ul>
+                                                @foreach ($user->permissions as $permission)
+                                                    <li>{{ $permission->name }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            <span class="text-muted">Tidak ada hak</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="d-flex">
-                                            <a href="{{ route('pengguna.edit', $user->pengguna_id) }}" class="btn btn-sm btn-primary mr-2">
+                                            <a href="{{ route('pengguna.edit', $user->pengguna_id) }}"
+                                                class="btn btn-sm btn-primary mr-2">
                                                 <i class="fa-solid fa-pen-to-square"></i> Edit
                                             </a>
-                                            <form action="{{ route('pengguna.destroy', $user->pengguna_id) }}" method="post">
+                                            <form action="{{ route('pengguna.destroy', $user->pengguna_id) }}"
+                                                method="post">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this?')">
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Are you sure to delete this?')">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </form>

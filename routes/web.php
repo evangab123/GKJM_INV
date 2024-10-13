@@ -5,6 +5,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\PermissionController;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,10 @@ Route::get('/pengguna', [PenggunaController::class, 'index'])
     ->middleware('role:Super Admin')
     ->name('pengguna.index');
 
+    Route::get('/pengguna/{pengguna}/edit/permissions', [PenggunaController::class, 'getPermissionsByUser'])
+    ->middleware('role:Super Admin');
+
+
 Route::get('/role', [RoleController::class, 'index'])
     ->middleware('role:Super Admin')
     ->name('role.index');
@@ -62,10 +67,12 @@ Route::get('/hak',  [PermissionController::class, 'index'])
     ->middleware('role:Super Admin')
     ->name('hak.index');
 
-Route::post('/role/{role}/permissions', [RoleController::class, 'givePermission'])
+Route::post('/role/{role}/givepermissions', [RoleController::class, 'givePermission'])
     ->middleware('role:Super Admin')
-    ->name('role.permissions');
+    ->name('role.givepermissions');
 
+Route::get('/roles/{role}/permissions', [RoleController::class, 'getPermissionsByRole'])
+    ->middleware('role:Super Admin');
 
 Route::delete('/roles/{role}/permissions/{permission}', [RoleController::class, 'removePermission'])
     ->middleware('role:Super Admin')

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RolePermissionsUpdated;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -29,13 +30,10 @@ class RoleController extends Controller
     {
         $request->validate([
             'nama_role' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'required|array|min:1', // Minimal 1 permission
-            'permissions.*' => 'exists:permissions,name', // Validasi untuk setiap permission
+
         ]);
 
-        $role = Role::create(['name' => $request->input('nama_role'),]);
-
-        $role->syncPermissions($request->input('permissions'));
+        Role::create(['name' => $request->input('nama_role'),]);
 
         return redirect()->route('role.index')->with('success', 'Role berhasil dibuat dengan permission.');
     }
@@ -67,11 +65,11 @@ class RoleController extends Controller
         $permisiId = $request->input('permissions');
         $perm = Permission::find($permisiId);
 
-        if($role->hasPermissionTo($request->permissions)){
-            return back()->with('warning','Sudah memiliki hak');
+        if ($role->hasPermissionTo($request->permissions)) {
+            return back()->with('warning', 'Sudah memiliki hak');
         }
         $role->givePermissionTo($request->permissions);
-        return back()->with('success','Hak Role sudah diperbaharui');
+        return back()->with('success', 'Hak Role sudah diperbaharui');
     }
     public function removePermission($roleId, $permissionId)
     {
@@ -80,9 +78,24 @@ class RoleController extends Controller
 
         if ($role && $permission) {
             $role->revokePermissionTo($permission); // Menghapus permission dari role
-            return response()->json(['success' => true]);
+            event(new RolePermissionsUpdated($role, $permission));
+            return back()->with('success', 'Salah satu Hak Role berhasil dihapus');
+
         }
 
-        return response()->json(['success' => false], 404);
+        return back()->with('message', 'Gagal menghapus Hak Role');
     }
+
+    public function getPermissionsByRole($roleId)
+    {
+        $role = Role::findOrFail($roleId);
+
+        // Fetch permissions for the role
+        $permissions = $role->permissions;
+
+        // Return the permissions (will be empty if none found)
+        return response()->json(['permissions' => $permissions]);
+    }
+
+
 }

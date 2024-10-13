@@ -2,10 +2,6 @@
 @section('title', 'Buat Pengguna | Inventaris GKJM')
 
 @section('main-content')
-    {{-- <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">{{ $title ?? __('Blank Page') }}</h1> --}}
-
-    <!-- Main Content goes here -->
 
     <div class="card">
         <div class="card-body">
@@ -60,7 +56,8 @@
 
                 <div class="form-group">
                     <label for="role_id">Role</label>
-                    <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id">
+                    <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id"
+                        onchange="haklist()">
                         <option value="">Pilih Role Pengguna</option>
                         @foreach ($roles as $role)
                             <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
@@ -73,38 +70,117 @@
                     @enderror
                 </div>
 
+                <!-- Permissions List -->
+                <div id="permissions-container" style="display: none;">
+                    <h5>Permissions</h5>
+                    <div id="permissions-list"></div>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ route('pengguna.index') }}" class="btn btn-default">Back to list</a>
+                <a href="{{ route('pengguna.index') }}" class="btn btn-default">Kembali ke list</a>
 
             </form>
         </div>
     </div>
 
-    <!-- End of Main Content -->
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+        haklist(); // Call the function to populate permissions on page load
+    });
+        function haklist() {
+            const roleId = document.getElementById('role_id').value;
+            const permissionsContainer = document.getElementById('permissions-container');
+
+            // Clear previous content
+            permissionsContainer.innerHTML = '';
+
+            if (roleId) {
+                permissionsContainer.style.display = 'block';
+                fetch(`/roles/${roleId}/permissions`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.permissions.length > 0) {
+                            // Create a heading for the permissions list
+                            const heading = document.createElement('h6');
+                            heading.classList.add('font-weight-bold', 'mb-3');
+                            heading.textContent = 'Daftar Hak Akses untuk Role Ini:';
+                            permissionsContainer.appendChild(heading);
+
+                            // Create a list for permissions
+                            const listGroup = document.createElement('div');
+                            listGroup.classList.add('list-group');
+
+                            // Iterate over the permissions and create checkboxes
+                            data.permissions.forEach(permission => {
+                                const checkboxContainer = document.createElement('div');
+                                checkboxContainer.classList.add('form-check', 'mb-2'); // Add margin-bottom here
+
+                                checkboxContainer.innerHTML = `
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="permissions[]"
+                                   value="${permission.name}"
+                                   id="permission-${permission.id}">
+                            <label class="form-check-label" for="permission-${permission.id}">
+                                ${permission.name}
+                            </label>
+                        `;
+
+                                listGroup.appendChild(checkboxContainer);
+                            });
+
+                            permissionsContainer.appendChild(listGroup);
+                        } else {
+                            // Display a message if no permissions are found
+                            const noPermissionsMessage = document.createElement('p');
+                            noPermissionsMessage.classList.add('text-muted');
+                            noPermissionsMessage.textContent = 'Tidak ada hak akses untuk role ini.';
+                            permissionsContainer.appendChild(noPermissionsMessage);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching permissions:', error);
+                        const errorMessage = document.createElement('p');
+                        errorMessage.classList.add('text-danger');
+                        errorMessage.textContent = 'Terjadi kesalahan saat mengambil hak akses.';
+                        permissionsContainer.appendChild(errorMessage);
+                    });
+            } else {
+                // Optionally clear the permissions list if no role is selected
+                const noRoleMessage = document.createElement('p');
+                noRoleMessage.classList.add('text-muted');
+                noRoleMessage.textContent = 'Silakan pilih role untuk melihat hak akses.';
+                permissionsContainer.appendChild(noRoleMessage);
+            }
+        }
+    </script>
+
+
+
+    @push('notif')
+        @if (session('success'))
+            <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
+        @if (session('warning'))
+            <div class="alert alert-warning border-left-warning alert-dismissible fade show" role="alert">
+                {{ session('warning') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
+        @if (session('status'))
+            <div class="alert alert-success border-left-success" role="alert">
+                {{ session('status') }}
+            </div>
+        @endif
+    @endpush
+
 @endsection
-
-@push('notif')
-    @if (session('success'))
-        <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    @if (session('warning'))
-        <div class="alert alert-warning border-left-warning alert-dismissible fade show" role="alert">
-            {{ session('warning') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    @if (session('status'))
-        <div class="alert alert-success border-left-success" role="alert">
-            {{ session('status') }}
-        </div>
-    @endif
-@endpush

@@ -40,11 +40,12 @@
                         </button>
                     </form>
                 @endforeach
+
                 <h6 class="mt-4 md-4">Petunjuk: Klik Role yang mau dihapus...</h6>
             </div>
 
             <!-- Form untuk menambah Permission -->
-            <form action="{{ route('role.permissions', $role->id) }}" method="POST" class="mt-4">
+            <form action="{{ route('role.givepermissions', $role->id) }}" method="POST" class="mt-4">
                 @csrf
 
                 <!-- Select Permissions -->
@@ -67,7 +68,6 @@
         <!-- Tombol kembali -->
         <a href="{{ route('role.index') }}" class="btn btn-default">Kembali ke list</a>
     </div>
-    <!-- End of Main Content -->
     <!-- End of Main Content -->
 @endsection
 

@@ -24,11 +24,13 @@ class AddUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'nama_pengguna' => 'required|string|max:255',
-            'jabatan' => 'nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:pengguna,email',
+           'nama_pengguna' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'email' => 'required|email|unique:pengguna,email',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
+            'permissions' => 'array',
+            'permissions.*' => 'string',
         ];
     }
 }

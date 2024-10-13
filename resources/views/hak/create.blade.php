@@ -20,6 +20,7 @@
                         <option value="hapus">Hapus</option>
                         <option value="perbarui">Perbarui</option>
                         <option value="lihat">Lihat</option>
+                        <option value="semua">Semua</option>
                     </select>
                 </div>
 
@@ -32,6 +33,7 @@
                         <option value="pengadaan">Pengadaan</option>
                         <option value="pemakai">Pemakai</option>
                         <option value="peminjam">Peminjam</option>
+                        <option value="semua">Semua</option>
                     </select>
                 </div>
 
