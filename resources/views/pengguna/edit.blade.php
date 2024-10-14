@@ -33,6 +33,15 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control @error('username') is-invalid @enderror" name="username"
+                        id="username" placeholder="Username..." autocomplete="off" value="{{ old('username')?? $user->username }}">
+                    @error('username')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror" name="email"
                         id="email" placeholder="Email" autocomplete="off" value="{{ old('email') ?? $user->email }}">

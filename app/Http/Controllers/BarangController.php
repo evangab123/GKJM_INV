@@ -14,6 +14,7 @@ use App\Models\KategoriBarang;
 use App\Models\KondisiBarang;
 use App\Models\Ruang;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\ActivityLogHelper;
 
 
 class BarangController extends Controller
@@ -125,6 +126,7 @@ class BarangController extends Controller
 
         // Cari barang berdasarkan kode_barang
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
+        $prev=$barang->toArray();
         // Mengunggah dan menyimpan foto jika ada
         if ($request->hasFile('path_gambar')) {
 
@@ -160,7 +162,8 @@ class BarangController extends Controller
 
         // Jika path_gambar diupdate, simpan perubahan
         $barang->save();
-
+        $new=$barang->toArray();
+        ActivityLogHelper::log('Barang '.$kode_barang.' Berhasil Diperbaruhi!',$new,$prev);
         return redirect()->route('barang.show', $barang->kode_barang)
             ->with('success', 'Detail barang berhasil diperbarui.');
     }
@@ -199,7 +202,6 @@ class BarangController extends Controller
 
         $keterangan = DetilKeteranganBarang::findOrFail($id);
         $keterangan->update($data);
-
         return redirect()->route('barang.keterangan', $keterangan->kode_barang)->with('success', 'Keterangan berhasil diperbarui');
     }
     public function storeKeterangan(Request $request, $id)
@@ -217,6 +219,8 @@ class BarangController extends Controller
             'tanggal' => $request->input('tanggal'),
         ]);
 
+
+        ActivityLogHelper::log('Keterangan '.$id.' baru Ditambahkan ');
         // Redirect back to the keterangan detail page for the specific barang
         return redirect()->route('barang.keterangan', $id)->with('message', 'Keterangan berhasil ditambahkan!');
     }
@@ -312,7 +316,8 @@ class BarangController extends Controller
             'status_barang' => $request->input('status_barang'),
             'path_gambar' => $pathFoto,
         ]);
-
+        // Log the activity, indicating it's a new entry\
+        ActivityLogHelper::log('Barang'. $kodeBarang.' Ditambahkan!');
         // Redirect back to the keterangan detail page for the specific barang
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }

@@ -25,10 +25,13 @@ class EditUserRequest extends FormRequest
     {
         return [
             'nama_pengguna' => 'required|string|max:255',
-            'jabatan' => 'nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:pengguna,email,' . $this->pengguna_id . ',pengguna_id',
-            'password' => 'nullable|string|min:8|confirmed',
-            'role_id' => 'required|exists:roles,id',
-        ];
+             'jabatan' => 'required|string|max:255',
+             'username'=>'required|string|unique:pengguna,username,'. $this->pengguna_id . ',pengguna_id',
+             'email' => 'required|string|email|max:255|unique:pengguna,email,' . $this->pengguna_id . ',pengguna_id',
+            //  'password' => 'required|string|min:8|confirmed',
+             'role_id' => 'required|exists:roles,id',
+             'permissions' => 'array',
+             'permissions.*' => 'string',
+         ];
     }
 }

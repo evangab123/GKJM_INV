@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ActivityLogHelper;
 use App\Models\Ruang;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -40,7 +41,7 @@ class PermissionController extends Controller
 
         // Simpan permission ke database
         Permission::create(['name' => $request->nama_hak_slug]);
-
+        ActivityLogHelper::log('Buat Hak "'.$request->input('nama_hak_slug').'"');
         return redirect()->route('hak.index')->with('success', 'Permission berhasil ditambahkan!');
     }
 
@@ -48,8 +49,8 @@ class PermissionController extends Controller
 
     public function destroy(Permission $hak)
     {
+        ActivityLogHelper::log('Hapus Hak "'.$hak->name.'"');
         $hak->delete();
-
         // Redirect kembali ke halaman index dengan pesan sukses
         return redirect()->route('hak.index')->with('message', 'Hak/Permission berhasil dihapus!');
     }

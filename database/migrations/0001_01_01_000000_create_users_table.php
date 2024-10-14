@@ -21,17 +21,14 @@ return new class extends Migration
 
         Schema::create('Pengguna', function (Blueprint $table) {
             $table->id('pengguna_id');
+            $table->string('username')->unique()->nullable();
             $table->string('nama_pengguna');
             $table->string('jabatan', 100)->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->rememberToken(); // Untuk menyimpan token "Remember Me"
             $table->timestamps();
-
-            // $table->unsignedBigInteger('role_id');
-            // $table->foreign('role_id')->references('role_id')->on('RolePengguna')
-            //     ->onUpdate('cascade');
         });
 
 

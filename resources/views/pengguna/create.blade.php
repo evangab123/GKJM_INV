@@ -17,6 +17,17 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control @error('username') is-invalid @enderror" name="username"
+                        id="username" placeholder="Username..." autocomplete="off" value="{{ old('username') }}">
+                    @error('username')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+
                 <div class="form-group">
                     <label for="jabatan">Jabatan</label>
                     <input type="text" class="form-control @error('jabatan') is-invalid @enderror" name="jabatan"
@@ -84,9 +95,10 @@
     </div>
 
     <script>
-            document.addEventListener('DOMContentLoaded', function() {
-        haklist(); // Call the function to populate permissions on page load
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            haklist(); // Call the function to populate permissions on page load
+        });
+
         function haklist() {
             const roleId = document.getElementById('role_id').value;
             const permissionsContainer = document.getElementById('permissions-container');

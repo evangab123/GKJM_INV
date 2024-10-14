@@ -28,30 +28,47 @@ class PenggunaSeeder extends Seeder
         DB::table('pengguna')->insert([
             [
                 'nama_pengguna' => 'John Doe',
+                'username'=>'jd123',
                 'jabatan' => 'Manager',
                 'email' => 'john.doe@example.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'remember_token' => null,
             ],
             [
                 'nama_pengguna' => 'Jane Smith',
+                'username'=>'js123',
                 'jabatan' => 'Staff',
                 'email' => 'jane.smith@example.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password1234'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'remember_token' => null,
             ],
             [
                 'nama_pengguna' => 'Admin',
+                'username'=>'admin',
                 'jabatan' => 'admin',
                 'email' => 'admin@example.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('admin'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'remember_token' => null,
+            ],
+            [
+                'nama_pengguna' => 'Evander Gabriel',
+                'username'=>'evgb123',
+                'jabatan' => 'Magang',
+                'email' => 'evgb@gmail.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('12321'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+                'remember_token' => null,
             ],
         ]);
 
@@ -63,6 +80,9 @@ class PenggunaSeeder extends Seeder
         $pengguna->assignRole($roles->find(2));
 
         $pengguna = Pengguna::where('email', 'admin@example.com')->first();
-        $pengguna->assignRole($roles->find(3)); 
+        $pengguna->assignRole($roles->find(3));
+
+        $pengguna = Pengguna::where('email', 'evgb@gmail.com')->first();
+        $pengguna->assignRole($roles->find(1));
     }
 }

@@ -26,6 +26,7 @@ class AddUserRequest extends FormRequest
         return [
            'nama_pengguna' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
+            'username'=>'required|string|unique:pengguna,username',
             'email' => 'required|email|unique:pengguna,email',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
