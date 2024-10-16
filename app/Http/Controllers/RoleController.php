@@ -108,7 +108,7 @@ class RoleController extends Controller
 
         if ($role) {
             // Log the activity before deletion
-            ActivityLogHelper::log('Menghapus Role "'.$role->name.'"');
+            ActivityLogHelper::log('Hapus Role "'.$role->name.'"');
 
             // Delete the role
             $role->delete();

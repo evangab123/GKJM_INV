@@ -152,7 +152,7 @@ class BarangController extends Controller
         $barang->save();
 
         $new = $barang->toArray();
-        ActivityLogHelper::log('Barang ' . $kode_barang . ' Berhasil Diperbaruhi!', $new, $prev);
+        ActivityLogHelper::log('Perbarui Barang "' . $kode_barang . '"', $new, $prev);
         return redirect()->route('barang.show', $barang->kode_barang)
             ->with('success', 'Detail barang berhasil diperbarui.');
     }
@@ -216,7 +216,7 @@ class BarangController extends Controller
             'tanggal' => $request->input('tanggal'),
         ]);
 
-        ActivityLogHelper::log('Keterangan ' . $id . ' baru Ditambahkan ');
+        ActivityLogHelper::log('Buat Keterangan "' . $id . '"');
         // Redirect back to the keterangan detail page for the specific barang
         return redirect()->route('barang.keterangan', $id)->with('message', 'Keterangan berhasil ditambahkan!');
     }
@@ -330,7 +330,7 @@ class BarangController extends Controller
             'path_gambar' => $pathFoto,
         ]);
         // Log the activity, indicating it's a new entry\
-        ActivityLogHelper::log('Barang' . $kodeBarang . ' Ditambahkan!');
+        ActivityLogHelper::log('Buat Barang "' . $kodeBarang . '"');
         // Redirect back to the keterangan detail page for the specific barang
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
@@ -346,6 +346,7 @@ class BarangController extends Controller
         }
 
         $barang->delete();
+        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '"');
 
         return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
     }
@@ -361,6 +362,7 @@ class BarangController extends Controller
         }
 
         $keterangan->delete();
+        ActivityLogHelper::log('Hapus Keterangan "' . $id . '"');
 
         return redirect()->back()->with('success', 'Keterangan telah dihapus.');
     }

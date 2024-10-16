@@ -7,12 +7,13 @@
         use App\Helpers\PermissionHelper;
         $hasCreate = PermissionHelper::AnyCanCreateBarang();
         $hasEdit = PermissionHelper::AnyCanEditBarang();
+        $hasAccess = PermissionHelper::AnyHasAccesstoBarang();
         $hasDelete = PermissionHelper::AnyCanDeleteBarang();
     @endphp
     <div class="row mb-3">
         <div class="d-flex">
             <a href="{{ route('barang.show', $barang->kode_barang) }}" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left"></i> {{ __('kembali') }}
+                <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
             <!-- Tombol Add Keterangan -->
             @if ($hasCreate['buat'])
@@ -40,11 +41,12 @@
                         <input type="hidden" name="kode_barang" value="{{ $barang->kode_barang }}">
                         <div class="form-group">
                             <label for="keterangan">{{ __('keterangan') }}</label>
-                            <input type="text" class="form-control" name="keterangan" required>
+                            <input id = 'keterangan' type="text" class="form-control" name="keterangan" required>
                         </div>
                         <div class="form-group">
                             <label for="tanggal">{{ __('Tanggal') }}</label>
-                            <input type="date" class="form-control" name="tanggal" min="{{ date('Y-m-d') }}" required>
+                            <input id = 'tanggal' type="date" class="form-control" name="tanggal"
+                                min="{{ date('Y-m-d') }}" required>
                         </div>
                         <button type="submit" class="btn btn-primary">{{ __('Tambah Keterangan') }}</button>
                     </form>
@@ -66,7 +68,7 @@
                                 <th scope="col">{{ __('No') }}</th>
                                 <th scope="col">{{ __('Tanggal') }}</th>
                                 <th scope="col">{{ __('Keterangan') }}</th>
-                                @if ($hasEdit['edit'] && $hasDelete['delete'])
+                                @if ($hasEdit['edit'] || $hasDelete['delete'])
                                     <th scope="col">{{ __('Aksi') }}</th>
                                 @endif
                             </tr>
@@ -82,6 +84,7 @@
                                     <td scope="row">{{ $loop->iteration }}</td>
                                     <td>{{ $keterangan->tanggal }}</td>
                                     <td>{{ $keterangan->keterangan }}</td>
+                                    @if ($hasEdit['edit'] || $hasDelete['delete'])
                                     <td style="width: 200px;">
                                         @if ($hasEdit['edit'])
                                             <a href="{{ route('keterangan.edit', $keterangan->keterangan_id) }}"
@@ -102,6 +105,7 @@
                                             </form>
                                         @endif
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

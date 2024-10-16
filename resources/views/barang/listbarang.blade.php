@@ -29,7 +29,7 @@
         </form>
 
         <!-- Add New Item Button -->
-        @if ($hasCreate['buat'])
+        @if($hasCreate['buat'])
             <div>
                 <a href="{{ route('barang.create') }}" class="btn btn-success">
                     <i class="fa-solid fa-plus"></i> {{ __('Tambah Barang!') }}
@@ -48,7 +48,7 @@
                 <th scope="col">{{ __('Merek') }}</th>
                 <th scope="col">{{ __('Ruang') }}</th>
                 <th scope="col">{{ __('Status') }}</th>
-                @if ($hasAccess['access'] && $hasDelete['delete'])
+                @if ($hasAccess['access'] || $hasDelete['delete'])
                     <th scope="col">{{ __('Aksi') }}</th>
                 @endif
             </tr>
@@ -61,6 +61,7 @@
                     <td>{{ $bar['merek_barang'] }}</td>
                     <td>{{ $bar->ruang->nama_ruang ?? __('N/A') }}</td>
                     <td>{{ $bar['status_barang'] }}</td>
+                    @if ($hasAccess['access'] || $hasDelete['delete'])
                     <td style="width: 200px;">
                         <div class="d-flex">
                             <!-- Detail Button -->
@@ -83,6 +84,7 @@
                             @endif
                         </div>
                     </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

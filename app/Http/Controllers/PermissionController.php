@@ -51,6 +51,7 @@ class PermissionController extends Controller
     {
         ActivityLogHelper::log('Hapus Hak "'.$hak->name.'"');
         $hak->delete();
+        ActivityLogHelper::log('Hapus Hak "' . $hak->name . '"');
         // Redirect kembali ke halaman index dengan pesan sukses
         return redirect()->route('hak.index')->with('message', 'Hak/Permission berhasil dihapus!');
     }

@@ -30,7 +30,6 @@
             @endif
             <a href="{{ route('barang.keterangan', $barang->kode_barang) }}"
                 class="btn btn-info ml-2">{{ __('lihat Keterangan') }}</a>
-
         </div>
     </div>
 
