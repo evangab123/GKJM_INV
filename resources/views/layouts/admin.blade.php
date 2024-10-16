@@ -67,8 +67,12 @@
                 {{ __('Fitur') }}
             </div>
 
-            <!-- Nav Pengguna -->
-            @if (Auth::check() && Auth::user()->hasRole('Super Admin'))
+            @php
+            use App\Helpers\PermissionHelper;
+            $hasAccess = PermissionHelper::AnyHasAccessToBarang();
+            @endphp
+
+            @if (Auth::check() && (Auth::user()->hasRole('Super Admin')))
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseData"
                         aria-expanded="true" aria-controls="collapseData">
@@ -81,7 +85,7 @@
                             <h6 class="collapse-header">{{ __('Pengguna:') }}</h6>
                             <a class="collapse-item {{ Nav::isRoute('role.index') }}"
                                 href="{{ route('role.index') }}">{{ __('Role Pengguna') }}</a>
-                                <a class="collapse-item {{ Nav::isRoute('hak.index') }}"
+                            <a class="collapse-item {{ Nav::isRoute('hak.index') }}"
                                 href="{{ route('hak.index') }}">{{ __('Hak Role ') }}</a>
                             <a class="collapse-item {{ Nav::isRoute('pengguna.index') }}"
                                 href="{{ route('pengguna.index') }}">{{ __('Daftar Pengguna') }}</a>

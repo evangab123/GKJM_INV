@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PermissionHelper;
 use App\Models\Barang;
 use App\Models\DetilKeteranganBarang;
 use Illuminate\Http\Request;
@@ -27,11 +28,15 @@ class BarangController extends Controller
     public function index(Request $request): Factory|View
     {
         $query = Barang::with('ruang', 'kondisi', 'kategori');
+        $accessResult = PermissionHelper::AnyHasAccessToBarang();
+        if (!empty($accessResult['room'])) {
+            $query->whereIn('ruang_id', function ($q) use ($accessResult) {
+                $q->select('ruang_id')->from('ruang')->whereIn('nama_ruang', $accessResult['room']);
+            });
+        }
         $kondisi = KondisiBarang::all();
-        $ruang = Ruang::all();
         $kategori = KategoriBarang::all();
 
-        // Check if there's a search query
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -43,21 +48,23 @@ class BarangController extends Controller
             });
         }
 
-        // Adding the search query to pagination links
         $data = $query->paginate(7)->appends($request->only('search'));
 
         return view('barang.listbarang', [
-            'title' => 'Daftar Barang',
             'barang' => $data,
             'kondisi' => $kondisi,
             'kategori' => $kategori,
-            'ruang' => $ruang,
         ]);
     }
 
 
+
     public function edit($kode_barang)
     {
+        $accessResult = PermissionHelper::AnyCanEditBarang();
+        if (!$accessResult['edit']) {
+            abort(403, 'Unauthorized action.');
+        }
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
         $kondisi = KondisiBarang::all();
         $Ruang = Ruang::all();
@@ -73,6 +80,10 @@ class BarangController extends Controller
 
     public function show($kode_barang)
     {
+        $accessResult = PermissionHelper::AnyHasAccessToBarang();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
 
         // Generate QR Code URL
@@ -87,28 +98,12 @@ class BarangController extends Controller
         ]);
     }
 
-
-    public function update(Request $request, $kode_barang)
-    {
-
-        $data = $request->validate([
-            'jumlah' => 'required|numeric',
-            'status_barang' => 'required|in:Ada,Dipinjam,Dipakai,Dihapus,Diperbaiki',
-            'keterangan' => 'required|string|max:255',
-            'ruang_id' => 'required|exists:ruang,ruang_id',
-            'kondisi_id' => 'required|exists:kondisibarang,kondisi_id',
-            'kategori_barang_id' => 'required|exists:kategoribarang,kategori_barang_id',
-        ]);
-
-        // Update Barang dengan data yang sudah divalidasi
-        $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
-        $barang->update($data);
-
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil diperbarui');
-    }
     public function update_detail(Request $request, $kode_barang)
     {
-        // Validasi data
+        $accessResult = PermissionHelper::AnyCanEditBarang();
+        if (!$accessResult['edit']) {
+            abort(403, 'Unauthorized action.');
+        }
         $request->validate([
             'merek_barang' => 'required|string|max:255',
             'perolehan_barang' => 'required|string',
@@ -124,27 +119,22 @@ class BarangController extends Controller
             'path_gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Cari barang berdasarkan kode_barang
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
-        $prev=$barang->toArray();
-        // Mengunggah dan menyimpan foto jika ada
-        if ($request->hasFile('path_gambar')) {
+        $prev = $barang->toArray();
 
+        if ($request->hasFile('path_gambar')) {
             $file = $request->file('path_gambar');
+
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
             $file->move(public_path('img/barang'), $filename);
 
-            // Hapus foto lama jika ada
             if ($barang->path_gambar && file_exists(public_path('img/barang/' . $barang->path_gambar))) {
                 unlink(public_path('img/barang/' . $barang->path_gambar));
             }
-
-            // Simpan nama foto baru ke model
             $barang->path_gambar = $filename;
         }
 
-
-        // Update data barang dengan data baru
         $barang->fill($request->only([
             'merek_barang',
             'perolehan_barang',
@@ -157,13 +147,12 @@ class BarangController extends Controller
             'kondisi_id',
             'kategori_barang_id',
             'status_barang',
-            'path_gambar',
         ]));
 
-        // Jika path_gambar diupdate, simpan perubahan
         $barang->save();
-        $new=$barang->toArray();
-        ActivityLogHelper::log('Barang '.$kode_barang.' Berhasil Diperbaruhi!',$new,$prev);
+
+        $new = $barang->toArray();
+        ActivityLogHelper::log('Barang ' . $kode_barang . ' Berhasil Diperbaruhi!', $new, $prev);
         return redirect()->route('barang.show', $barang->kode_barang)
             ->with('success', 'Detail barang berhasil diperbarui.');
     }
@@ -195,6 +184,10 @@ class BarangController extends Controller
 
     public function updateKeterangan(Request $request, $id)
     {
+        $accessResult = PermissionHelper::AnyHasAccessToBarang();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
         $data = $request->validate([
             'keterangan' => 'required|string|max:255',
             'tanggal' => 'required|date',
@@ -206,6 +199,10 @@ class BarangController extends Controller
     }
     public function storeKeterangan(Request $request, $id)
     {
+        $accessResult = PermissionHelper::AnyCanCreateBarang();
+        if (!$accessResult['buat']) {
+            abort(403, 'Unauthorized action.');
+        }
         // Validate the incoming request
         $request->validate([
             'keterangan' => 'required|string|max:255',
@@ -219,24 +216,38 @@ class BarangController extends Controller
             'tanggal' => $request->input('tanggal'),
         ]);
 
-
-        ActivityLogHelper::log('Keterangan '.$id.' baru Ditambahkan ');
+        ActivityLogHelper::log('Keterangan ' . $id . ' baru Ditambahkan ');
         // Redirect back to the keterangan detail page for the specific barang
         return redirect()->route('barang.keterangan', $id)->with('message', 'Keterangan berhasil ditambahkan!');
     }
     public function create()
     {
-        $ruang = Ruang::all();
-        $kondisi = KondisiBarang::all();
-        $kategori = KategoriBarang::all();
+        $accessResult = PermissionHelper::AnyCanCreateBarang();
 
-        return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
+        if (!$accessResult['buat']) {
+            abort(403, 'Unauthorized action.');
+
+        }
+
+        if (!empty($accessResult['room'])) {
+            $ruang = Ruang::whereIn('nama_ruang', $accessResult['room'])->get();
+            $kondisi = KondisiBarang::all();
+            $kategori = KategoriBarang::all();
+            return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
+        }else{
+            $ruang = Ruang::all();
+            $kondisi = KondisiBarang::all();
+            $kategori = KategoriBarang::all();
+            return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
+        }
+
     }
     public function store(Request $request)
     {
+
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
-            // 'kode_barang' => 'required|string|max:255',
+            // 'kode_barang' => 'required|string|unique:barang,kode_barang',
             'merek_barang' => 'required|string|max:255',
             'perolehan_barang' => 'required|string',
             'harga_pembelian' => 'required|numeric',
@@ -278,8 +289,10 @@ class BarangController extends Controller
         }
 
         $lastBarang = Barang::where('kategori_barang_id', $request->kategori_barang_id)
-            ->orderBy('kode_barang', 'desc')
+            ->orderBy('id', 'desc')
             ->first();
+
+
 
         // Mengambil nomor urut terakhir untuk kategori yang sama
         $nomorUrut = $lastBarang ? intval(substr($lastBarang->kode_barang, -4)) + 1 : 1;
@@ -317,8 +330,39 @@ class BarangController extends Controller
             'path_gambar' => $pathFoto,
         ]);
         // Log the activity, indicating it's a new entry\
-        ActivityLogHelper::log('Barang'. $kodeBarang.' Ditambahkan!');
+        ActivityLogHelper::log('Barang' . $kodeBarang . ' Ditambahkan!');
         // Redirect back to the keterangan detail page for the specific barang
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
+
+    public function destroy($id)
+    {
+        $barang = Barang::findOrFail($id);
+
+        $accessResult = PermissionHelper::AnyCanDeleteBarang();
+
+        if (!$accessResult['delete']) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $barang->delete();
+
+        return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
+    }
+
+    public function delKeterangan($id)
+    {
+        $barang = Barang::findOrFail($id);
+
+        $accessResult = PermissionHelper::AnyCanDeleteBarang();
+
+        if (!$accessResult['delete']) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $barang->delete();
+
+        return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
+    }
+
 }

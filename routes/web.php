@@ -6,6 +6,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\PermissionController;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,26 +39,24 @@ Route::get('/blank', function () {
 // Rute yang memerlukan autentikasi
 Route::middleware('auth')->group(function () {
     Route::resource('pengguna', PenggunaController::class)
-        ->middleware('role:Super Admin'); // hanya Super Admin yang bisa mengelola pengguna
+        ->middleware('role:Super Admin');
 
     Route::resource('role', RoleController::class)
-        ->middleware('role:Super Admin'); // hanya Super Admin yang bisa mengelola role
+        ->middleware('role:Super Admin',);
 
     Route::resource('hak', PermissionController::class)
         ->middleware('role:Super Admin');
 
     Route::resource('barang', BarangController::class)
-        ->middleware('role:Super Admin'); // Super Admin
+        ->middleware(['role:Super Admin||Admin Ruang||Majelis']);
 });
 
-// Rute spesifik dengan middleware role
 Route::get('/pengguna', [PenggunaController::class, 'index'])
     ->middleware('role:Super Admin')
     ->name('pengguna.index');
 
-    Route::get('/pengguna/{pengguna}/edit/permissions', [PenggunaController::class, 'getPermissionsByUser'])
+Route::get('/pengguna/{pengguna}/edit/permissions', [PenggunaController::class, 'getPermissionsByUser'])
     ->middleware('role:Super Admin');
-
 
 Route::get('/role', [RoleController::class, 'index'])
     ->middleware('role:Super Admin')
@@ -83,27 +82,15 @@ Route::delete('/roles/{role}/permissions/{permission}', [RoleController::class, 
 Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
 Route::get('/barang/{kode_barang}', [BarangController::class, 'show'])->name('barang.show');
 
-// Middleware untuk mengelola barang yang dapat diakses oleh role tertentu
-Route::put('/barang/{kode_barang}', [BarangController::class, 'update'])
-    ->middleware('role:Super Admin')
-    ->name('barang.update');
-
+// // Middleware untuk mengelola barang yang dapat diakses oleh role tertentu
 Route::put('/barang/{kode_barang}/edit', [BarangController::class, 'update_detail'])
-    ->middleware('role:Super Admin')
     ->name('barang.update_detail');
 
 Route::get('/barang/{kode_barang}/keterangan', [BarangController::class, 'showKeterangan'])
-    ->middleware('role:Super Admin')
     ->name('barang.keterangan');
 
 Route::get('/keterangan/{id}/edit', [BarangController::class, 'editKeterangan'])
-    ->middleware('role:Super Admin')
     ->name('keterangan.edit');
 
-Route::put('/keterangan/{id}', [BarangController::class, 'updateKeterangan'])
-    ->middleware('role:Super Admin')
-    ->name('keterangan.update');
-
 Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan'])
-    ->middleware('role:Super Admin')
     ->name('keterangan.store');

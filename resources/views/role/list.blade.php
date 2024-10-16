@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'List Roles | Inventaris GKJM')
+@section('title', 'Daftar Roles | Inventaris GKJM')
 
 @section('main-content')
 

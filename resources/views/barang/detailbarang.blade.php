@@ -3,6 +3,10 @@
 @section('title', 'Detail Barang | Inventaris GKJM')
 
 @section('main-content')
+    @php
+    use App\Helpers\PermissionHelper;
+    $hasAccess = PermissionHelper::AnyCanEditBarang();
+    @endphp
     <!-- Main Content -->
     <div class="row mb-3">
         <!-- Button Kembali -->
@@ -18,7 +22,7 @@
                 </a>
             @else
                 <!-- Tombol Edit -->
-                @if (Auth::user()->hasRole('Super Admin'))
+                @if ($hasAccess['edit'])
                     <a href="{{ route('barang.edit', $barang->kode_barang) }}" class="btn btn-primary ml-2">
                         <i class="fa-solid fa-pen-to-square"></i> Edit
                     </a>

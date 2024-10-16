@@ -28,7 +28,8 @@ return new class extends Migration
             $table->timestamps();
         });
         Schema::create('barang', function (Blueprint $table) {
-            $table->string('kode_barang',50)->primary();
+            $table->id();
+            $table->string('kode_barang',50)->unique();
             $table->string('merek_barang', 100);
             $table->decimal('harga_pembelian', 15, 2)->nullable();
             $table->year('tahun_pembelian');
@@ -42,7 +43,6 @@ return new class extends Migration
             $table->unsignedBigInteger('ruang_id');
             $table->unsignedBigInteger('kondisi_id');
             $table->unsignedBigInteger('kategori_barang_id');
-            // $table->unsignedBigInteger('pengguna_id');
             // Foreign key constraints
             $table->foreign('ruang_id')->references('ruang_id')->on('Ruang')
             ->onUpdate('cascade');
@@ -50,8 +50,6 @@ return new class extends Migration
             ->onUpdate('cascade');
             $table->foreign('kategori_barang_id')->references('kategori_barang_id')->on('KategoriBarang')
             ->onUpdate('cascade');
-            // $table->foreign('pengguna_id')->references('pengguna_id')->on('Pengguna')
-            // ->onUpdate('cascade');
             $table->timestamps();
         });
         Schema::create('DetilKeteranganBarang', function (Blueprint $table) {

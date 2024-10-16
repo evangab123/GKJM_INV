@@ -1,8 +1,15 @@
 @extends('layouts.admin')
 
-@section('title', 'List Barang | Inventaris GKJM')
+@section('title', 'Daftar Barang | Inventaris GKJM')
 
 @section('main-content')
+    @php
+        use App\Helpers\PermissionHelper;
+        $hasCreate = PermissionHelper::AnyCanCreateBarang();
+        $hasEdit = PermissionHelper::AnyCanEditBarang();
+        $hasAccess = PermissionHelper::AnyHasAccesstoBarang();
+        $hasDelete = PermissionHelper::AnyCanDeleteBarang();
+    @endphp
     <!-- Main Content goes here -->
     <div class="d-flex justify-content-between mb-3">
         <!-- Search Form -->
@@ -22,57 +29,73 @@
         </form>
 
         <!-- Add New Item Button -->
-        <div>
-            <a href="{{ route('barang.create') }}" class="btn btn-success">
-                <i class="fa-solid fa-plus"></i> Tambah Barang!
-            </a>
-        </div>
+        @if ($hasCreate['buat'])
+            <div>
+                <a href="{{ route('barang.create') }}" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> Tambah Barang!
+                </a>
+            </div>
+        @endif
+
     </div>
 
     <!-- Table -->
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Kode</th>
                 <th>Merek</th>
                 <th>Ruang</th>
                 <th>Status</th>
-                <th>Aksi</th>
+                @if ($hasAccess['access'] && $hasDelete['delete'])
+                    <th>Aksi</th>
+                @endif
+
             </tr>
         </thead>
         <tbody>
             @foreach ($barang as $bar)
                 <tr>
+                    <td scope="row">{{ $loop->iteration }}</td>
                     <td>{{ $bar['kode_barang'] }}</td>
                     <td>{{ $bar['merek_barang'] }}</td>
                     <td>{{ $bar->ruang->nama_ruang ?? 'N/A' }}</td>
                     <td>{{ $bar['status_barang'] }}</td>
                     <td>
                         <div class="d-flex">
-                            <!-- Edit Button -->
+                            {{-- <!-- Edit Button -->
                             <button type="button" class="btn btn-primary btn-sm mr-2" data-toggle="modal"
                                 data-target="#editModal{{ $bar['kode_barang'] }}">
                                 <i class="fa-solid fa-pen-to-square"></i> Edit
-                            </button>
+                            </button> --}}
 
                             <!-- Delete Button -->
-                            <form action="{{ route('barang.destroy', $bar['kode_barang']) }}" method="POST" class="mr-2">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this item?')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </form>
+
+                            @if ($hasDelete['delete'])
+                                <form action="{{ route('barang.destroy', $bar['kode_barang']) }}" method="POST"
+                                    class="mr-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this item?')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            @endif
 
                             <!-- Detail Button -->
-                            <a href="{{ route('barang.show', $bar['kode_barang']) }}" class="btn btn-info btn-sm">
-                                <i class="fas fa-info-circle"></i> Detail
-                            </a>
+                            @if ($hasAccess['access'])
+                                <a href="{{ route('barang.show', $bar['kode_barang']) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-info-circle"></i> _{{ 'Detail' }}
+                                </a>
+                            @endif
+
                         </div>
                     </td>
                 </tr>
 
-                <!-- Edit Modal -->
+                {{-- <!-- Edit Modal -->
                 <div class="modal fade" id="editModal{{ $bar['kode_barang'] }}" tabindex="-1" role="dialog"
                     aria-labelledby="editModalLabel{{ $bar['kode_barang'] }}" aria-hidden="true">
                     <div class="modal-dialog" role="document">
@@ -116,7 +139,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             @endforeach
         </tbody>
     </table>

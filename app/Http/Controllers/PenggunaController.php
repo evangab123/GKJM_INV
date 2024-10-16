@@ -25,6 +25,7 @@ class PenggunaController extends Controller
      */
     public function index(): View|Factory
     {
+
         // dd(Auth::user()->role);
         return view('pengguna.list', [
             'title' => 'Master Data Pengguna',

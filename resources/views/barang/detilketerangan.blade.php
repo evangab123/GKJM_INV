@@ -3,15 +3,24 @@
 @section('title', 'Detail Keterangan Barang | Inventaris GKJM')
 
 @section('main-content')
+    @php
+        use App\Helpers\PermissionHelper;
+        $hasCreate = PermissionHelper::AnyCanCreateBarang();
+        $hasEdit = PermissionHelper::AnyCanEditBarang();
+        $hasDelete = PermissionHelper::AnyCanDeleteBarang();
+    @endphp
     <div class="row mb-3">
         <div class="d-flex">
             <a href="{{ route('barang.show', $barang->kode_barang) }}" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> Kembali
             </a>
             <!-- Tombol Add Keterangan -->
-            <button type="button" class="btn btn-success ml-2" data-toggle="modal" data-target="#addKeteranganModal">
-                <i class="fa-solid fa-plus"></i> Tambah Keterangan Baru
-            </button>
+            @if ($hasCreate['buat'])
+                <button type="button" class="btn btn-success ml-2" data-toggle="modal" data-target="#addKeteranganModal">
+                    <i class="fa-solid fa-plus"></i> Tambah Keterangan Baru
+                </button>
+            @endif
+
         </div>
     </div>
     <!-- Modal -->
@@ -56,7 +65,9 @@
                             <tr>
                                 <th>Tanggal</th>
                                 <th>Keterangan</th>
-                                <th>Aksi</th>
+                                @if ($hasEdit['edit'] && $hasDelete['delete'])
+                                    <th>Aksi</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -65,14 +76,19 @@
                                     <td>{{ $keterangan->tanggal }}</td>
                                     <td>{{ $keterangan->keterangan }}</td>
                                     <td>
-                                        <a href="{{ route('keterangan.edit', $keterangan->keterangan_id) }}"
-                                            class="btn btn-warning btn-sm">Edit</a>
-                                        {{-- <form action="{{ route('keterangan.destroy', $keterangan->keterangan_id) }}"
+                                        @if ($hasEdit['edit'])
+                                            <a href="{{ route('keterangan.edit', $keterangan->keterangan_id) }}"
+                                                class="btn btn-warning btn-sm">Edit</a>
+                                        @endif
+                                        @if ($hasDelete['delete'])
+                                            <form action="{{ route('keterangan.destroy', $keterangan->keterangan_id) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                            </form> --}}
+                                            </form>
+                                        @endif
+
                                     </td>
                                 </tr>
                             @endforeach

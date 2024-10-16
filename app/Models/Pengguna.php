@@ -12,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Pengguna extends Authenticatable
 {
-    use HasFactory, Notifiable,HasRoles;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $table = 'pengguna';
 
