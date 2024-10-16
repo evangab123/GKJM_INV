@@ -19,12 +19,12 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead>
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
                             <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>Aksi</th>
+                                <th scope="col">No</th>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,14 +32,14 @@
                                 <tr>
                                     <td scope="row">{{ $loop->iteration }}</td>
                                     <td>{{ $permisi->name }}</td>
-                                    <td>
+                                    <td style="width:110px">
                                         <div class="d-flex">
                                             <form action="{{ route('hak.destroy', $permisi->id) }}" method="post">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                <button type="submit" class="btn btn-danger"
                                                     onclick="return confirm('Are you sure to delete this?')">
-                                                    <i class="fas fa-trash"></i> Delete
+                                                    <i class="fas fa-trash"></i> {{ __("Hapus") }}
                                                 </button>
                                             </form>
                                         </div>

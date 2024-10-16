@@ -6,7 +6,7 @@
     <div class="row mb-3">
         <div class="d-flex">
             <a href="{{ route('barang.index') }}" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
+                <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
         </div>
     </div>
@@ -15,52 +15,48 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Tambah Barang</h5>
+                    <h5 class="card-title">{{ __('Tambah Barang') }}</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('barang.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        {{-- <div class="form-group">
-                            <label for="kode_barang">Kode Barang</label>
-                            <input type="text" class="form-control" id="kode_barang" name="kode_barang">
-                        </div> --}}
                         <div class="form-group">
-                            <label for="merek_barang">Merek Barang</label>
+                            <label for="merek_barang">{{ __('Merek Barang') }}</label>
                             <input type="text" class="form-control" id="merek_barang" name="merek_barang">
                         </div>
                         <div class="form-group">
-                            <label for="perolehan_barang">Perolehan</label>
+                            <label for="perolehan_barang">{{ __('Perolehan') }}</label>
                             <select class="form-control" id="perolehan_barang" name="perolehan_barang">
-                                <option value="Hibah">Hibah</option>
-                                <option value="Pembelian">Pembelian</option>
+                                <option value="Hibah">{{ __('Hibah') }}</option>
+                                <option value="Pembelian">{{ __('Pembelian') }}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="harga_pembelian">Harga Beli</label>
+                            <label for="harga_pembelian">{{ __('Harga Beli') }}</label>
                             <input type="number" class="form-control" id="harga_pembelian" name="harga_pembelian"
                                 onchange="calculateNilaiEkonomis()">
                         </div>
                         <div class="form-group">
-                            <label for="tahun_pembelian">Tahun Beli</label>
+                            <label for="tahun_pembelian">{{ __('Tahun Beli') }}</label>
                             <input type="text" class="form-control" id="tahun_pembelian" name="tahun_pembelian"
                                 onchange="calculateNilaiEkonomis()">
                         </div>
 
                         <div class="form-group">
-                            <label for="nilai_ekonomis_barang">Nilai Ekonomis</label>
+                            <label for="nilai_ekonomis_barang">{{ __('Nilai Ekonomis') }}</label>
                             <input type="number" class="form-control" id="nilai_ekonomis_barang"
                                 name="nilai_ekonomis_barang" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="jumlah">Jumlah/Stok</label>
+                            <label for="jumlah">{{ __('Jumlah/Stok') }}</label>
                             <input type="number" class="form-control" id="jumlah" name="jumlah">
                         </div>
                         <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
+                            <label for="keterangan">{{ __('Keterangan') }}</label>
                             <input type="text" class="form-control" id="keterangan" name="keterangan">
                         </div>
                         <div class="form-group">
-                            <label for="ruang_id">Ruang</label>
+                            <label for="ruang_id">{{ __('Ruang') }}</label>
                             <select class="form-control" name="ruang_id" id="ruang_id">
                                 @foreach ($ruang as $rua)
                                     <option value="{{ $rua->ruang_id }}">{{ $rua->nama_ruang }}</option>
@@ -68,7 +64,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="kondisi_id">Kondisi</label>
+                            <label for="kondisi_id">{{ __('Kondisi') }}</label>
                             <select class="form-control" name="kondisi_id" id="kondisi_id">
                                 @foreach ($kondisi as $kon)
                                     <option value="{{ $kon->kondisi_id }}">{{ $kon->deskripsi_kondisi }}</option>
@@ -76,7 +72,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="kategori_barang_id">Kategori</label>
+                            <label for="kategori_barang_id">{{ __('Kategori') }}</label>
                             <select class="form-control" name="kategori_barang_id" id="kategori_barang_id">
                                 @foreach ($kategori as $kat)
                                     <option value="{{ $kat->kategori_barang_id }}">{{ $kat->nama_kategori }}</option>
@@ -84,20 +80,20 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="status_barang">Status</label>
+                            <label for="status_barang">{{ __('Status') }}</label>
                             <select class="form-control" name="status_barang" id="status_barang">
-                                <option value="Ada">Ada</option>
-                                <option value="Dipinjam">Dipinjam</option>
-                                <option value="Diperbaiki">Diperbaiki</option>
-                                <option value="Dihapus">Dihapus</option>
-                                <option value="Dipakai">Dipakai</option>
+                                <option value="Ada">{{ __('Ada') }}</option>
+                                <option value="Dipinjam">{{ __('Dipinjam') }}</option>
+                                <option value="Diperbaiki">{{ __('Diperbaiki') }}</option>
+                                <option value="Dihapus">{{ __('Dihapus') }}</option>
+                                <option value="Dipakai">{{ __('Dipakai') }}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="foto_barang">Foto Barang</label>
+                            <label for="foto_barang">{{ __('Foto Barang') }}</label>
                             <input type="file" class="form-control" name="path_gambar" accept="image/*" id="foto_barang">
                         </div>
-                        <button type="submit" class="btn btn-success">Tambah Barang</button>
+                        <button type="submit" class="btn btn-success">{{ __('Tambah Barang') }}</button>
                     </form>
                 </div>
             </div>
@@ -133,10 +129,9 @@
         const currentYear = new Date().getFullYear();
         const yearsUsed = currentYear - tahunPembelian;
 
-        let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed );
+        let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed);
         nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
 
         nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
     }
 </script>
-

@@ -4,31 +4,32 @@
 
 @section('main-content')
     @php
-    use App\Helpers\PermissionHelper;
-    $hasAccess = PermissionHelper::AnyCanEditBarang();
+        use App\Helpers\PermissionHelper;
+        $hasAccess = PermissionHelper::AnyCanEditBarang();
     @endphp
     <!-- Main Content -->
     <div class="row mb-3">
         <!-- Button Kembali -->
         <div class="d-flex">
             <a href="{{ route('barang.index') }}" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
+                <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
             <!-- Button Edit/Close -->
             @if ($isEditing)
                 <!-- Tombol Close (keluar dari mode edit) -->
                 <a href="{{ route('barang.show', $barang->kode_barang) }}" class="btn btn-secondary ml-2">
-                    <i class="fa-solid fa-times"></i> Close
+                    <i class="fa-solid fa-times"></i> {{ __('Tutup') }}
                 </a>
             @else
                 <!-- Tombol Edit -->
                 @if ($hasAccess['edit'])
                     <a href="{{ route('barang.edit', $barang->kode_barang) }}" class="btn btn-primary ml-2">
-                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                        <i class="fa-solid fa-pen-to-square"></i> {{ __('Edit') }}
                     </a>
                 @endif
             @endif
-            <a href="{{ route('barang.keterangan', $barang->kode_barang) }}" class="btn btn-info ml-2">Lihat Keterangan</a>
+            <a href="{{ route('barang.keterangan', $barang->kode_barang) }}"
+                class="btn btn-info ml-2">{{ __('lihat Keterangan') }}</a>
 
         </div>
     </div>
@@ -58,7 +59,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Detail Barang</h5>
+                    <h5 class="card-title">{{ __('Detail Barang') }}</h5>
                     <div class="card-body">
                         @if ($isEditing)
                             <!-- Form Edit -->
@@ -70,31 +71,32 @@
                                 <table class="table">
                                     <tbody>
                                         <tr>
-                                            <th>Kode</th>
+                                            <th>{{ __('Kode') }}</th>
                                             <td><input type="text" class="form-control" name="kode_barang"
                                                     value="{{ $barang->kode_barang }}" readonly></td>
                                         </tr>
                                         <tr>
-                                            <th>Merek</th>
+                                            <th>{{ __('Merek') }}</th>
                                             <td><input type="text" class="form-control" name="merek_barang"
                                                     value="{{ $barang->merek_barang }}"></td>
                                         </tr>
                                         <tr>
-                                            <th>Perolehan</th>
+                                            <th>{{ __('Perolehan') }}</th>
                                             <td>
                                                 <select class="form-control" id="perolehan_barang" name="perolehan_barang">
                                                     <option value="Hibah"
                                                         {{ $barang['perolehan_barang'] == 'Hibah' ? 'selected' : '' }}>
-                                                        Hibah</option>
+                                                        {{ __('Hibah') }}
+                                                    </option>
                                                     <option value="Pembelian"
                                                         {{ $barang['perolehan_barang'] == 'Pembelian' ? 'selected' : '' }}>
-                                                        Pembelian
+                                                        {{ __('Pembelian') }}
                                                     </option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Harga Beli</th>
+                                            <th>{{ __('Harga Beli') }}</th>
                                             <td>
                                                 <input type="text" class="form-control" name="harga_pembelian"
                                                     value="{{ $barang->harga_pembelian }}"
@@ -102,7 +104,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Tahun Beli</th>
+                                            <th>{{ __('Tahun Beli') }}</th>
                                             <td>
                                                 <input type="text" class="form-control" name="tahun_pembelian"
                                                     value="{{ $barang->tahun_pembelian }}"
@@ -110,22 +112,28 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Nilai Ekonomis</th>
-                                            <td><input type="text" class="form-control" name="nilai_ekonomis_barang"
-                                                    value="{{ $barang->nilai_ekonomis_barang }}" readonly></td>
+                                            <th>{{ __('Nilai Ekonomis') }}</th>
+                                            <td>
+                                                <input type="text" class="form-control" name="nilai_ekonomis_barang"
+                                                    value="{{ $barang->nilai_ekonomis_barang }}" readonly>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <th>Jumlah/Stok</th>
-                                            <td><input type="text" class="form-control" name="jumlah"
-                                                    value="{{ $barang->jumlah }}"></td>
+                                            <th>{{ __('Jumlah/Stok') }}</th>
+                                            <td>
+                                                <input type="text" class="form-control" name="jumlah"
+                                                    value="{{ $barang->jumlah }}">
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <th>Keterangan</th>
-                                            <td><input type="text" class="form-control" name="keterangan"
-                                                    value="{{ $barang->keterangan }}"></td>
+                                            <th>{{ __('Keterangan') }}</th>
+                                            <td>
+                                                <input type="text" class="form-control" name="keterangan"
+                                                    value="{{ $barang->keterangan }}">
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <th>Ruang</th>
+                                            <th>{{ __('Ruang') }}</th>
                                             <td>
                                                 <select class="form-control" name="ruang_id">
                                                     @foreach ($ruang as $rua)
@@ -138,7 +146,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Kondisi</th>
+                                            <th>{{ __('Kondisi') }}</th>
                                             <td>
                                                 <select class="form-control" name="kondisi_id">
                                                     @foreach ($kondisi as $kon)
@@ -151,7 +159,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Kategori</th>
+                                            <th>{{ __('Kategori') }}</th>
                                             <td>
                                                 <select class="form-control" name="kategori_barang_id">
                                                     @foreach ($kategori as $kat)
@@ -163,32 +171,36 @@
                                                 </select>
                                             </td>
                                         </tr>
+
                                         <tr>
-                                            <th>Status</th>
+                                            <th>{{ __('Status') }}</th>
                                             <td>
                                                 <select class="form-control" name="status_barang">
                                                     <option value="Ada"
-                                                        {{ $barang->status_barang == 'Ada' ? 'selected' : '' }}>Ada
+                                                        {{ $barang->status_barang == 'Ada' ? 'selected' : '' }}>
+                                                        {{ __('Ada') }}
                                                     </option>
                                                     <option value="Dipinjam"
                                                         {{ $barang->status_barang == 'Dipinjam' ? 'selected' : '' }}>
-                                                        Dipinjam
+                                                        {{ __('Dipinjam') }}
                                                     </option>
                                                     <option value="Diperbaiki"
                                                         {{ $barang->status_barang == 'Diperbaiki' ? 'selected' : '' }}>
-                                                        Diperbaiki
+                                                        {{ __('Diperbaiki') }}
                                                     </option>
                                                     <option value="Dihapus"
-                                                        {{ $barang->status_barang == 'Dihapus' ? 'selected' : '' }}>Dihapus
+                                                        {{ $barang->status_barang == 'Dihapus' ? 'selected' : '' }}>
+                                                        {{ __('Dihapus') }}
                                                     </option>
                                                     <option value="Dipakai"
-                                                        {{ $barang->status_barang == 'Dipakai' ? 'selected' : '' }}>Dipakai
+                                                        {{ $barang->status_barang == 'Dipakai' ? 'selected' : '' }}>
+                                                        {{ __('Dipakai') }}
                                                     </option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Foto Barang</th>
+                                            <th>{{ __('Foto Barang') }}</th>
                                             <td>
                                                 <input type="file" class="form-control" name="path_gambar"
                                                     accept="image/*">
@@ -196,58 +208,58 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="submit" class="btn btn-primary">{{ __('Perbarui') }}</button>
                             </form>
                         @else
                             <!-- Detail Barang -->
                             <table class="table">
                                 <tbody>
                                     <tr>
-                                        <th>Kode</th>
+                                        <th>{{ __('Kode') }}</th>
                                         <td>{{ $barang->kode_barang }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Merek</th>
+                                        <th>{{ __('Merek') }}</th>
                                         <td>{{ $barang->merek_barang }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Perolehan</th>
+                                        <th>{{ __('Perolehan') }}</th>
                                         <td>{{ $barang->perolehan_barang }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Harga Beli</th>
+                                        <th>{{ __('Harga Beli') }}</th>
                                         <td>Rp {{ number_format($barang->harga_pembelian, 2, ',', '.') }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Tahun Beli</th>
+                                        <th>{{ __('Tahun Beli') }}</th>
                                         <td>{{ $barang->tahun_pembelian }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Nilai Ekonomis</th>
+                                        <th>{{ __('nilai Ekonomis') }}</th>
                                         <td>Rp {{ number_format($barang->nilai_ekonomis_barang, 2, ',', '.') }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Jumlah/Stok</th>
+                                        <th>{{ __('Jumlah/Stok') }}</th>
                                         <td>{{ $barang->jumlah }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Keterangan</th>
+                                        <th>{{ __('Keterangan') }}</th>
                                         <td>{{ $barang->keterangan }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Ruang</th>
+                                        <th>{{ __('Ruang') }}</th>
                                         <td>{{ $barang->ruang->nama_ruang }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Kondisi</th>
+                                        <th>{{ __('Kondisi') }}</th>
                                         <td>{{ $barang->kondisi->deskripsi_kondisi }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Kategori</th>
+                                        <th>{{ __('Kategori') }}</th>
                                         <td>{{ $barang->kategori->nama_kategori }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Status</th>
+                                        <th>{{ __('Status') }}</th>
                                         <td>{{ $barang->status_barang }}</td>
                                     </tr>
                                 </tbody>

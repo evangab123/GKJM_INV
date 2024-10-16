@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Edit Role dan Permissions | Inventaris GKJM')
+@section('title', __('Edit Role dan Permissions | Inventaris GKJM'))
 
 @section('main-content')
     <!-- Main Content -->
@@ -12,9 +12,9 @@
 
                 <!-- Nama Role -->
                 <div class="form-group">
-                    <label for="nama_role">Nama Role</label>
+                    <label for="nama_role">{{ __('Nama Role') }}</label>
                     <input type="text" class="form-control @error('nama_role') is-invalid @enderror" name="nama_role"
-                        id="nama_role" value="{{ old('nama_role', $role->name) }}" placeholder="Nama Role..."
+                        id="nama_role" value="{{ old('nama_role', $role->name) }}" placeholder="{{ __('Nama Role...') }}"
                         autocomplete="off">
                     @error('nama_role')
                         <span class="text-danger">{{ $message }}</span>
@@ -22,12 +22,12 @@
                 </div>
 
                 <!-- Submit button untuk simpan perubahan -->
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <button type="submit" class="btn btn-primary">{{ __('Simpan Perubahan') }}</button>
             </form>
 
             <!-- Daftar Permissions -->
             <div id="permissions-list" class="mt-4 md-4">
-                <h5>Daftar Hak Akses yang dimiliki Role:</h5>
+                <h5>{{ __('Daftar Hak Akses yang dimiliki Role:') }}</h5>
 
                 @foreach ($role->permissions as $permission)
                     <form action="{{ route('roles.permissions.destroy', [$role->id, $permission->id]) }}" method="POST"
@@ -35,13 +35,13 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Apakah kamu yakin ingin menghapus permission ini dari role?')">
+                            onclick="return confirm('{{ __('Apakah kamu yakin ingin menghapus permission ini dari role?') }}')">
                             {{ $permission->name }} <i class="fas fa-times"></i>
                         </button>
                     </form>
                 @endforeach
 
-                <h6 class="mt-4 md-4">Petunjuk: Klik Role yang mau dihapus...</h6>
+                <h6 class="mt-4 md-4">{{ __('Petunjuk: Klik Role yang mau dihapus...') }}</h6>
             </div>
 
             <!-- Form untuk menambah Permission -->
@@ -50,7 +50,7 @@
 
                 <!-- Select Permissions -->
                 <div class="form-group">
-                    <label for="permissions">Tambah Permission</label>
+                    <label for="permissions">{{ __('Tambah Permission') }}</label>
                     <select name="permissions" id="permissions" class="form-control">
                         @foreach ($permissions as $permission)
                             <option value="{{ $permission->name }}">
@@ -61,12 +61,12 @@
                 </div>
 
                 <!-- Submit button untuk tambah permission -->
-                <button type="submit" class="btn btn-primary">Tambah Hak Akses</button>
+                <button type="submit" class="btn btn-primary">{{ __('Tambah Hak Akses') }}</button>
             </form>
         </div>
 
         <!-- Tombol kembali -->
-        <a href="{{ route('role.index') }}" class="btn btn-default">Kembali ke list</a>
+        <a href="{{ route('role.index') }}" class="btn btn-default">{{ __('Kembali ke list') }}</a>
     </div>
     <!-- End of Main Content -->
 @endsection

@@ -1,10 +1,10 @@
 @extends('layouts.admin')
-@section('title', 'Daftar Pengguna | Inventaris GKJM')
+@section('title', __('Daftar Pengguna | Inventaris GKJM'))
 
 @section('main-content')
 
     <div class="container-fluid">
-        <a href="{{ route('pengguna.create') }}" class="btn btn-primary mb-3">Buat Pengguna!</a>
+        <a href="{{ route('pengguna.create') }}" class="btn btn-primary mb-3">{{ __('Buat Pengguna!') }}</a>
 
         @if (session('message'))
             <div class="alert alert-success">
@@ -18,16 +18,16 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead>
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
                             <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>Jabatan</th>
-                                <th>Email</th>
-                                <th>Role Pengguna</th>
-                                <th>Hak yang dimiliki</th>
-                                <th>Aksi</th>
+                                <th scope="col">{{ __('No') }}</th>
+                                <th scope="col">{{ __('Nama') }}</th>
+                                <th scope="col">{{ __('Jabatan') }}</th>
+                                <th scope="col">{{ __('Email') }}</th>
+                                <th scope="col">{{ __('Role Pengguna') }}</th>
+                                <th scope="col">{{ __('Hak yang dimiliki') }}</th>
+                                <th scope="col">{{ __('Aksi') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,22 +46,22 @@
                                                 @endforeach
                                             </ul>
                                         @else
-                                            <span class="text-muted">Tidak ada hak</span>
+                                            <span class="text-muted">{{ __('Tidak ada hak') }}</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td style="width:200px">
                                         <div class="d-flex">
-                                            <a href="{{ route('pengguna.edit', $user->pengguna_id) }}"
-                                                class="btn btn-sm btn-primary mr-2">
-                                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                                            <a href="{{ route('pengguna.edit', $user->pengguna_id) }}" title="{{ __('Edit') }}"
+                                                class="btn btn-warning mr-2">
+                                                <i class="fa-solid fa-pen-to-square"></i> {{ __('Edit!') }}
                                             </a>
                                             <form action="{{ route('pengguna.destroy', $user->pengguna_id) }}"
                                                 method="post">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Are you sure to delete this?')">
-                                                    <i class="fas fa-trash"></i> Delete
+                                                <button type="submit" class="btn btn-danger" title="{{ __('Hapus') }}"
+                                                    onclick="return confirm('{{ __('Are you sure to delete this?') }}')">
+                                                    <i class="fas fa-trash"></i>{{ __('Hapus!') }}
                                                 </button>
                                             </form>
                                         </div>

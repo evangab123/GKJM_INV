@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:Super Admin');
 
     Route::resource('role', RoleController::class)
-        ->middleware('role:Super Admin',);
+        ->middleware('role:Super Admin', );
 
     Route::resource('hak', PermissionController::class)
         ->middleware('role:Super Admin');
@@ -62,7 +62,7 @@ Route::get('/role', [RoleController::class, 'index'])
     ->middleware('role:Super Admin')
     ->name('role.index');
 
-Route::get('/hak',  [PermissionController::class, 'index'])
+Route::get('/hak', [PermissionController::class, 'index'])
     ->middleware('role:Super Admin')
     ->name('hak.index');
 
@@ -94,3 +94,6 @@ Route::get('/keterangan/{id}/edit', [BarangController::class, 'editKeterangan'])
 
 Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan'])
     ->name('keterangan.store');
+
+Route::delete('/keterangan/{id}', [BarangController::class, 'delKeterangan'])->name('keterangan.destroy');
+

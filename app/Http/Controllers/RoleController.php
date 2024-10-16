@@ -101,6 +101,21 @@ class RoleController extends Controller
         // Return the permissions (will be empty if none found)
         return response()->json(['permissions' => $permissions]);
     }
+    public function destroy($id)
+    {
+        // Find the role by ID
+        $role = Role::find($id);
 
+        if ($role) {
+            // Log the activity before deletion
+            ActivityLogHelper::log('Menghapus Role "'.$role->name.'"');
 
+            // Delete the role
+            $role->delete();
+
+            return redirect()->route('role.index')->with('success', 'Role berhasil dihapus.');
+        }
+
+        return redirect()->route('role.index')->with('warning', 'Role tidak ditemukan.');
+    }
 }

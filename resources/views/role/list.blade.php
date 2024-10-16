@@ -15,17 +15,17 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">{{ __('Role List') }}</h6>
+                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar List') }}</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead>
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
                             <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>Hak</th>
-                                <th>Aksi</th>
+                                <th scope="col">No</th>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Hak</th>
+                                <th scope="col">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,18 +44,18 @@
                                             <span class="text-muted">Tidak ada hak</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td style="width: 200px">
                                         <div class="d-flex">
-                                            <a href="{{ route('role.edit', $Role->id) }}"
-                                                class="btn btn-sm btn-primary mr-2">
-                                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                                            <a href="{{ route('role.edit', $Role->id) }}" title="Edit"
+                                                class="btn  btn-warning mr-2">
+                                                <i class="fa-solid fa-pen-to-square"></i> {{ __(' Edit') }}
                                             </a>
                                             <form action="{{ route('role.destroy', $Role->id) }}" method="post">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                <button type="submit" class="btn  btn-danger" title="Hapus"
                                                     onclick="return confirm('Anda yakin ingin menghapus hak ini dari role tersebut?')">
-                                                    <i class="fas fa-trash"></i> Delete
+                                                    <i class="fas fa-trash"></i> {{ __(' Hapus!') }}
                                                 </button>
                                             </form>
                                         </div>

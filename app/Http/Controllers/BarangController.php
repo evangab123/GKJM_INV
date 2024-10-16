@@ -352,7 +352,7 @@ class BarangController extends Controller
 
     public function delKeterangan($id)
     {
-        $barang = Barang::findOrFail($id);
+        $keterangan = DetilKeteranganBarang::findOrFail($id);
 
         $accessResult = PermissionHelper::AnyCanDeleteBarang();
 
@@ -360,9 +360,8 @@ class BarangController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $barang->delete();
+        $keterangan->delete();
 
-        return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
+        return redirect()->back()->with('success', 'Keterangan telah dihapus.');
     }
-
 }

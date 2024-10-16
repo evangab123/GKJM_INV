@@ -1,10 +1,7 @@
 @extends('layouts.admin')
-@section('title', 'Buat Role | Inventaris GKJM')
+@section('title', __('Buat Role | Inventaris GKJM'))
 
 @section('main-content')
-    {{-- <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">{{ $title ?? __('Blank Page') }}</h1> --}}
-
     <!-- Main Content goes here -->
     <div class="card">
         <div class="card-body">
@@ -12,27 +9,17 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="nama_role">Nama Role</label>
+                    <label for="nama_role">{{ __('Nama Role') }}</label>
                     <input type="text" class="form-control @error('nama_role') is-invalid @enderror" name="nama_role"
-                        id="nama_role" placeholder="Nama Role..." autocomplete="off" value="{{ old('nama_role') }}" onchange="generateSlug()">
+                        id="nama_role" placeholder="{{ __('Nama Role...') }}" autocomplete="off"
+                        value="{{ old('nama_role') }}" onchange="generateSlug()">
                     @error('nama_role')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
-                {{-- <div class="form-group">
-                    <label for="nama_role_slug">Nama Role Slug</label>
-                    <input type="text" class="form-control @error('nama_role_slug') is-invalid @enderror"
-                        name="nama_role_slug" id="nama_role_slug" placeholder="nama-role-slug..." autocomplete="off"
-                        value="{{ old('nama_role_slug') }}" readonly>
-                    @error('nama_role_slug')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div> --}}
-
-
-                <button type="submit" class="btn btn-primary">Simpan</button>
-                <a href="{{ route('role.index') }}" class="btn btn-default">Kembali ke list</a>
+                <button type="submit" class="btn btn-primary">{{ __('Simpan') }}</button>
+                <a href="{{ route('role.index') }}" class="btn btn-default">{{ __('Kembali ke list') }}</a>
 
             </form>
         </div>
