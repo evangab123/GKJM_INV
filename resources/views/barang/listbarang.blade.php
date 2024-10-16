@@ -29,7 +29,7 @@
         </form>
 
         <!-- Add New Item Button -->
-        @if($hasCreate['buat'])
+        @if ($hasCreate['buat'])
             <div>
                 <a href="{{ route('barang.create') }}" class="btn btn-success">
                     <i class="fa-solid fa-plus"></i> {{ __('Tambah Barang!') }}
@@ -60,32 +60,103 @@
                     <td>{{ $bar['kode_barang'] }}</td>
                     <td>{{ $bar['merek_barang'] }}</td>
                     <td>{{ $bar->ruang->nama_ruang ?? __('N/A') }}</td>
-                    <td>{{ $bar['status_barang'] }}</td>
-                    @if ($hasAccess['access'] || $hasDelete['delete'])
-                    <td style="width: 200px;">
-                        <div class="d-flex">
-                            <!-- Detail Button -->
-                            @if ($hasAccess['access'])
-                                <a href="{{ route('barang.show', $bar['kode_barang']) }}" class="btn btn-info">
-                                    <i class="fas fa-info-circle"></i> {{ __('Detil') }}
-                                </a>
-                            @endif
-                            <!-- Delete Button -->
-                            @if ($hasDelete['delete'])
-                                <form action="{{ route('barang.destroy', $bar['kode_barang']) }}" method="POST"
-                                    class="ml-1">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('{{ __('Are you sure you want to delete this item?') }}')">
-                                        <i class="fas fa-trash"></i> {{ __('Hapus!') }}
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
+                    <td
+                        class="
+                                @if ($bar['status_barang'] == 'Dihapus') text-danger
+                                @elseif ($bar['status_barang'] == 'Ada')
+                                    text-success
+                                @elseif ($bar['status_barang'] == 'Dipinjam')
+                                    text-warning
+                                @elseif ($bar['status_barang'] == 'Dipakai')
+                                    text-info
+                                @elseif ($bar['status_barang'] == 'Diperbaiki')
+                                    text-primary
+                                @else
+                                    text-muted @endif
+">
+                        @if ($bar['status_barang'] == 'Dihapus')
+                            <i class="fas fa-trash" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                        @elseif ($bar['status_barang'] == 'Ada')
+                            <i class="fas fa-check-circle" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                        @elseif ($bar['status_barang'] == 'Dipinjam')
+                            <i class="fas fa-user" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                        @elseif ($bar['status_barang'] == 'Dipakai')
+                            <i class="fas fa-cog" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                        @elseif ($bar['status_barang'] == 'Diperbaiki')
+                            <i class="fas fa-wrench" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                        @endif
                     </td>
+
+
+
+                    @if ($hasAccess['access'] || $hasDelete['delete'])
+                        <td style="width: 200px;">
+                            <div class="d-flex">
+                                <!-- Detail Button -->
+                                @if ($hasAccess['access'])
+                                    <a href="{{ route('barang.show', $bar['kode_barang']) }}" class="btn btn-info">
+                                        <i class="fas fa-info-circle"></i> {{ __('Detil') }}
+                                    </a>
+                                @endif
+                                <!-- Delete Button -->
+                                @if ($hasDelete['delete'])
+                                    @if ($bar->status_barang === 'Ada')
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn btn-danger ml-2" data-toggle="modal"
+                                            data-target="#deleteModal{{ $bar['kode_barang'] }}">
+                                            <i class="fas fa-trash"></i> {{ __('Hapus!') }}
+                                        </button>
+                                    @else
+                                        <!-- Delete Button Not Ada-->
+                                        <button type="button" class="btn btn-danger ml-2" data-toggle="modal" disabled
+                                            data-target="#deleteModal{{ $bar['kode_barang'] }}">
+                                            <i class="fas fa-trash"></i> {{ __('Hapus!') }}
+                                        </button>
+                                    @endif
+                                @endif
+                            </div>
+                        </td>
                     @endif
                 </tr>
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal{{ $bar['kode_barang'] }}" tabindex="-1" role="dialog"
+                    aria-labelledby="deleteModalLabel{{ $bar['kode_barang'] }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel{{ $bar['kode_barang'] }}">
+                                    {{ __('Konfirmasi Hapus') }}
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                {{ __('Apakah Anda yakin ingin menghapus item ini?') }}
+                                <div class="mb-3">
+                                    <label for="alasan{{ $bar['kode_barang'] }}" class="form-label">Alasan
+                                        Penghapusan:</label>
+                                    <input type="text" class="form-control" id="alasan{{ $bar['kode_barang'] }}"
+                                        name="alasan" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-dismiss="modal">{{ __('Batal') }}</button>
+                                <form action="{{ route('barang.destroy', $bar['kode_barang']) }}" method="POST"
+                                    class="d-inline" id="deleteForm{{ $bar['kode_barang'] }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="alasan" id="hiddenAlasan{{ $bar['kode_barang'] }}">
+                                    <button type="button" class="btn btn-danger"
+                                        onclick="submitDeleteForm('{{ $bar['kode_barang'] }}')">
+                                        {{ __('Hapus') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @endforeach
         </tbody>
     </table>
@@ -93,13 +164,49 @@
     <!-- Pagination and Info -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="show-info">
-            {{ __('Melihat') }} {{ $barang->firstItem() }} {{ __('hingga') }} {{ $barang->lastItem() }} {{ __('dari total') }} {{ $barang->total() }} {{ __('Barang') }}
+            {{ __('Melihat') }} {{ $barang->firstItem() }} {{ __('hingga') }} {{ $barang->lastItem() }}
+            {{ __('dari total') }} {{ $barang->total() }} {{ __('Barang') }}
         </div>
         <div class="pagination">
             {{ $barang->links() }}
         </div>
     </div>
-
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal{{ $bar['kode_barang'] }}" tabindex="-1" role="dialog"
+        aria-labelledby="deleteModalLabel{{ $bar['kode_barang'] }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ $bar['kode_barang'] }}">{{ __('Konfirmasi Hapus') }}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ __('Apakah Anda yakin ingin menghapus item ini?') }}
+                    <div class="mb-3">
+                        <label for="alasan{{ $bar['kode_barang'] }}" class="form-label">Alasan Penghapusan:</label>
+                        <input type="text" class="form-control" id="alasan{{ $bar['kode_barang'] }}" name="alasan"
+                            required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Batal') }}</button>
+                    <form action="{{ route('barang.destroy', $bar['kode_barang']) }}" method="POST" class="d-inline"
+                        id="deleteForm{{ $bar['kode_barang'] }}">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="alasan" id="hiddenAlasan{{ $bar['kode_barang'] }}">
+                        <button type="button" class="btn btn-danger"
+                            onclick="submitDeleteForm('{{ $bar['kode_barang'] }}')">
+                            {{ __('Hapus') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- End of Main Content -->
 @endsection
 
@@ -128,3 +235,14 @@
         </div>
     @endif
 @endpush
+
+<script>
+    function submitDeleteForm(barangId) {
+        // Get the reason input value
+        var alasan = document.getElementById('alasan' + barangId).value;
+        // Set the value to the hidden input
+        document.getElementById('hiddenAlasan' + barangId).value = alasan;
+        // Submit the form
+        document.getElementById('deleteForm' + barangId).submit();
+    }
+</script>

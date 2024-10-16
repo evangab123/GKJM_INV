@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\PermissionHelper;
 use App\Models\Barang;
 use App\Models\DetilKeteranganBarang;
+use App\Models\PenghapusanBarang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -226,9 +227,7 @@ class BarangController extends Controller
 
         if (!$accessResult['buat']) {
             abort(403, 'Unauthorized action.');
-
         }
-
         if (!empty($accessResult['room'])) {
             $ruang = Ruang::whereIn('nama_ruang', $accessResult['room'])->get();
             $kondisi = KondisiBarang::all();
@@ -335,18 +334,28 @@ class BarangController extends Controller
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         $barang = Barang::findOrFail($id);
-
+        if ($barang->status_barang !== 'Ada') {
+            return redirect()->route('barang.index')->with('warning', __('Barang tidak bisa dihapus karena statusnya bukan Ada.'));
+        }
         $accessResult = PermissionHelper::AnyCanDeleteBarang();
 
         if (!$accessResult['delete']) {
             abort(403, 'Unauthorized action.');
         }
 
-        $barang->delete();
-        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '"');
+        $pb =PenghapusanBarang::create([
+            'kode_barang' => $barang->kode_barang,
+            'tanggal_penghapusan' => now(),
+            'alasan_penghapusan' => $request->input('alasan'),
+            'nilai_sisa' => $barang->nilai_ekonomis_barang,
+        ]);
+
+        $barang->status_barang = 'Dihapus';
+        $barang->save();
+        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '" dengan id penghapusan "'.$pb->penghapusan_id.'"');
 
         return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
     }

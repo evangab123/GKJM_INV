@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PenghapusanBarangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\RoleController;
@@ -36,7 +37,7 @@ Route::get('/blank', function () {
     return view('blank');
 })->name('blank');
 
-// Rute yang memerlukan autentikasi
+// Rute Resource
 Route::middleware('auth')->group(function () {
     Route::resource('pengguna', PenggunaController::class)
         ->middleware('role:Super Admin');
@@ -49,6 +50,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('barang', BarangController::class)
         ->middleware(['role:Super Admin||Admin Ruang||Majelis']);
+
+    Route::resource('penghapusan', PenghapusanBarangController::class);
 });
 
 Route::get('/pengguna', [PenggunaController::class, 'index'])
@@ -96,4 +99,6 @@ Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan
     ->name('keterangan.store');
 
 Route::delete('/keterangan/{id}', [BarangController::class, 'delKeterangan'])->name('keterangan.destroy');
+
+Route::delete('/penghapusan/{id}', [PenghapusanBarangController::class, 'destroy'])->name('penghapusan.destroy');
 

@@ -92,9 +92,9 @@
                         </div>
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">{{ __('Barang:') }}</h6>
-                            <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
+                            <a class="collapse-item {{ Nav::isRoute('#') }}"
                                 href="{{ '#' }}">{{ __('Tambah Kategori') }}</a>
-                            <a class="collapse-item {{ Nav::isRoute('ruang.index') }}"
+                            <a class="collapse-item {{ Nav::isRoute('#') }}"
                                 href="{{ '#' }}">{{ __('Tambah Ruang') }}</a>
                         </div>
                     </div>
@@ -114,8 +114,8 @@
                         <h6 class="collapse-header">{{ __('CRUD Barang') }}:</h6>
                         <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
                             href={{ route('barang.index') }}>{{ __('List Barang') }}</a>
-                        <a class="collapse-item" href={{ route('barang.index') }}>{{ __('Penghapusan Barang') }}</a>
-                        <a class="collapse-item" href={{ route('barang.index') }}>{{ __('Pemakaian Barang') }}</a>
+                        <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}" href={{ route('penghapusan.index') }}>{{ __('Penghapusan Barang') }}</a>
+                        <a class="collapse-item {{ Nav::isRoute('barang.index') }}" href={{ route('barang.index') }}>{{ __('Pemakaian Barang') }}</a>
                     </div>
                 </div>
             </li>

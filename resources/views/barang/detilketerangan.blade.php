@@ -68,7 +68,7 @@
                                 <th scope="col">{{ __('No') }}</th>
                                 <th scope="col">{{ __('Tanggal') }}</th>
                                 <th scope="col">{{ __('Keterangan') }}</th>
-                                @if ($hasEdit['edit'] || $hasDelete['delete'])
+                                @if ($hasDelete['delete'])
                                     <th scope="col">{{ __('Aksi') }}</th>
                                 @endif
                             </tr>
@@ -84,14 +84,14 @@
                                     <td scope="row">{{ $loop->iteration }}</td>
                                     <td>{{ $keterangan->tanggal }}</td>
                                     <td>{{ $keterangan->keterangan }}</td>
-                                    @if ($hasEdit['edit'] || $hasDelete['delete'])
+                                    @if ($hasDelete['delete'])
                                     <td style="width: 200px;">
-                                        @if ($hasEdit['edit'])
+                                        {{-- @if ($hasEdit['edit'])
                                             <a href="{{ route('keterangan.edit', $keterangan->keterangan_id) }}"
                                                 class="btn btn-warning {{ $dateDiff > 7 ? 'disabled' : '' }}">
                                                 <i class="fa-solid fa-pen-to-square"></i>{{ __(' Edit ') }}
                                             </a>
-                                        @endif
+                                        @endif --}}
                                         @if ($hasDelete['delete'])
                                             <form action="{{ route('keterangan.destroy', $keterangan->keterangan_id) }}"
                                                 method="POST" style="display:inline;"

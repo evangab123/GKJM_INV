@@ -5,7 +5,10 @@
 @section('main-content')
     @php
         use App\Helpers\PermissionHelper;
-        $hasAccess = PermissionHelper::AnyCanEditBarang();
+        $hasCreate = PermissionHelper::AnyCanCreateBarang();
+        $hasEdit = PermissionHelper::AnyCanEditBarang();
+        $hasAccess = PermissionHelper::AnyHasAccesstoBarang();
+        $hasDelete = PermissionHelper::AnyCanDeleteBarang();
     @endphp
     <!-- Main Content -->
     <div class="row mb-3">
@@ -22,14 +25,16 @@
                 </a>
             @else
                 <!-- Tombol Edit -->
-                @if ($hasAccess['edit'])
+                @if ($hasEdit['edit'])
                     <a href="{{ route('barang.edit', $barang->kode_barang) }}" class="btn btn-primary ml-2">
                         <i class="fa-solid fa-pen-to-square"></i> {{ __('Edit') }}
                     </a>
                 @endif
             @endif
-            <a href="{{ route('barang.keterangan', $barang->kode_barang) }}"
-                class="btn btn-info ml-2">{{ __('lihat Keterangan') }}</a>
+            @if ($hasAccess['access'])
+                <a href="{{ route('barang.keterangan', $barang->kode_barang) }}"
+                    class="btn btn-info ml-2">{{ __('lihat Keterangan') }}</a>
+            @endif
         </div>
     </div>
 
