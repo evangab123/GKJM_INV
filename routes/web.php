@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PemakaianController;
 use App\Http\Controllers\PenghapusanBarangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PenggunaController;
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
         ->middleware(['role:Super Admin||Admin Ruang||Majelis']);
 
     Route::resource('penghapusan', PenghapusanBarangController::class);
+    Route::resource('pemakaian', PemakaianController::class);
 });
 
 Route::get('/pengguna', [PenggunaController::class, 'index'])

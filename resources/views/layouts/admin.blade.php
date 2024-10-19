@@ -115,7 +115,7 @@
                         <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
                             href={{ route('barang.index') }}>{{ __('List Barang') }}</a>
                         <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}" href={{ route('penghapusan.index') }}>{{ __('Penghapusan Barang') }}</a>
-                        <a class="collapse-item {{ Nav::isRoute('barang.index') }}" href={{ route('barang.index') }}>{{ __('Pemakaian Barang') }}</a>
+                        <a class="collapse-item {{ Nav::isRoute('pemakaian.index') }}" href={{ route('pemakaian.index') }}>{{ __('Pemakaian Barang') }}</a>
                     </div>
                 </div>
             </li>

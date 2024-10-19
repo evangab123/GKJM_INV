@@ -2,6 +2,11 @@
 @section('title', __('Daftar Penghapusan | Inventaris GKJM'))
 
 @section('main-content')
+    @php
+        use App\Helpers\PermissionHelper;
+        $hasAccess = PermissionHelper::AnyCanAccessPenghapusan();
+        $hasDelete = PermissionHelper::AnyCanDeletePenghapusan();
+    @endphp
 
     <div class="container-fluid">
 
@@ -15,7 +20,8 @@
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Penghapusan Barang') }}</h6>
                 <form action="{{ route('penghapusan.index') }}" method="GET" class="form-inline mt-3">
-                    <input type="text" name="search" class="form-control" placeholder="{{ __('Cari...') }}" value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="{{ __('Cari...') }}"
+                        value="{{ request('search') }}">
                     <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
                 </form>
             </div>
@@ -30,7 +36,9 @@
                                 <th scope="col">{{ __('Tanggal Penghapusan') }}</th>
                                 <th scope="col">{{ __('Alasan Penghapusan') }}</th>
                                 <th scope="col">{{ __('Nilai Sisa') }}</th>
-                                <th scope="col">{{ __('Aksi') }}</th>
+                                @if ($hasDelete['delete'])
+                                    <th scope="col">{{ __('Aksi') }}</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -38,21 +46,27 @@
                                 <tr>
                                     <td scope="row">{{ $loop->iteration }}</td>
                                     <td>{{ $item->kode_barang }}</td>
-                                    <td>{{ $item->tanggal_penghapusan}}</td>
+                                    <td>{{ $item->tanggal_penghapusan }}</td>
                                     <td>{{ $item->alasan_penghapusan }}</td>
                                     <td>{{ number_format($item->nilai_sisa, 2) }}</td>
-                                    <td style="width:120px">
-                                        <div class="d-flex">`
-                                            <form action="{{ route('penghapusan.destroy', $item->penghapusan_id) }}" method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <button type="submit" class="btn btn-danger"
-                                                    onclick="return confirm('{{ __('Are you sure to delete this record?') }}')">
-                                                    <i class="fas fa-trash"></i> {{ __('Hapus') }}
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    @if (
+                                        $hasDelete['delete'] &&
+                                            \Carbon\Carbon::parse($item->created_at)->diffInDays(now()) <= (int) env('DELETE_PERIOD_DAYS', 7))
+                                        <td style="width:120px">
+                                            <div class="d-flex">
+                                                <form action="{{ route('penghapusan.destroy', $item->penghapusan_id) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <button type="submit" class="btn btn-danger"
+                                                        onclick="return confirm('{{ __('Are you sure to delete this record?') }}')">
+                                                        <i class="fas fa-trash"></i> {{ __('Hapus') }}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    @endif
+
                                 </tr>
                             @endforeach
                         </tbody>

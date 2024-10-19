@@ -75,39 +75,34 @@
                         </thead>
                         <tbody>
                             @foreach ($keteranganList as $keterangan)
-                                @php
-                                    $dateDiff = \Carbon\Carbon::parse($keterangan->tanggal)->diffInDays(
-                                        \Carbon\Carbon::now(),
-                                    );
-                                @endphp
                                 <tr>
                                     <td scope="row">{{ $loop->iteration }}</td>
                                     <td>{{ $keterangan->tanggal }}</td>
                                     <td>{{ $keterangan->keterangan }}</td>
                                     @if ($hasDelete['delete'])
-                                    <td style="width: 200px;">
-                                        {{-- @if ($hasEdit['edit'])
-                                            <a href="{{ route('keterangan.edit', $keterangan->keterangan_id) }}"
-                                                class="btn btn-warning {{ $dateDiff > 7 ? 'disabled' : '' }}">
-                                                <i class="fa-solid fa-pen-to-square"></i>{{ __(' Edit ') }}
-                                            </a>
-                                        @endif --}}
-                                        @if ($hasDelete['delete'])
+                                        <td style="width: 200px;">
                                             <form action="{{ route('keterangan.destroy', $keterangan->keterangan_id) }}"
                                                 method="POST" style="display:inline;"
                                                 onsubmit="return confirm('{{ __('Apakah Anda yakin ingin menghapus?') }}');">
                                                 @csrf
                                                 @method('DELETE')
+
+                                                @php
+                                                    $dateDiff = \Carbon\Carbon::parse($keterangan->tanggal)->diffInDays(
+                                                        now(),
+                                                    );
+                                                @endphp
+
                                                 <button type="submit"
-                                                    class="btn btn-danger {{ $dateDiff > 7 ? 'disabled' : '' }}">
+                                                    class="btn btn-danger {{ $dateDiff > (int) env('DELETE_PERIOD_DAYS', 7) ? 'disabled' : '' }}">
                                                     <i class="fas fa-trash"></i> {{ __(' Hapus!') }}
                                                 </button>
                                             </form>
-                                        @endif
-                                    </td>
+                                        </td>
                                     @endif
                                 </tr>
                             @endforeach
+
                         </tbody>
                     </table>
                 </div>

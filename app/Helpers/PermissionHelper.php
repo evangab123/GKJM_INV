@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\Pengguna;
 use App\Models\Ruang;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
 
 class PermissionHelper
 {
@@ -20,6 +21,19 @@ class PermissionHelper
 
         return $permruangs;
     }
+    public static function userHasPermission($permission)
+    {
+        $pengguna = Auth::user();
+
+        if (!$pengguna) {
+            return false;
+        }
+        $userPermissions = $pengguna->permissions->pluck('name')->toArray();
+
+        return in_array($permission, $userPermissions);
+    }
+
+
 
     public static function AnyHasAccessToBarang()
     {
@@ -30,16 +44,16 @@ class PermissionHelper
 
         $permruangs = self::getRoomList();
         $hasAccess = false;
-        $ruangs=[];
+        $ruangs = [];
 
         foreach ($permruangs as $room) {
             if (
-                $pengguna->can('lihat-barang-' . strtolower($room)) ||
-                $pengguna->can('semua-barang-' . strtolower($room)) ||
-                $pengguna->can('semua-semua-' . strtolower($room))
+                self::userHasPermission('lihat-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $hasAccess = true;
-                $ruangs[]=$room;
+                $ruangs[] = $room;
             }
         }
         if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
@@ -58,15 +72,15 @@ class PermissionHelper
         }
         $permruangs = self::getRoomList();
         $canMake = false;
-        $ruangs=[];
+        $ruangs = [];
         foreach ($permruangs as $room) {
             if (
-                $pengguna->can('buat-barang-' . strtolower($room)) ||
-                $pengguna->can('semua-barang-' . strtolower($room)) ||
-                $pengguna->can('semua-semua-' . strtolower($room))
+                self::userHasPermission('buat-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canMake = true;
-                $ruangs[]=$room;
+                $ruangs[] = $room;
             }
         }
         if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
@@ -87,12 +101,12 @@ class PermissionHelper
 
         foreach ($permruangs as $room) {
             if (
-                $pengguna->can('perbarui-barang-' . strtolower($room)) ||
-                $pengguna->can('semua-barang-' . strtolower($room)) ||
-                $pengguna->can('semua-semua-' . strtolower($room))
+                self::userHasPermission('perbarui-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canEdit = true;
-                $ruangs[]=$room;
+                $ruangs[] = $room;
             }
         }
         if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
@@ -110,18 +124,76 @@ class PermissionHelper
         }
         $permruangs = self::getRoomList();
         $canDelete = false;
-        $ruangs=[];
+        $ruangs = [];
 
         foreach ($permruangs as $room) {
             if (
-                $pengguna->can('hapus-barang-' . strtolower($room)) ||
-                $pengguna->can('semua-barang-' . strtolower($room))||
-                $pengguna->can('semua-semua-' . strtolower($room))
+                self::userHasPermission('hapus-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canDelete = true;
-                $ruangs[]=$room;
+                $ruangs[] = $room;
             }
         }
+        if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
+            $ruangs = [];
+        }
+
+        return ['delete' => $canDelete, 'room' => $ruangs];
+    }
+
+    public static function AnyCanAccessPenghapusan()
+    {
+        $pengguna = Auth::user();
+        if (!$pengguna) {
+            return false;
+        }
+
+        $permruangs = self::getRoomList();
+        $canAccess = false;
+        $ruangs = [];
+
+        foreach ($permruangs as $room) {
+            if (
+                self::userHasPermission('lihat-penghapusan-' . strtolower($room)) ||
+                self::userHasPermission('semua-penghapusan-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
+            ) {
+                $canAccess = true;
+                $ruangs[] = $room;
+            }
+        }
+
+        if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
+            $ruangs = [];
+        }
+
+        return ['access' => $canAccess, 'room' => $ruangs];
+    }
+
+    public static function AnyCanDeletePenghapusan()
+    {
+        $pengguna = Auth::user();
+        if (!$pengguna) {
+            return false;
+        }
+
+        $permruangs = self::getRoomList();
+        $canDelete = false;
+        $ruangs = [];
+
+        foreach ($permruangs as $room) {
+            if (
+                self::userHasPermission('hapus-penghapusan-' . strtolower($room)) ||
+                self::userHasPermission('semua-penghapusan-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
+            ) {
+                $canDelete = true;
+                $ruangs[] = $room;
+            }
+        }
+
         if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
             $ruangs = [];
         }

@@ -30,6 +30,9 @@ class BarangController extends Controller
     {
         $query = Barang::with('ruang', 'kondisi', 'kategori');
         $accessResult = PermissionHelper::AnyHasAccessToBarang();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
         if (!empty($accessResult['room'])) {
             $query->whereIn('ruang_id', function ($q) use ($accessResult) {
                 $q->select('ruang_id')->from('ruang')->whereIn('nama_ruang', $accessResult['room']);

@@ -31,6 +31,7 @@
                         <option value="">{{ __('Pilih Entitas...') }}</option>
                         <option value="barang">{{ __('Barang') }}</option>
                         <option value="pengadaan">{{ __('Pengadaan') }}</option>
+                        <option value="penghapusan">{{ __('Penghapusan') }}</option>
                         <option value="pemakai">{{ __('Pemakai') }}</option>
                         <option value="peminjam">{{ __('Peminjam') }}</option>
                         <option value="semua">{{ __('Semua') }}</option>

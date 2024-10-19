@@ -116,7 +116,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        
+
         Schema::create('LogBarang', function (Blueprint $table) {
             $table->id('log_id');
             $table->string('kode_barang',50);
