@@ -4,9 +4,6 @@
 @section('main-content')
 
     <div class="container-fluid">
-
-        <a href="{{ route('role.create') }}" class="btn btn-primary mb-3">Buat Role Pengguna!</a>
-
         @if (session('message'))
             <div class="alert alert-success">
                 {{ session('message') }}
@@ -14,8 +11,10 @@
         @endif
 
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar List') }}</h6>
+            <div class="card-header pt-3 d-flex justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Role') }}</h6>
+                <a href="{{ route('role.create') }}" class="btn btn-success mb-3">
+                    <i class="fa-solid fa-plus"></i> {{ __('Buat Role!') }}</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

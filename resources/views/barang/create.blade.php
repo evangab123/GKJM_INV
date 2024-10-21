@@ -27,8 +27,9 @@
                         <div class="form-group">
                             <label for="perolehan_barang">{{ __('Perolehan') }}</label>
                             <select class="form-control" id="perolehan_barang" name="perolehan_barang">
-                                <option value="Hibah">{{ __('Hibah') }}</option>
+                                <option value="Persembahan">{{ __('Persembahan') }}</option>
                                 <option value="Pembelian">{{ __('Pembelian') }}</option>
+                                <option value="Pembuatan">{{ __('Pembuatan') }}</option>
                             </select>
                         </div>
                         <div class="form-group">

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PemakaianController;
+use App\Http\Controllers\PengadaanController;
 use App\Http\Controllers\PenghapusanBarangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PenggunaController;
@@ -54,6 +55,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('penghapusan', PenghapusanBarangController::class);
     Route::resource('pemakaian', PemakaianController::class);
+    Route::resource('pengadaan', PengadaanController::class);
 });
 
 Route::get('/pengguna', [PenggunaController::class, 'index'])
@@ -85,7 +87,7 @@ Route::delete('/roles/{role}/permissions/{permission}', [RoleController::class, 
 
 // Rute barang
 Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
-Route::get('/barang/{kode_barang}', [BarangController::class, 'show'])->name('barang.show');
+// Route::get('/barang/{kode_barang}', [BarangController::class, 'show'])->name('barang.show');
 
 // // Middleware untuk mengelola barang yang dapat diakses oleh role tertentu
 Route::put('/barang/{kode_barang}/edit', [BarangController::class, 'update_detail'])
@@ -102,5 +104,5 @@ Route::post('/keterangan/store/{id}', [BarangController::class, 'storeKeterangan
 
 Route::delete('/keterangan/{id}', [BarangController::class, 'delKeterangan'])->name('keterangan.destroy');
 
-Route::delete('/penghapusan/{id}', [PenghapusanBarangController::class, 'destroy'])->name('penghapusan.destroy');
+// Route::delete('/penghapusan/{id}', [PenghapusanBarangController::class, 'destroy'])->name('penghapusan.destroy');
 

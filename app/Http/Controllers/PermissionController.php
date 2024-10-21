@@ -10,14 +10,23 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Permission::query();
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%");
+            });
+        }
+        $data = $query->paginate(7)->appends($request->only('search'));
         return view('hak.list', [
             'title' => 'Master Data Hak',
-            'Roles' => Role::paginate(10),
-            'permissions' => Permission::all()
+            'Roles' => Role::all(),
+            'permissions' => $data,
         ]);
     }
+
 
     public function create()
     {

@@ -68,11 +68,11 @@
             </div>
 
             @php
-            use App\Helpers\PermissionHelper;
-            $hasAccess = PermissionHelper::AnyHasAccessToBarang();
+                use App\Helpers\PermissionHelper;
+                $hasAccess = PermissionHelper::AnyHasAccessToBarang();
             @endphp
 
-            @if (Auth::check() && (Auth::user()->hasRole('Super Admin')))
+            @if (Auth::check() && Auth::user()->hasRole('Super Admin'))
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseData"
                         aria-expanded="true" aria-controls="collapseData">
@@ -114,11 +114,22 @@
                         <h6 class="collapse-header">{{ __('CRUD Barang') }}:</h6>
                         <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
                             href={{ route('barang.index') }}>{{ __('List Barang') }}</a>
-                        <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}" href={{ route('penghapusan.index') }}>{{ __('Penghapusan Barang') }}</a>
-                        <a class="collapse-item {{ Nav::isRoute('pemakaian.index') }}" href={{ route('pemakaian.index') }}>{{ __('Pemakaian Barang') }}</a>
+                        <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}"
+                            href={{ route('penghapusan.index') }}>{{ __('Penghapusan Barang') }}</a>
+                        <a class="collapse-item {{ Nav::isRoute('pemakaian.index') }}"
+                            href={{ route('pemakaian.index') }}>{{ __('Pemakaian Barang') }}</a>
                     </div>
                 </div>
             </li>
+
+            <!-- Nav Item - Pengadaan -->
+            <li class="nav-item {{ Nav::isRoute('pengadaan.index') }}">
+                <a class="nav-link" href="{{ route('pengadaan.index') }}">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>{{ __('Pengadaan') }}</span>
+                </a>
+            </li>
+
 
             <!-- Nav Item - Profile -->
             <li class="nav-item {{ Nav::isRoute('profile') }}">

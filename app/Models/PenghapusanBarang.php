@@ -25,7 +25,7 @@ class PenghapusanBarang extends Model
     public function barang()
     {
         // $results = DB::select('
-        // SELECT pb.*, b.*
+        // SELECT b.*
         // FROM PenghapusanBarang as pb
         // JOIN Barang as b ON pb.kode_barang = b.kode_barang
         // ');

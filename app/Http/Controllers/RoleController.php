@@ -12,11 +12,19 @@ use Illuminate\Contracts\View\Factory;
 class RoleController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
+        $query = Role::with('roles','permissions');
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%");
+            });
+        }
+        $data = $query->paginate(7)->appends($request->only('search'));
         return view('role.list', [
             'title' => 'Master Data Role',
-            'Roles' => Role::paginate(10),
+            'Roles' => $data,
             'permission' => Permission::all()
         ]);
     }

@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('merek_barang', 100);
             $table->decimal('harga_pembelian', 15, 2)->nullable();
             $table->year('tahun_pembelian');
-            $table->enum('perolehan_barang', ['Hibah', 'Pembelian']);
+            $table->enum('perolehan_barang', ['Persembahan', 'Pembelian','Pembuatan']);
             $table->decimal('nilai_ekonomis_barang', 15, 2);
             $table->integer('jumlah');
             $table->enum('status_barang', ['Dipinjam', 'Diperbaiki', 'Dihapus','Ada','Dipakai']);
@@ -62,7 +62,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        //need working on pengajuanpengadaanm apakah perlu trigger
+
         Schema::create('PengajuanPengadaan', function (Blueprint $table) {
             $table->id('pengajuan_id');
             // $table->string('kode_barang',50);

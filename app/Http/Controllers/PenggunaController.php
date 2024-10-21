@@ -23,13 +23,22 @@ class PenggunaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): View|Factory
+    public function index(Request $request): View|Factory
     {
-
-        // dd(Auth::user()->role);
+        $query = Pengguna::with('roles','permissions');
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_pengguna', 'LIKE', "%$search%")
+                    ->orWhere('username', 'LIKE', "%$search%")
+                    ->orWhere('jabatan', 'LIKE', "%$search%")
+                    ->orWhere('email', 'LIKE', "%$search%");
+            });
+        }
+        $data = $query->paginate(7)->appends($request->only('search'));
         return view('pengguna.list', [
             'title' => 'Master Data Pengguna',
-            'pengguna' => Pengguna::paginate(10)
+            'pengguna' => $data
         ]);
     }
 

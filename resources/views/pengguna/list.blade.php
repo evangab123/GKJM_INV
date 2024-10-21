@@ -4,17 +4,26 @@
 @section('main-content')
 
     <div class="container-fluid">
-        <a href="{{ route('pengguna.create') }}" class="btn btn-primary mb-3">{{ __('Buat Pengguna!') }}</a>
-
         @if (session('message'))
             <div class="alert alert-success">
                 {{ session('message') }}
             </div>
         @endif
-
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Pengguna') }}</h6>
+        <div class="card shadow">
+            <div class="card-header pt-3 d-flex justify-content-between">
+                <div class="d-flex align-items-center">
+                    {{-- Search Form --}}
+                    <form action="{{ route('pengguna.index') }}" method="GET" class="form-inline">
+                        <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
+                            value="{{ request('search') }}" style="max-width: 200px;">
+                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
+                        <a href="{{ route('pengguna.index') }}" class="btn btn-secondary ml-2">
+                            <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
+                        </a>
+                    </form>
+                </div>
+                <a href="{{ route('pengguna.create') }}" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> {{ __('Buat Pengguna!') }}</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -51,8 +60,8 @@
                                     </td>
                                     <td style="width:200px">
                                         <div class="d-flex">
-                                            <a href="{{ route('pengguna.edit', $user->pengguna_id) }}" title="{{ __('Edit') }}"
-                                                class="btn btn-warning mr-2">
+                                            <a href="{{ route('pengguna.edit', $user->pengguna_id) }}"
+                                                title="{{ __('Edit') }}" class="btn btn-warning mr-2">
                                                 <i class="fa-solid fa-pen-to-square"></i> {{ __('Edit!') }}
                                             </a>
                                             <form action="{{ route('pengguna.destroy', $user->pengguna_id) }}"
@@ -73,8 +82,16 @@
                 </div>
             </div>
         </div>
-
-        {{ $pengguna->links() }}
+        <!-- Pagination and Info -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="show-info">
+                {{ __('Melihat') }} {{ $pengguna->firstItem() }} {{ __('hingga') }} {{ $pengguna->lastItem() }}
+                {{ __('dari total') }} {{ $pengguna->total() }} {{ __('Barang') }}
+            </div>
+            <div class="pagination">
+                {{ $pengguna->links() }}
+            </div>
+        </div>
     </div>
 
 @endsection
