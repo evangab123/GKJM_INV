@@ -14,7 +14,7 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
-        $query = Role::with('roles','permissions');
+        $query = Role::with('permissions');
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {

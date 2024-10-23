@@ -30,6 +30,10 @@ class RuangSeeder extends Seeder
             ['nama_ruang' => 'R. Pastori', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['nama_ruang' => 'R. Koster', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['nama_ruang' => 'R. Mulmed', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['nama_ruang' => 'R. Sekolah Minggu', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['nama_ruang' => 'R. Gudang Keamanan', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['nama_ruang' => 'R. Pastori 1', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['nama_ruang' => 'R. Pastori 2', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
         ]);
     }
 }

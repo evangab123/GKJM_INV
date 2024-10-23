@@ -42,7 +42,7 @@
                         <tbody>
                             @foreach ($pengguna as $user)
                                 <tr>
-                                    <td scope="row">{{ $loop->iteration }}</td>
+                                    <td scope="row">{{ ($pengguna->currentPage() - 1) * $pengguna->perPage() + $loop->iteration }}</td>
                                     <td>{{ $user->nama_pengguna }}</td>
                                     <td>{{ $user->jabatan }}</td>
                                     <td>{{ $user->email }}</td>
@@ -86,7 +86,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="show-info">
                 {{ __('Melihat') }} {{ $pengguna->firstItem() }} {{ __('hingga') }} {{ $pengguna->lastItem() }}
-                {{ __('dari total') }} {{ $pengguna->total() }} {{ __('Barang') }}
+                {{ __('dari total') }} {{ $pengguna->total() }} {{ __('Pengguna') }}
             </div>
             <div class="pagination">
                 {{ $pengguna->links() }}

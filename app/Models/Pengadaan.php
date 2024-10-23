@@ -12,11 +12,15 @@ class Pengadaan extends Model
 
     protected $table = 'PengajuanPengadaan';
 
+    protected $primaryKey = 'pengadaan_id';
+
     protected $fillable = [
+        'nama_barang',
         'jumlah',
         'tanggal_pengajuan',
         'status_pengajuan',
         'pengaju_id',
+        'referensi',
         'keterangan',
     ];
 

@@ -207,13 +207,11 @@ class BarangController extends Controller
         if (!$accessResult['buat']) {
             abort(403, 'Unauthorized action.');
         }
-        // Validate the incoming request
         $request->validate([
             'keterangan' => 'required|string|max:255',
             'tanggal' => 'required|date',
         ]);
 
-        // Create a new entry in the DetilKeteranganBarang table
         DetilKeteranganBarang::create([
             'kode_barang' => $id,
             'keterangan' => $request->input('keterangan'),

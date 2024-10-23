@@ -106,3 +106,17 @@ Route::delete('/keterangan/{id}', [BarangController::class, 'delKeterangan'])->n
 
 // Route::delete('/penghapusan/{id}', [PenghapusanBarangController::class, 'destroy'])->name('penghapusan.destroy');
 
+
+// Rute untuk pengadaan
+Route::prefix('pengadaan')->group(function () {
+    Route::get('/', [PengadaanController::class, 'index'])->name('pengadaan.index');
+    Route::post('/', [PengadaanController::class, 'store'])->name('pengadaan.store');
+    Route::put('{id}/approve', [PengadaanController::class, 'approve'])->name('pengadaan.approve');
+    Route::put('{id}/reject', [PengadaanController::class, 'reject'])->name('pengadaan.reject');
+    Route::get('{id}/edit', [PengadaanController::class, 'edit'])->name('pengadaan.edit');
+    Route::put('{id}', [PengadaanController::class, 'update'])->name('pengadaan.update');
+    Route::delete('{id}', [PengadaanController::class, 'destroy'])->name('pengadaan.destroy');
+});
+
+
+

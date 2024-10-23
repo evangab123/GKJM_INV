@@ -24,7 +24,7 @@
                     </form>
                 </div>
                 <a href="{{ route('hak.create') }}" class="btn btn-success">
-                    <i class="fa-solid fa-plus"></i> Buat Hak!
+                    <i class="fa-solid fa-plus"></i> {{ __('Buat Hak!') }}
                 </a>
             </div>
 
@@ -41,7 +41,7 @@
                         <tbody>
                             @foreach ($permissions as $permisi)
                                 <tr>
-                                    <td scope="row">{{ $loop->iteration }}</td>
+                                    <td scope="row">{{ ($permissions->currentPage() - 1) * $permissions->perPage() + $loop->iteration }}</td>
                                     <td>{{ $permisi->name }}</td>
                                     <td style="width:110px">
                                         <div class="d-flex">
@@ -66,7 +66,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="show-info">
                 {{ __('Melihat') }} {{ $permissions->firstItem() }} {{ __('hingga') }} {{ $permissions->lastItem() }}
-                {{ __('dari total') }} {{ $permissions->total() }} {{ __('Barang') }}
+                {{ __('dari total') }} {{ $permissions->total() }} {{ __('Hak') }}
             </div>
             <div class="pagination">
                 {{ $permissions->links() }}

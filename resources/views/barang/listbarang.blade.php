@@ -54,7 +54,8 @@
                         <tbody>
                             @foreach ($barang as $bar)
                                 <tr>
-                                    <td scope="row">{{ $loop->iteration }}</td>
+                                    <td scope="row">
+                                        {{ ($barang->currentPage() - 1) * $barang->perPage() + $loop->iteration }}</td>
                                     <td>{{ $bar['kode_barang'] }}</td>
                                     <td>{{ $bar['merek_barang'] }}</td>
                                     <td>{{ $bar->ruang->nama_ruang ?? __('N/A') }}</td>
@@ -97,17 +98,12 @@
                                                 <!-- Delete Button -->
                                                 @if ($hasDelete['delete'])
                                                     @if ($bar->status_barang === 'Ada')
-                                                        <!-- Delete Button -->
                                                         <button type="button" class="btn btn-danger ml-2"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteModal{{ $bar['kode_barang'] }}">
+                                                            onclick="openDeleteModal('{{ $bar['kode_barang'] }}', '{{ $bar['merek_barang'] }}')">
                                                             <i class="fas fa-trash"></i> {{ __('Hapus!') }}
                                                         </button>
                                                     @else
-                                                        <!-- Delete Button Not Ada-->
-                                                        <button type="button" class="btn btn-danger ml-2"
-                                                            data-toggle="modal" disabled
-                                                            data-target="#deleteModal{{ $bar['kode_barang'] }}">
+                                                        <button type="button" class="btn btn-danger ml-2" disabled>
                                                             <i class="fas fa-trash"></i> {{ __('Hapus!') }}
                                                         </button>
                                                     @endif
@@ -116,48 +112,6 @@
                                         </td>
                                     @endif
                                 </tr>
-                                @if ($barang)
-                                    <div class="modal fade" id="deleteModal{{ $bar['kode_barang'] }}" tabindex="-1"
-                                        role="dialog" aria-labelledby="deleteModalLabel{{ $bar['kode_barang'] }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="deleteModalLabel{{ $bar['kode_barang'] }}">
-                                                        {{ __('Konfirmasi Hapus') }}
-                                                    </h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                  </div>
-                                                <div class="modal-body">
-                                                    {{ __('Apakah Anda yakin ingin menghapus item ini?') }}
-                                                    <div class="mb-3">
-                                                        <label for="alasan{{ $bar['kode_barang'] }}"
-                                                            class="form-label">Alasan Penghapusan:</label>
-                                                        <input type="text" class="form-control"
-                                                            id="alasan{{ $bar['kode_barang'] }}" name="alasan" required>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">{{ __('Batal') }}</button>
-                                                    <form action="{{ route('barang.destroy', $bar['kode_barang']) }}"
-                                                        method="POST" class="d-inline"
-                                                        id="deleteForm{{ $bar['kode_barang'] }}">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <input type="hidden" name="alasan"
-                                                            id="hiddenAlasan{{ $bar['kode_barang'] }}">
-                                                        <button type="button" class="btn btn-danger"
-                                                            onclick="submitDeleteForm('{{ $bar['kode_barang'] }}')">{{ __('Hapus') }}</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -178,6 +132,39 @@
         </div>
         <!-- End of Main Content -->
     </div>
+
+    <!-- Modal Hapus -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">{{ __('Konfirmasi Hapus') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ __('Apakah Anda yakin ingin menghapus item ini?') }}
+                    <div class="mb-3">
+                        <label for="alasan" class="form-label">Alasan Penghapusan:</label>
+                        <input type="text" class="form-control" id="alasan" name="alasan" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Batal') }}</button>
+                    <form action="" method="POST" class="d-inline" id="deleteForm">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="alasan" id="hiddenAlasan">
+                        <button type="button" class="btn btn-danger"
+                            onclick="submitDeleteForm()">{{ __('Hapus') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('notif')
@@ -207,9 +194,16 @@
 @endpush
 
 <script>
-    function submitDeleteForm(barangId) {
-        var alasan = document.getElementById('alasan' + barangId).value;
-        document.getElementById('hiddenAlasan' + barangId).value = alasan;
-        document.getElementById('deleteForm' + barangId).submit();
+    function openDeleteModal(barangId, barangMerek) {
+        document.getElementById('deleteModalLabel').innerText = `Hapus ${barangMerek}`;
+        document.getElementById('hiddenAlasan').value = ''; // Reset alasan
+        document.getElementById('deleteForm').action = `/barang/${barangId}`; // Ganti URL action form
+        $('#deleteModal').modal('show'); // Tampilkan modal
+    }
+
+    function submitDeleteForm() {
+        var alasan = document.getElementById('alasan').value;
+        document.getElementById('hiddenAlasan').value = alasan;
+        document.getElementById('deleteForm').submit();
     }
 </script>

@@ -17,13 +17,18 @@
         @endif
 
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Penghapusan Barang') }}</h6>
-                <form action="{{ route('penghapusan.index') }}" method="GET" class="form-inline mt-3">
-                    <input type="text" name="search" class="form-control" placeholder="{{ __('Cari...') }}"
-                        value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
-                </form>
+            <div class="card-header pt-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    {{-- Search Form --}}
+                    <form action="{{ route('penghapusan.index') }}" method="GET" class="form-inline">
+                        <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
+                            value="{{ request('search') }}" style="max-width: 200px;">
+                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
+                        <a href="{{ route('penghapusan.index') }}" class="btn btn-secondary ml-2">
+                            <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
+                        </a>
+                    </form>
+                </div>
             </div>
 
             <div class="card-body">
@@ -44,7 +49,7 @@
                         <tbody>
                             @foreach ($penghapusan as $item)
                                 <tr>
-                                    <td scope="row">{{ $loop->iteration }}</td>
+                                    <td scope="row">{{ ($penghapusan->currentPage() - 1) * $penghapusan->perPage() + $loop->iteration }}</td>
                                     <td>{{ $item->kode_barang }}</td>
                                     <td>{{ $item->tanggal_penghapusan }}</td>
                                     <td>{{ $item->alasan_penghapusan }}</td>

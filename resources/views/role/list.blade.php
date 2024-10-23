@@ -12,9 +12,20 @@
 
         <div class="card shadow mb-4">
             <div class="card-header pt-3 d-flex justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Role') }}</h6>
-                <a href="{{ route('role.create') }}" class="btn btn-success mb-3">
-                    <i class="fa-solid fa-plus"></i> {{ __('Buat Role!') }}</a>
+                <div class="d-flex align-items-center">
+                    {{-- Search Form --}}
+                    <form action="{{ route('role.index') }}" method="GET" class="form-inline">
+                        <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
+                            value="{{ request('search') }}" style="max-width: 200px;">
+                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
+                        <a href="{{ route('role.index') }}" class="btn btn-secondary ml-2">
+                            <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
+                        </a>
+                    </form>
+                </div>
+                <a href="{{ route('role.create') }}" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> {{ __('Buat Role!') }}
+                </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -30,7 +41,7 @@
                         <tbody>
                             @foreach ($Roles as $Role)
                                 <tr>
-                                    <td scope="row">{{ $loop->iteration }}</td>
+                                    <td scope="row">{{ ($Roles->currentPage() - 1) * $Roles->perPage() + $loop->iteration }}</td>
                                     <td>{{ $Role->name }}</td>
                                     <td>
                                         @if ($Role->permissions->count())
@@ -67,7 +78,16 @@
             </div>
         </div>
 
-        {{ $Roles->links() }}
+        <!-- Pagination and Info -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="show-info">
+                {{ __('Melihat') }} {{ $Roles->firstItem() }} {{ __('hingga') }} {{ $Roles->lastItem() }}
+                {{ __('dari total') }} {{ $Roles->total() }} {{ __('Roles') }}
+            </div>
+            <div class="pagination">
+                {{ $Roles->links() }}
+            </div>
+        </div>
     </div>
 
 @endsection
