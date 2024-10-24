@@ -29,6 +29,7 @@ class PermissionHelper
             return false;
         }
         $userPermissions = $pengguna->permissions->pluck('name')->toArray();
+        // dd($userPermissions);
 
         return in_array($permission, $userPermissions);
     }
@@ -199,5 +200,116 @@ class PermissionHelper
         }
 
         return ['delete' => $canDelete, 'room' => $ruangs];
+    }
+
+    public static function AnyCanAccessPengadaan()
+    {
+        $pengguna = Auth::user();
+        if (!$pengguna) {
+            return false;
+        }
+
+        $permruangs = self::getRoomList();
+        $canAccess = false;
+        $ruangs = [];
+
+        foreach ($permruangs as $room) {
+            if (
+                self::userHasPermission('lihat-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
+            ) {
+                $canAccess = true;
+                $ruangs[] = $room;
+            }
+        }
+
+        if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
+            $ruangs = [];
+        }
+
+        return ['access' => $canAccess, 'room' => $ruangs];
+    }
+
+    public static function AnyCanCreatePengadaan()
+    {
+        $pengguna = Auth::user();
+        if (!$pengguna) {
+            return false;
+        }
+        $permruangs = self::getRoomList();
+        $canMake = false;
+        $ruangs = [];
+        foreach ($permruangs as $room) {
+            if (
+                self::userHasPermission('buat-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
+            ) {
+                $canMake = true;
+                $ruangs[] = $room;
+            }
+        }
+        if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
+            $ruangs = [];
+        }
+
+        return ['buat' => $canMake, 'room' => $ruangs];
+    }
+
+    public static function AnyCanDeletePengadaan()
+    {
+        $pengguna = Auth::user();
+        if (!$pengguna) {
+            return false;
+        }
+
+        $permruangs = self::getRoomList();
+        $canDelete = false;
+        $ruangs = [];
+
+        foreach ($permruangs as $room) {
+            if (
+                self::userHasPermission('hapus-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
+            ) {
+                $canDelete = true;
+                $ruangs[] = $room;
+            }
+        }
+
+        if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
+            $ruangs = [];
+        }
+
+        return ['delete' => $canDelete, 'room' => $ruangs];
+    }
+
+    public static function AnyCanEditPengadaan()
+    {
+        $pengguna = Auth::user();
+        if (!$pengguna) {
+            return false;
+        }
+        $permruangs = self::getRoomList();
+        $canEdit = false;
+        $ruangs = [];
+
+        foreach ($permruangs as $room) {
+            if (
+                self::userHasPermission('perbarui-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('semua-semua-' . strtolower($room))
+            ) {
+                $canEdit = true;
+                $ruangs[] = $room;
+            }
+        }
+        if (count($ruangs) === 1 && in_array('semua', $ruangs, true)) {
+            $ruangs = [];
+        }
+
+        return ['edit' => $canEdit, 'room' => $ruangs];
     }
 }

@@ -93,10 +93,11 @@
                                                     );
                                                 @endphp
 
-                                                <button type="submit"
-                                                    class="btn btn-danger {{ $dateDiff > (int) env('DELETE_PERIOD_DAYS', 7) ? 'disabled' : '' }}">
+                                                <button type="submit" class="btn btn-danger"
+                                                    {{ $dateDiff > (int) env('DELETE_PERIOD_DAYS', 7) ? 'disabled' : '' }}>
                                                     <i class="fas fa-trash"></i> {{ __(' Hapus!') }}
                                                 </button>
+
                                             </form>
                                         </td>
                                     @endif

@@ -54,23 +54,28 @@
                                     <td>{{ $item->tanggal_penghapusan }}</td>
                                     <td>{{ $item->alasan_penghapusan }}</td>
                                     <td>{{ number_format($item->nilai_sisa, 2) }}</td>
-                                    @if (
-                                        $hasDelete['delete'] &&
-                                            \Carbon\Carbon::parse($item->created_at)->diffInDays(now()) <= (int) env('DELETE_PERIOD_DAYS', 7))
-                                        <td style="width:120px">
-                                            <div class="d-flex">
-                                                <form action="{{ route('penghapusan.destroy', $item->penghapusan_id) }}"
-                                                    method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button type="submit" class="btn btn-danger"
-                                                        onclick="return confirm('{{ __('Are you sure to delete this record?') }}')">
-                                                        <i class="fas fa-trash"></i> {{ __('Hapus') }}
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    @endif
+                                    @if ($hasDelete['delete'])
+                                    <td style="width: 200px;">
+                                        <form action="{{ route('penghapusan.destroy', $item->penghapusan_id) }}"
+                                            method="POST" style="display:inline;"
+                                            onsubmit="return confirm('{{ __('Apakah Anda yakin ingin menghapus?') }}');">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            @php
+                                                $dateDiff = \Carbon\Carbon::parse($item->created_at)->diffInDays(
+                                                    now(),
+                                                );
+                                            @endphp
+
+                                            <button type="submit" class="btn btn-danger"
+                                                {{ $dateDiff > (int) env('DELETE_PERIOD_DAYS', 7) ? 'disabled' : '' }}>
+                                                <i class="fas fa-trash"></i> {{ __(' Hapus!') }}
+                                            </button>
+
+                                        </form>
+                                    </td>
+                                @endif
 
                                 </tr>
                             @endforeach

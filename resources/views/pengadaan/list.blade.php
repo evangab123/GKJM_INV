@@ -2,9 +2,14 @@
 @section('title', 'Daftar Pengadaan Barang | Inventaris GKJM')
 
 @section('main-content')
-
+    @php
+        use App\Helpers\PermissionHelper;
+        $hasCreate = PermissionHelper::AnyCanCreatePengadaan();
+        $hasEdit = PermissionHelper::AnyCanEditPengadaan();
+        $hasAccess = PermissionHelper::AnyCanAccessPengadaan();
+        $hasDelete = PermissionHelper::AnyCanDeletePengadaan();
+    @endphp
     <div class="container-fluid">
-
         @if (session('message'))
             <div class="alert alert-success">
                 {{ session('message') }}
@@ -35,13 +40,18 @@
                             <tr>
                                 <th scope="col">{{ __('No') }}</th>
                                 <th scope="col">{{ __('Nama Barang') }}</th>
+                                <th scope="col">{{ __('Jumlah') }}</th>
+                                <th scope="col">{{ __('Referensi') }}</th>
+                                <th scope="col">{{ __('Keterangan') }}</th>
                                 <th scope="col">{{ __('Pengaju') }}</th>
                                 <th scope="col">{{ __('Tanggal Pengajuan') }}</th>
-                                <th scope="col">{{ __('Jumlah') }}</th>
-                                <th scope="col">{{ __('Referensi Barang') }}</th>
-                                <th scope="col">{{ __('Keterangan') }}</th>
                                 <th scope="col">{{ __('Status') }}</th>
-                                <th scope="col">{{ __('Aksi') }}</th>
+                                @if (
+                                    $hasDelete['delete'] ||
+                                        $hasEdit['edit'] ||
+                                        auth()->user()->hasRole(['Super Admin', 'Majelis']))
+                                    <th scope="col">{{ __('Aksi') }}</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -51,8 +61,6 @@
                                         {{ ($pengadaan->currentPage() - 1) * $pengadaan->perPage() + $loop->iteration }}
                                     </td>
                                     <td>{{ $item->nama_barang }}</td>
-                                    <td>{{ $item->pengguna->nama_pengguna }}</td>
-                                    <td>{{ $item->tanggal_pengajuan }}</td>
                                     <td>{{ $item->jumlah }}</td>
                                     <td style="width:120px">
                                         <div class="d-flex">
@@ -62,50 +70,60 @@
                                         </div>
                                     </td>
                                     <td>{{ $item->keterangan }}</td>
+                                    <td>{{ $item->pengguna->nama_pengguna }}</td>
+                                    <td>{{ $item->tanggal_pengajuan }}</td>
                                     <td>{{ $item->status_pengajuan }}</td>
-                                    <td style="width:120px">
-                                        <div class="d-flex">
-                                            <!-- Tombol Setuju -->
-                                            <form action="{{ route('pengadaan.approve', $item->pengadaan_id) }}"
-                                                method="POST" class="mr-2">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-success"
-                                                    onclick="return confirm('{{ __('Apakah Anda yakin ingin menyetujui pengadaan ini?') }}')">
-                                                    <i class="fas fa-check"></i> {{ __('Setuju') }}
-                                                </button>
-                                            </form>
+                                    @if (
+                                        $hasDelete['delete'] ||
+                                            $hasEdit['edit'] ||
+                                            auth()->user()->hasRole(['Super Admin', 'Majelis']))
+                                        <td style="width:120px">
+                                            <div class="d-flex">
+                                                @if (auth()->user()->hasRole(['Super Admin', 'Majelis']))
+                                                    <!-- Tombol Setuju -->
+                                                    <form action="{{ route('pengadaan.approve', $item->pengadaan_id) }}"
+                                                        method="POST" class="mr-2">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="submit" class="btn btn-success"
+                                                            onclick="return confirm('{{ __('Apakah Anda yakin ingin menyetujui pengadaan ini?') }}')">
+                                                            <i class="fas fa-check"></i> {{ __('Setuju') }}
+                                                        </button>
+                                                    </form>
 
-                                            <!-- Tombol Tolak -->
-                                            <form action="{{ route('pengadaan.reject', $item->pengadaan_id) }}"
-                                                method="POST" class="mr-2">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-warning"
-                                                    onclick="return confirm('{{ __('Apakah Anda yakin ingin menolak pengadaan ini?') }}')">
-                                                    <i class="fas fa-times"></i> {{ __('Tolak') }}
-                                                </button>
-                                            </form>
-
-                                            <!-- Tombol Edit -->
-                                            <button class="btn btn-primary mr-2"
-                                                onclick="openEditModal({{ $item->pengadaan_id }}, '{{ $item->nama_barang }}', {{ $item->jumlah }}, '{{ $item->referensi }}', '{{ $item->keterangan }}')">
-                                                <i class="fas fa-edit"></i> {{ __('Edit') }}
-                                            </button>
-
-                                            <!-- Tombol Hapus -->
-                                            <form action="{{ route('pengadaan.destroy', $item->pengadaan_id) }}"
-                                                method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <button type="submit" class="btn btn-danger"
-                                                    onclick="return confirm('{{ __('Apakah Anda yakin ingin menghapus data ini?') }}')">
-                                                    <i class="fas fa-trash"></i> {{ __('Hapus') }}
-                                                </button>
-                                            </form>
-                                        </div>
-
-                                    </td>
+                                                    <!-- Tombol Tolak -->
+                                                    <form action="{{ route('pengadaan.reject', $item->pengadaan_id) }}"
+                                                        method="POST" class="mr-2">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="submit" class="btn btn-warning"
+                                                            onclick="return confirm('{{ __('Apakah Anda yakin ingin menolak pengadaan ini?') }}')">
+                                                            <i class="fas fa-times"></i> {{ __('Tolak') }}
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                @if ($hasEdit['edit'])
+                                                    <!-- Tombol Edit -->
+                                                    <button class="btn btn-primary mr-2"
+                                                        onclick="openEditModal({{ $item->pengadaan_id }}, '{{ $item->nama_barang }}', {{ $item->jumlah }}, '{{ $item->referensi }}', '{{ $item->keterangan }}')">
+                                                        <i class="fas fa-edit"></i> {{ __('Edit') }}
+                                                    </button>
+                                                @endif
+                                                @if ($hasDelete['delete'])
+                                                    <!-- Tombol Hapus -->
+                                                    <form action="{{ route('pengadaan.destroy', $item->pengadaan_id) }}"
+                                                        method="post">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger"
+                                                            onclick="return confirm('{{ __('Apakah Anda yakin ingin menghapus data ini?') }}')">
+                                                            <i class="fas fa-trash"></i> {{ __('Hapus') }}
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

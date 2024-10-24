@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ActivityLogHelper;
+use App\Helpers\PermissionHelper;
 use App\Models\Barang;
 use App\Models\Pengadaan;
 use Illuminate\Http\Request;
@@ -11,7 +13,14 @@ class PengadaanController extends Controller
 {
     public function index(Request $request)
     {
+        $accessResult = PermissionHelper::AnyCanAccessPengadaan();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
         $query = Pengadaan::with('pengguna');
+        if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
+            $query->where('pengaju_id', auth()->user()->pengguna_id);
+        }
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -35,7 +44,10 @@ class PengadaanController extends Controller
 
     public function store(Request $request)
     {
-
+        $accessResult = PermissionHelper::AnyCanCreatePengadaan();
+        if (!$accessResult['buat']) {
+            abort(403, 'Unauthorized action.');
+        }
         $request->validate([
             'nama_barang' => 'required|string|max:255',
             'keterangan' => 'required|string|max:255',
@@ -43,7 +55,7 @@ class PengadaanController extends Controller
             'jumlah' => 'required|numeric',
         ]);
 
-        Pengadaan::create([
+        $pengadaan = Pengadaan::create([
             'tanggal_pengajuan' => now(),
             'pengaju_id' => Auth::user()->pengguna_id,
             'status_pengajuan' => "Diajukan",
@@ -52,6 +64,7 @@ class PengadaanController extends Controller
             'referensi'=>$request->input('referensi'),
             'keterangan' => $request->input('keterangan'),
         ]);
+        ActivityLogHelper::log('Buat Pengadaan "' . $pengadaan->pengadaan_id . '"');
 
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil disimpan.');
     }
@@ -59,30 +72,35 @@ class PengadaanController extends Controller
     // Metode untuk menyetujui pengadaan
     public function approve($pengajuan_id)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
+            abort(403, 'Unauthorized action.');
+        }
         $pengadaan = Pengadaan::findOrFail($pengajuan_id);
         $pengadaan->status_pengajuan = 'Disetujui';
         $pengadaan->save();
+        ActivityLogHelper::log('Setuju akan pengadaan "' . $pengadaan->pengadaan_id . '"');
         return redirect()->route('barang.create')->with('message', 'Pengadaan barang berhasil disetujui lanjutkan untuk membuat barang.');
     }
     // Metode untuk menolak pengadaan
     public function reject($id)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
+            abort(403, 'Unauthorized action.');
+        }
         $pengadaan = Pengadaan::findOrFail($id);
         $pengadaan->status_pengajuan = 'Ditolak';
         $pengadaan->save();
-
+        ActivityLogHelper::log('Tolak akan pengadaan "' . $pengadaan->pengadaan_id . '"');
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil ditolak.');
-    }
-
-    public function edit($id)
-    {
-        $pengadaan = Pengadaan::findOrFail($id);
-        return view('pengadaan.index', compact('pengadaan'));
     }
 
     //Metode untuk mengupdate pengadaan setelah diedit
     public function update(Request $request, $id)
     {
+        $accessResult = PermissionHelper::AnyCanEditPengadaan();
+        if (!$accessResult['edit']) {
+            abort(403, 'Unauthorized action.');
+        }
         $data=$request->validate([
             'nama_barang' => 'required|string|max:255',
             'keterangan' => 'required|string|max:255',
@@ -92,13 +110,19 @@ class PengadaanController extends Controller
 
         $pengadaan = Pengadaan::findOrFail($id);
         $pengadaan->update($data);
+        ActivityLogHelper::log('Perbarui akan pengadaan "' . $pengadaan->pengadaan_id .'"');
 
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil diperbarui.');
     }
     public function destroy($id)
     {
+        $accessResult = PermissionHelper::AnyCanDeletePengadaan();
+        if (!$accessResult['delete']) {
+            abort(403, 'Unauthorized action.');
+        }
         $pengadaan = Pengadaan::findOrFail($id);
         $pengadaan->delete();
+        ActivityLogHelper::log('Hapus akan pengadaan "' . $pengadaan->pengadaan_id . '"');
 
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil dihapus.');
     }
