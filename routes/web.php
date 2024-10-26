@@ -113,6 +113,7 @@ Route::prefix('pengadaan')->group(function () {
     Route::post('/', [PengadaanController::class, 'store'])->name('pengadaan.store');
     Route::put('{id}/approve', [PengadaanController::class, 'approve'])->name('pengadaan.approve');
     Route::put('{id}/reject', [PengadaanController::class, 'reject'])->name('pengadaan.reject');
+    Route::put('{id}/buatbarang', [PengadaanController::class, 'CreateBarang'])->name('pengadaan.buatbarang');
     Route::get('{id}/edit', [PengadaanController::class, 'edit'])->name('pengadaan.edit');
     Route::put('{id}', [PengadaanController::class, 'update'])->name('pengadaan.update');
     Route::delete('{id}', [PengadaanController::class, 'destroy'])->name('pengadaan.destroy');

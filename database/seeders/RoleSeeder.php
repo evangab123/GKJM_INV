@@ -14,12 +14,23 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Membuat role
-        $Roles =Role::create(['name' => 'Super Admin']);
+        $RolesSuper = Role::create(['name' => 'Super Admin']);
         Role::create(['name' => 'Admin Ruang']);
-        Role::create(['name' => 'Majelis']);
-        Role::create(['name' => 'Pengguna Normal']);
+        $RoleMajelis= Role::create(['name' => 'Majelis']);
+        $usernormal = Role::create(['name' => 'Pengguna Normal']);
         $perm = Permission::create(['name'=>'semua-semua-semua']);
-        $Roles->givePermissionTo($perm);
+        $perm2=Permission::create(['name'=>'lihat-semua-semua']);
+        $perm3 = Permission::create(['name'=>'lihat-pengadaan-semua']);
+        $perm4 = Permission::create(['name'=>'buat-pengadaan-semua']);
+        $perm5 = Permission::create(['name'=>'hapus-pengadaan-semua']);
+        $perm6 = Permission::create(['name'=>'perbarui-pengadaan-semua']);
+
+        $RolesSuper->givePermissionTo($perm);
+        $RoleMajelis->givePermissionTo($perm2);
+        $usernormal->givePermissionTo($perm3);
+        $usernormal->givePermissionTo($perm4);
+        $usernormal->givePermissionTo($perm5);
+        $usernormal->givePermissionTo($perm6);
 
     }
 }

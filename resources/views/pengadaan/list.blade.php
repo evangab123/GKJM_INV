@@ -45,6 +45,7 @@
                                 <th scope="col">{{ __('Keterangan') }}</th>
                                 <th scope="col">{{ __('Pengaju') }}</th>
                                 <th scope="col">{{ __('Tanggal Pengajuan') }}</th>
+                                <th scope="col">{{ __('Kode Barang') }}</th>
                                 <th scope="col">{{ __('Status') }}</th>
                                 @if (
                                     $hasDelete['delete'] ||
@@ -72,51 +73,85 @@
                                     <td>{{ $item->keterangan }}</td>
                                     <td>{{ $item->pengguna->nama_pengguna }}</td>
                                     <td>{{ $item->tanggal_pengajuan }}</td>
-                                    <td>{{ $item->status_pengajuan }}</td>
+                                    <td>{{ $item->kode_barang ?? 'Belum dibuat kode barang' }}</td>
+                                    <td>
+                                        @if ($item->status_pengajuan == 'Diajukan')
+                                            <span style="color: blue;">
+                                                <i class="fas fa-paper-plane"></i> Diajukan
+                                            </span>
+                                        @elseif($item->status_pengajuan == 'Disetujui')
+                                            <span style="color: green;">
+                                                <i class="fas fa-check-circle"></i> Disetujui
+                                            </span>
+                                        @elseif($item->status_pengajuan == 'Ditolak')
+                                            <span style="color: red;">
+                                                <i class="fas fa-times-circle"></i> Ditolak
+                                            </span>
+                                        @endif
+                                    </td>
+
                                     @if (
                                         $hasDelete['delete'] ||
                                             $hasEdit['edit'] ||
                                             auth()->user()->hasRole(['Super Admin', 'Majelis']))
-                                        <td style="width:120px">
-                                            <div class="d-flex">
+                                        <td>
+                                            <div class="btn-group d-flex" role="group" aria-label="Tombol Aksi"
+                                                style="width: 100%;">
                                                 @if (auth()->user()->hasRole(['Super Admin', 'Majelis']))
-                                                    <!-- Tombol Setuju -->
-                                                    <form action="{{ route('pengadaan.approve', $item->pengadaan_id) }}"
-                                                        method="POST" class="mr-2">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <button type="submit" class="btn btn-success"
-                                                            onclick="return confirm('{{ __('Apakah Anda yakin ingin menyetujui pengadaan ini?') }}')">
-                                                            <i class="fas fa-check"></i> {{ __('Setuju') }}
-                                                        </button>
-                                                    </form>
-
-                                                    <!-- Tombol Tolak -->
-                                                    <form action="{{ route('pengadaan.reject', $item->pengadaan_id) }}"
-                                                        method="POST" class="mr-2">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <button type="submit" class="btn btn-warning"
-                                                            onclick="return confirm('{{ __('Apakah Anda yakin ingin menolak pengadaan ini?') }}')">
-                                                            <i class="fas fa-times"></i> {{ __('Tolak') }}
-                                                        </button>
-                                                    </form>
+                                                    @if (!($item->status_pengajuan == 'Ditolak' || $item->status_pengajuan == 'Disetujui'))
+                                                        <!-- Tombol Setuju -->
+                                                        <form
+                                                            action="{{ route('pengadaan.approve', $item->pengadaan_id) }}"
+                                                            method="POST" class="flex-fill" style="margin: 0;">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button type="submit" class="btn btn-success"
+                                                                onclick="return confirm('{{ __('Apakah Anda yakin ingin menyetujui pengadaan ini?') }}')"
+                                                                style="width: 100%;">
+                                                                <i class="fas fa-check"></i> {{ __('Setuju') }}
+                                                            </button>
+                                                        </form>
+                                                        <!-- Tombol Tolak -->
+                                                        <form action="{{ route('pengadaan.reject', $item->pengadaan_id) }}"
+                                                            method="POST" class="flex-fill" style="margin: 0;">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button type="submit" class="btn btn-warning"
+                                                                onclick="return confirm('{{ __('Apakah Anda yakin ingin menolak pengadaan ini?') }}')"
+                                                                style="width: 100%;">
+                                                                <i class="fas fa-times"></i> {{ __('Tolak') }}
+                                                            </button>
+                                                        </form>
+                                                    @elseif ($item->status_pengajuan == 'Disetujui')
+                                                        <form
+                                                            action="{{ route('pengadaan.buatbarang', $item->pengadaan_id) }}"
+                                                            method="POST" class="flex-fill" style="margin: 0;">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button type="submit" class="btn btn-success"
+                                                                style="width: 100%;">
+                                                                <i class="fas fa-plus"></i>{{ __('Barang') }}
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 @endif
                                                 @if ($hasEdit['edit'])
                                                     <!-- Tombol Edit -->
-                                                    <button class="btn btn-primary mr-2"
-                                                        onclick="openEditModal({{ $item->pengadaan_id }}, '{{ $item->nama_barang }}', {{ $item->jumlah }}, '{{ $item->referensi }}', '{{ $item->keterangan }}')">
+                                                    <button class="btn btn-primary flex-fill"
+                                                        onclick="openEditModal({{ $item->pengadaan_id }}, '{{ $item->nama_barang }}', {{ $item->jumlah }}, '{{ $item->referensi }}', '{{ $item->keterangan }}')"
+                                                        style="width: 100%;">
                                                         <i class="fas fa-edit"></i> {{ __('Edit') }}
                                                     </button>
                                                 @endif
                                                 @if ($hasDelete['delete'])
                                                     <!-- Tombol Hapus -->
                                                     <form action="{{ route('pengadaan.destroy', $item->pengadaan_id) }}"
-                                                        method="post">
+                                                        method="post" class="flex-fill" style="margin: 0;">
                                                         @csrf
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-danger"
-                                                            onclick="return confirm('{{ __('Apakah Anda yakin ingin menghapus data ini?') }}')">
+                                                            onclick="return confirm('{{ __('Apakah Anda yakin ingin menghapus data ini?') }}')"
+                                                            style="width: 100%;">
                                                             <i class="fas fa-trash"></i> {{ __('Hapus') }}
                                                         </button>
                                                     </form>

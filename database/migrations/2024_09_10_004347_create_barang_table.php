@@ -63,14 +63,18 @@ return new class extends Migration {
 
         Schema::create('pengajuanpengadaan', function (Blueprint $table) {
             $table->id('pengadaan_id');
-            // $table->string('kode_barang', 50); // Jika Anda ingin menambahkan kode barang, aktifkan baris ini
+            $table->string('kode_barang', 50)->nullable();
+            $table->string('nama_barang');
             $table->integer('jumlah');
             $table->date('tanggal_pengajuan');
             $table->enum('status_pengajuan', ['Diajukan', 'Disetujui', 'Ditolak']);
             $table->unsignedBigInteger('pengaju_id');
             $table->string('referensi')->nullable();
             $table->string('keterangan');
-            $table->foreign('pengaju_id')->references('pengguna_id')->on('pengguna')->onUpdate('cascade'); // Foreign key ke tabel pengguna
+            $table->foreign('pengaju_id')->references('pengguna_id')->on('pengguna')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('kode_barang')->references('kode_barang')->on('Barang')
+                ->onUpdate('cascade');
             $table->timestamps();
         });
 

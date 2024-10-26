@@ -29,6 +29,10 @@
                             <label for="merek_barang">{{ __('Merek Barang') }}</label>
                             <input type="text" class="form-control" id="merek_barang" name="merek_barang">
                         </div>
+                        <!-- Hidden input untuk mengirimkan status fromApprove -->
+                        <input type="hidden" name="from" value="{{ $fromApprove ? 'approve' : '' }}">
+                        <!-- Hidden input untuk mengirimkan ID pengadaan -->
+                        <input type="hidden" name="idp" value="{{ $idp }}">
                         <div class="form-group">
                             <label for="perolehan_barang">{{ __('Perolehan') }}</label>
                             <select class="form-control" id="perolehan_barang" name="perolehan_barang">
@@ -97,7 +101,8 @@
                         </div>
                         <div class="form-group">
                             <label for="foto_barang">{{ __('Foto Barang') }}</label>
-                            <input type="file" class="form-control" name="path_gambar" accept="image/*" id="foto_barang">
+                            <input type="file" class="form-control" name="path_gambar" accept="image/*"
+                                id="foto_barang">
                         </div>
                         <button type="submit" class="btn btn-success">{{ __('Tambah Barang') }}</button>
                     </form>
