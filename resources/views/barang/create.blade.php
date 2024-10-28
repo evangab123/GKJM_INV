@@ -27,12 +27,18 @@
                         @csrf
                         <div class="form-group">
                             <label for="merek_barang">{{ __('Merek Barang') }}</label>
-                            <input type="text" class="form-control" id="merek_barang" name="merek_barang">
+                            <input type="text" class="form-control" id="merek_barang" name="merek_barang"
+                            value="{{ old('harga_pembelian', $pengadaan->nama_barang ?? '') }}">
                         </div>
-                        <!-- Hidden input untuk mengirimkan status fromApprove -->
-                        <input type="hidden" name="from" value="{{ $fromApprove ? 'approve' : '' }}">
-                        <!-- Hidden input untuk mengirimkan ID pengadaan -->
-                        <input type="hidden" name="idp" value="{{ $idp }}">
+                        <!-- Hidden input untuk mengirimkan status fromApprove jika tersedia -->
+                        @if (isset($fromApprove))
+                            <input type="hidden" name="from" value="{{ $fromApprove ? 'approve' : '' }}">
+                        @endif
+                        <!-- Hidden input untuk mengirimkan ID pengadaan jika tersedia -->
+                        @if (isset($idp))
+                            <input type="hidden" name="idp" value="{{ $idp }}">
+                        @endif
+
                         <div class="form-group">
                             <label for="perolehan_barang">{{ __('Perolehan') }}</label>
                             <select class="form-control" id="perolehan_barang" name="perolehan_barang">
@@ -59,11 +65,14 @@
                         </div>
                         <div class="form-group">
                             <label for="jumlah">{{ __('Jumlah/Stok') }}</label>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah">
+                            <input type="number" class="form-control" id="jumlah" name="jumlah"
+                            value="{{ old('harga_pembelian', $pengadaan->jumlah ?? '') }}">
                         </div>
                         <div class="form-group">
                             <label for="keterangan">{{ __('Keterangan') }}</label>
-                            <input type="text" class="form-control" id="keterangan" name="keterangan">
+                            <input type="text" class="form-control" id="keterangan" name="keterangan"
+                                value="{{ old('harga_pembelian', $pengadaan->keterangan ?? '') }}">
+
                         </div>
                         <div class="form-group">
                             <label for="ruang_id">{{ __('Ruang') }}</label>

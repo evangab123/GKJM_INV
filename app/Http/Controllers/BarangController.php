@@ -242,9 +242,8 @@ class BarangController extends Controller
             $fromApprove = $request->get('from') === 'approve';
             $idp = $request->get('idp');
             if($fromApprove){
-                Pengadaan::findOrFail($idp);
-                
-                return view('barang.create', compact('ruang', 'kondisi', 'kategori', 'fromApprove','idp'));
+                $pengadaan = Pengadaan::findOrFail($idp);
+                return view('barang.create', compact('ruang', 'kondisi', 'kategori', 'fromApprove','idp','pengadaan'));
             }
             return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
         }

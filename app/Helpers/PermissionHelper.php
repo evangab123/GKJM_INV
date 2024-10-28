@@ -29,7 +29,7 @@ class PermissionHelper
             return false;
         }
         $userPermissions = $pengguna->permissions->pluck('name')->toArray();
-        // dd($userPermissions);
+        //dd($userPermissions);
 
         return in_array($permission, $userPermissions);
     }
@@ -51,6 +51,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('lihat-barang-' . strtolower($room)) ||
                 self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('lihat-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $hasAccess = true;
@@ -78,6 +79,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('buat-barang-' . strtolower($room)) ||
                 self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('buat-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canMake = true;
@@ -104,6 +106,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('perbarui-barang-' . strtolower($room)) ||
                 self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('perbarui-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canEdit = true;
@@ -131,6 +134,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('hapus-barang-' . strtolower($room)) ||
                 self::userHasPermission('semua-barang-' . strtolower($room)) ||
+                self::userHasPermission('hapus-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canDelete = true;
@@ -159,6 +163,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('lihat-penghapusan-' . strtolower($room)) ||
                 self::userHasPermission('semua-penghapusan-' . strtolower($room)) ||
+                self::userHasPermission('lihat-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canAccess = true;
@@ -188,6 +193,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('hapus-penghapusan-' . strtolower($room)) ||
                 self::userHasPermission('semua-penghapusan-' . strtolower($room)) ||
+                self::userHasPermission('hapus-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canDelete = true;
@@ -217,6 +223,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('lihat-pengadaan-' . strtolower($room)) ||
                 self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('lihat-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canAccess = true;
@@ -244,6 +251,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('buat-pengadaan-' . strtolower($room)) ||
                 self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('buat-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canMake = true;
@@ -272,6 +280,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('hapus-pengadaan-' . strtolower($room)) ||
                 self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('hapus-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canDelete = true;
@@ -300,6 +309,7 @@ class PermissionHelper
             if (
                 self::userHasPermission('perbarui-pengadaan-' . strtolower($room)) ||
                 self::userHasPermission('semua-pengadaan-' . strtolower($room)) ||
+                self::userHasPermission('perbarui-semua-' . strtolower($room)) ||
                 self::userHasPermission('semua-semua-' . strtolower($room))
             ) {
                 $canEdit = true;

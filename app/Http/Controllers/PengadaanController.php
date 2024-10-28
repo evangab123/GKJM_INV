@@ -14,6 +14,7 @@ class PengadaanController extends Controller
     public function index(Request $request)
     {
         $accessResult = PermissionHelper::AnyCanAccessPengadaan();
+        //dd($accessResult);
         if (!$accessResult['access']) {
             abort(403, 'Unauthorized action.');
         }

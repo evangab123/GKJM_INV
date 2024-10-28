@@ -28,9 +28,11 @@
                         </a>
                     </form>
                 </div>
-                <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPengadaan">
-                    <i class="fa-solid fa-plus"></i> {{ __('Buat Pengadaan Barang!') }}
-                </a>
+                @if ($hasCreate['buat'])
+                    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPengadaan">
+                        <i class="fa-solid fa-plus"></i> {{ __('Buat Pengadaan Barang!') }}
+                    </a>
+                @endif
             </div>
 
             <div class="card-body">
@@ -77,28 +79,27 @@
                                     <td>
                                         @if ($item->status_pengajuan == 'Diajukan')
                                             <span style="color: blue;">
-                                                <i class="fas fa-paper-plane"></i> Diajukan
+                                                <i class="fas fa-paper-plane"></i> {{ __('Diajukan') }}
                                             </span>
                                         @elseif($item->status_pengajuan == 'Disetujui')
                                             <span style="color: green;">
-                                                <i class="fas fa-check-circle"></i> Disetujui
+                                                <i class="fas fa-check-circle"></i> {{ __('Disetujui') }}
                                             </span>
                                         @elseif($item->status_pengajuan == 'Ditolak')
                                             <span style="color: red;">
-                                                <i class="fas fa-times-circle"></i> Ditolak
+                                                <i class="fas fa-times-circle"></i> {{ __('Ditolak') }}
                                             </span>
                                         @endif
                                     </td>
-
                                     @if (
                                         $hasDelete['delete'] ||
                                             $hasEdit['edit'] ||
                                             auth()->user()->hasRole(['Super Admin', 'Majelis']))
                                         <td>
-                                            <div class="btn-group d-flex" role="group" aria-label="Tombol Aksi"
-                                                style="width: 100%;">
+                                            <div class="d-flex flex-column" role="group" aria-label="Tombol Aksi"
+                                                style="width: 100%; gap: 5px;">
                                                 @if (auth()->user()->hasRole(['Super Admin', 'Majelis']))
-                                                    @if (!($item->status_pengajuan == 'Ditolak' || $item->status_pengajuan == 'Disetujui'))
+                                                    @if (!($item->status_pengajuan == 'Disetujui'))
                                                         <!-- Tombol Setuju -->
                                                         <form
                                                             action="{{ route('pengadaan.approve', $item->pengadaan_id) }}"
@@ -107,7 +108,8 @@
                                                             @method('PUT')
                                                             <button type="submit" class="btn btn-success"
                                                                 onclick="return confirm('{{ __('Apakah Anda yakin ingin menyetujui pengadaan ini?') }}')"
-                                                                style="width: 100%;">
+                                                                style="width: 100%; height: 40px;"
+                                                                @if ($item->kode_barang !== null) disabled @endif>
                                                                 <i class="fas fa-check"></i> {{ __('Setuju') }}
                                                             </button>
                                                         </form>
@@ -118,19 +120,22 @@
                                                             @method('PUT')
                                                             <button type="submit" class="btn btn-warning"
                                                                 onclick="return confirm('{{ __('Apakah Anda yakin ingin menolak pengadaan ini?') }}')"
-                                                                style="width: 100%;">
+                                                                style="width: 100%; height: 40px;"
+                                                                @if ($item->kode_barang !== null) disabled @endif>
                                                                 <i class="fas fa-times"></i> {{ __('Tolak') }}
                                                             </button>
                                                         </form>
                                                     @elseif ($item->status_pengajuan == 'Disetujui')
+                                                         <!-- Tombol Buat Barang -->
                                                         <form
                                                             action="{{ route('pengadaan.buatbarang', $item->pengadaan_id) }}"
                                                             method="POST" class="flex-fill" style="margin: 0;">
                                                             @csrf
                                                             @method('PUT')
                                                             <button type="submit" class="btn btn-success"
-                                                                style="width: 100%;">
-                                                                <i class="fas fa-plus"></i>{{ __('Barang') }}
+                                                                style="width: 100%; height: 40px;"
+                                                                @if ($item->kode_barang !== null||!(auth()->user()->hasRole("Super Admin"))) disabled @endif>
+                                                                <i class="fas fa-plus"></i> {{ __('Barang') }}
                                                             </button>
                                                         </form>
                                                     @endif
@@ -139,7 +144,8 @@
                                                     <!-- Tombol Edit -->
                                                     <button class="btn btn-primary flex-fill"
                                                         onclick="openEditModal({{ $item->pengadaan_id }}, '{{ $item->nama_barang }}', {{ $item->jumlah }}, '{{ $item->referensi }}', '{{ $item->keterangan }}')"
-                                                        style="width: 100%;">
+                                                        style="width: 100%; height: 40px;"
+                                                        @if ($item->kode_barang !== null) disabled @endif>
                                                         <i class="fas fa-edit"></i> {{ __('Edit') }}
                                                     </button>
                                                 @endif
@@ -151,7 +157,8 @@
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-danger"
                                                             onclick="return confirm('{{ __('Apakah Anda yakin ingin menghapus data ini?') }}')"
-                                                            style="width: 100%;">
+                                                            style="width: 100%; height: 40px;"
+                                                            @if ($item->kode_barang !== null) disabled @endif>
                                                             <i class="fas fa-trash"></i> {{ __('Hapus') }}
                                                         </button>
                                                     </form>
@@ -193,7 +200,7 @@
                     <form action="{{ route('pengadaan.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label for="nama_barang">{{ __('Nama Barang') }}</label>
+                            <label for="nama_barang">{{ __('Merek Barang') }}</label>
                             <input type="text" name="nama_barang" class="form-control" required
                                 placeholder="Masukkan Nama Barang" id="nama_barang">
                         </div>
