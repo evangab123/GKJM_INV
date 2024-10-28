@@ -92,6 +92,8 @@
                         </div>
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">{{ __('Barang:') }}</h6>
+                            <a class="collapse-item {{ Nav::isRoute('terkunci.index') }}"
+                                href="{{ route('terkunci.index') }}">{{ __('Barang Terkunci') }}</a>
                             <a class="collapse-item {{ Nav::isRoute('#') }}"
                                 href="{{ '#' }}">{{ __('Tambah Kategori') }}</a>
                             <a class="collapse-item {{ Nav::isRoute('#') }}"

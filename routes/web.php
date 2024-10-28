@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BarangTerkunciController;
 use App\Http\Controllers\PemakaianController;
 use App\Http\Controllers\PengadaanController;
 use App\Http\Controllers\PenghapusanBarangController;
@@ -48,6 +49,9 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:Super Admin', );
 
     Route::resource('hak', PermissionController::class)
+        ->middleware('role:Super Admin');
+
+    Route::resource('terkunci', BarangTerkunciController::class)
         ->middleware('role:Super Admin');
 
     Route::resource('barang', BarangController::class)

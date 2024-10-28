@@ -50,4 +50,9 @@ class Barang extends Model
     {
         return $this->belongsTo(DetilKeteranganBarang::class, 'kode_barang', 'kode_barang');
     }
+
+    public function barangTerkunci()
+    {
+        return $this->hasOne(BarangTerkunci::class, 'kode_barang', 'kode_barang');
+    }
 }

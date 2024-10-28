@@ -34,7 +34,7 @@ class PengadaanController extends Controller
                     });
             });
         }
-        $data = $query->paginate(7)->appends($request->only('search'));
+        $data = $query->paginate(4)->appends($request->only('search'));
         $barang = Barang::all();
 
         return view('pengadaan.list', [
