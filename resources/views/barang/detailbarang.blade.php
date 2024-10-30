@@ -11,15 +11,23 @@
         $hasDelete = PermissionHelper::AnyCanDeleteBarang();
     @endphp
     <!-- Main Content -->
+    @if (session('message'))
+        <div class="alert alert-success">
+            {{ session('message') }}
+        </div>
+    @endif
     <div class="row mb-3">
+
         <!-- Button Kembali -->
-        <div class="d-flex">
+        <div>
+            <!-- Tombol Kembali -->
             <a href="{{ route('barang.index') }}" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
+
             <!-- Button Edit/Close -->
             @if ($isEditing)
-                <!-- Tombol Close (keluar dari mode edit) -->
+                <!-- Tombol Tutup (keluar dari mode edit) -->
                 <a href="{{ route('barang.show', $barang->kode_barang) }}" class="btn btn-secondary ml-2">
                     <i class="fa-solid fa-times"></i> {{ __('Tutup') }}
                 </a>
@@ -31,11 +39,50 @@
                     </a>
                 @endif
             @endif
+
+            <!-- Tombol Lihat Keterangan -->
             @if ($hasAccess['access'])
-                <a href="{{ route('barang.keterangan', $barang->kode_barang) }}"
-                    class="btn btn-info ml-2">{{ __('lihat Keterangan') }}</a>
+                <a href="{{ route('barang.keterangan', $barang->kode_barang) }}" class="btn btn-info ml-2">
+                    {{ __('Lihat Keterangan') }}
+                </a>
+            @endif
+
+            <!-- Tombol Hapus -->
+            @if ($hasDelete['delete'])
+                @if ($barang->status_barang === 'Ada')
+                    <button type="button" class="btn btn-danger ml-2"
+                        onclick="openDeleteModal('{{ $barang['kode_barang'] }}', '{{ $barang['merek_barang'] }}')">
+                        <i class="fas fa-trash"></i> {{ __('Penghapusan Barang!') }}
+                    </button>
+                @else
+                    <button type="button" class="btn btn-danger ml-2" disabled>
+                        <i class="fas fa-trash"></i> {{ __('Penghapusan Barang!') }}
+                    </button>
+                @endif
+            @endif
+
+
+            <!-- Tombol Kunci atau Lepas Kunci -->
+            @if (auth()->user()->hasRole('Super Admin||Majelis'))
+                @if ($barangTerkunci)
+                    <form action="{{ route('terkunci.destroy', $barangTerkunci->kode_barang) }}" method="POST"
+                        class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger ml-2"
+                            onclick="return confirm('Apakah Anda yakin ingin melepas kunci barang ini?')">
+                            <i class='fas fa-lock'></i> {{ __('Lepas Kunci') }}
+                        </button>
+                    </form>
+                @else
+                    <!-- Tombol Kunci Barang -->
+                    <button type="button" class="btn btn-warning ml-2" data-toggle="modal" data-target="#addModal">
+                        <i class="fas fa-lock-open"></i> {{ __('Kunci Barang') }}
+                    </button>
+                @endif
             @endif
         </div>
+
     </div>
 
     <div class="row">
@@ -184,21 +231,21 @@
                                                         {{ $barang->status_barang == 'Ada' ? 'selected' : '' }}>
                                                         {{ __('Ada') }}
                                                     </option>
-                                                    <option value="Dipinjam"
+                                                    {{-- <option value="Dipinjam"
                                                         {{ $barang->status_barang == 'Dipinjam' ? 'selected' : '' }}>
                                                         {{ __('Dipinjam') }}
-                                                    </option>
+                                                    </option> --}}
                                                     <option value="Diperbaiki"
                                                         {{ $barang->status_barang == 'Diperbaiki' ? 'selected' : '' }}>
                                                         {{ __('Diperbaiki') }}
                                                     </option>
-                                                    <option value="Dihapus"
+                                                    {{-- <option value="Dihapus"
                                                         {{ $barang->status_barang == 'Dihapus' ? 'selected' : '' }}>
                                                         {{ __('Dihapus') }}
                                                     </option>
                                                     <option value="Dipakai"
                                                         {{ $barang->status_barang == 'Dipakai' ? 'selected' : '' }}>
-                                                        {{ __('Dipakai') }}
+                                                        {{ __('Dipakai') }} --}}
                                                     </option>
                                                 </select>
                                             </td>
@@ -239,7 +286,7 @@
                                         <td>{{ $barang->tahun_pembelian }}</td>
                                     </tr>
                                     <tr>
-                                        <th>{{ __('nilai Ekonomis') }}</th>
+                                        <th>{{ __('Nilai Ekonomis') }}</th>
                                         <td>Rp {{ number_format($barang->nilai_ekonomis_barang, 2, ',', '.') }}</td>
                                     </tr>
                                     <tr>
@@ -273,7 +320,78 @@
                 </div>
             </div>
         </div>
+        <!-- Modal Hapus -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">{{ __('Konfirmasi Penghapusan') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {{ __('Apakah Anda yakin ingin melakukan penghapusan barang?') }}
 
+                        <div class="mb-3">
+                            <label for="alasan" class="form-label">{{ __('Alasan Penghapusan:') }}</label>
+                            <input type="text" class="form-control" id="alasan" name="alasan" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tanggal_penghapusan" class="form-label">{{ __('Tanggal Penghapusan:') }}</label>
+                            <input type="date" class="form-control" id="tanggal_penghapusan"
+                                name="tanggal_penghapusan" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">{{ __('Batal') }}</button>
+                        <form action="" method="POST" class="d-inline" id="deleteForm">
+                            @csrf
+                            <input type="hidden" name="alasan" id="hiddenAlasan">
+                            <input type="hidden" name="kode_barang" id="hiddenKodeBarang">
+                            <input type="hidden" name="tanggal_penghapusan" id="hiddenTanggalPenghapusan">
+                            <button type="button" class="btn btn-danger"
+                                onclick="submitDeleteForm()">{{ __('Hapuskan!') }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Kunci -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="{{ route('terkunci.store') }}" method="POST">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addModalLabel">{{ __('Tambah Barang Terkunci') }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Input Hidden untuk Kode Barang -->
+                            <input type="hidden" id="hidden_kode_barang" name="kode_barang"
+                                value="{{ $barang->kode_barang }}">
+
+                            <div class="form-group">
+                                <label for="alasan_terkunci">{{ __('Alasan Terkunci') }}</label>
+                                <textarea class="form-control" id="alasan_terkunci" name="alasan_terkunci" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">{{ __('Tutup') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('Simpan') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <!-- End of Main Content -->
     @endsection
@@ -320,5 +438,25 @@
             nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
 
             nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
+        }
+    </script>
+    <script>
+        function openDeleteModal(kode_barang, merek_barang) {
+            $('#hiddenKodeBarang').val(kode_barang);
+            $('#deleteModal').modal('show');
+        }
+
+        function submitDeleteForm() {
+            const alasan = $('#alasan').val();
+            const tanggalPenghapusan = $('#tanggal_penghapusan').val();
+            const kodeBarang = $('#hiddenKodeBarang').val();
+
+            $('#hiddenAlasan').val(alasan);
+            $('#hiddenTanggalPenghapusan').val(tanggalPenghapusan);
+
+            $('#deleteForm').attr('action', '{{ route('barang.penghapusanbarang', ':kode_barang') }}'.replace(
+                ':kode_barang', kodeBarang));
+
+            $('#deleteForm').submit();
         }
     </script>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ActivityLogHelper;
 use App\Models\Barang;
 use App\Models\BarangTerkunci;
 use Illuminate\Http\Request;
@@ -13,8 +14,8 @@ class BarangTerkunciController extends Controller
     {
         $barangTerkunci = BarangTerkunci::paginate(7);
         $barangs = Barang::all();
-        $kodeBarangTerkunci = BarangTerkunci::pluck('kode_barang')->toArray();
-        return view('barang.terkunci.list', compact('barangTerkunci', 'barangs','kodeBarangTerkunci'));
+        // $kodeBarangTerkunci = BarangTerkunci::pluck('kode_barang')->toArray();
+        return view('barang.terkunci.list', compact('barangTerkunci', 'barangs'));
     }
 
     // Menampilkan form untuk menambah barang terkunci
@@ -27,8 +28,8 @@ class BarangTerkunciController extends Controller
         ]);
 
         BarangTerkunci::create($request->all());
-
-        return redirect()->route('terkunci.index')->with('message', 'Barang terkunci berhasil ditambahkan.');
+        ActivityLogHelper::log('Buat Kunci untuk "' . $request->input('kode_barang') . '"');
+        return redirect()->back()->with('success', 'Barang berhasil dikunci silahkan liat di Master Data Barang Tekunci.');
     }
 
     // Menghapus barang terkunci
@@ -37,7 +38,10 @@ class BarangTerkunciController extends Controller
         $barangTerkunci = BarangTerkunci::where('kode_barang', $kode_barang)->firstOrFail();
         $barangTerkunci->delete();
 
-        return redirect()->route('terkunci.index')->with('message', 'Barang terkunci berhasil dihapus.');
+        ActivityLogHelper::log('Hapus Kunci untuk "' . $kode_barang . '"');
+
+        return redirect()->back()->with('sucess', 'Barang terkunci berhasil dilepas.');
     }
+
 
 }

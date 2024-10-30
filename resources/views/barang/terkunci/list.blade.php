@@ -13,54 +13,12 @@
         <div class="card shadow mb-4">
             <div class="card-header pt-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Barang Terkunci') }}</h6>
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">
+                {{-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">
                     <i class="fa-solid fa-plus"></i> {{ __('Tambah Barang Terkunci!') }}
-                </button>
+                </button> --}}
             </div>
 
             <div class="card-body">
-                <!-- Modal -->
-                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <form action="{{ route('terkunci.store') }}" method="POST">
-                                @csrf
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="addModalLabel">{{ __('Tambah Barang Terkunci') }}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="kode_barang">{{ __('Kode Barang') }}</label>
-                                        <select class="form-control" id="kode_barang" name="kode_barang" required>
-                                            <option value="" disabled selected>{{ __('Pilih Barang...') }}</option>
-                                            @foreach ($barangs as $barang)
-                                                @if (!in_array($barang->kode_barang, $kodeBarangTerkunci))
-                                                    <option value="{{ $barang->kode_barang }}">
-                                                        {{ $barang->kode_barang . ' || ' . $barang->merek_barang }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="alasan_terkunci">{{ __('Alasan Terkunci') }}</label>
-                                        <textarea class="form-control" id="alasan_terkunci" name="alasan_terkunci" required></textarea>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-dismiss="modal">{{ __('Tutup') }}</button>
-                                    <button type="submit" class="btn btn-primary">{{ __('Simpan') }}</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead class="thead-dark">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\PermissionHelper;
 use App\Models\Barang;
+use App\Models\BarangTerkunci;
 use App\Models\DetilKeteranganBarang;
 use App\Models\Pengadaan;
 use App\Models\PenghapusanBarang;
@@ -74,12 +75,16 @@ class BarangController extends Controller
         $kondisi = KondisiBarang::all();
         $Ruang = Ruang::all();
         $kategori = KategoriBarang::all();
+        $barangTerkunci = BarangTerkunci::where('kode_barang', $kode_barang)->first();
+
+
         return view('barang.detailbarang', [
             'barang' => $barang,
             'isEditing' => true,
             'kondisi' => $kondisi,
             'kategori' => $kategori,
             'ruang' => $Ruang,
+            'barangTer  '=>$barangTerkunci,
         ]);
     }
 
@@ -90,7 +95,7 @@ class BarangController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
-
+        $barangTerkunci = BarangTerkunci::where('kode_barang', $kode_barang)->first();
         // Generate QR Code URL
         // $qrCodeController = new QrCodeController();
         // $qrCodeUrl = $qrCodeController->generateQrCode($barang->kode_barang);
@@ -99,6 +104,7 @@ class BarangController extends Controller
             'title' => 'Detail Barang',
             'barang' => $barang,
             'isEditing' => false,
+            'barangTerkunci'=>$barangTerkunci,
             // 'qrCodeUrl' => $qrCodeUrl,
         ]);
     }
@@ -267,7 +273,6 @@ class BarangController extends Controller
             'kategori_barang_id' => 'required|exists:kategoribarang,kategori_barang_id',
             'status_barang' => 'required|string',
             'foto_barang' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-
         ]);
         if ($validator->fails()) {
             return redirect()->back()
@@ -350,6 +355,32 @@ class BarangController extends Controller
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
 
+    public function penghapusanbarang(Request $request,$id)
+    {
+        $barang = Barang::findOrFail($id);
+        if ($barang->status_barang !== 'Ada') {
+            return redirect()->route('barang.index')->with('warning', __('Barang tidak bisa dihapus karena statusnya bukan Ada.'));
+        }
+        $accessResult = PermissionHelper::AnyCanDeleteBarang();
+
+        if (!$accessResult['delete']) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $pb = PenghapusanBarang::create([
+            'kode_barang' => $barang->kode_barang,
+            'tanggal_penghapusan' => $request->input('tanggal_penghapusan'), 
+            'alasan_penghapusan' => $request->input('alasan'),
+            'nilai_sisa' => $barang->nilai_ekonomis_barang,
+        ]);
+
+        $barang->status_barang = 'Dihapus';
+        $barang->save();
+        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '" dengan id penghapusan "'.$pb->penghapusan_id.'"');
+
+        return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
+    }
+
     public function destroy(Request $request,$id)
     {
         $barang = Barang::findOrFail($id);
@@ -362,16 +393,8 @@ class BarangController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $pb =PenghapusanBarang::create([
-            'kode_barang' => $barang->kode_barang,
-            'tanggal_penghapusan' => now(),
-            'alasan_penghapusan' => $request->input('alasan'),
-            'nilai_sisa' => $barang->nilai_ekonomis_barang,
-        ]);
-
-        $barang->status_barang = 'Dihapus';
-        $barang->save();
-        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '" dengan id penghapusan "'.$pb->penghapusan_id.'"');
+        $barang->delete();
+        ActivityLogHelper::log('Hapus Database Barang "' . $barang->kode_barang . '"');
 
         return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
     }

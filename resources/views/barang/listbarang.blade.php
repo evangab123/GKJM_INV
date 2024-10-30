@@ -95,13 +95,18 @@
                                                         <i class="fas fa-info-circle"></i> {{ __('Detil') }}
                                                     </a>
                                                 @endif
-                                                <!-- Delete Button -->
+                                                <!-- Tombol Hapus -->
                                                 @if ($hasDelete['delete'])
                                                     @if ($bar->status_barang === 'Ada')
-                                                        <button type="button" class="btn btn-danger ml-2"
-                                                            onclick="openDeleteModal('{{ $bar['kode_barang'] }}', '{{ $bar['merek_barang'] }}')">
-                                                            <i class="fas fa-trash"></i> {{ __('Hapus!') }}
-                                                        </button>
+                                                        <form action="{{ route('barang.destroy', $bar->kode_barang) }}"
+                                                            method="POST" style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger ml-2"
+                                                                onclick="return confirm('Apakah Anda yakin ingin menghapus barang ini?')">
+                                                                <i class="fas fa-trash"></i> {{ __('Hapus!') }}
+                                                            </button>
+                                                        </form>
                                                     @else
                                                         <button type="button" class="btn btn-danger ml-2" disabled>
                                                             <i class="fas fa-trash"></i> {{ __('Hapus!') }}
@@ -133,37 +138,7 @@
         <!-- End of Main Content -->
     </div>
 
-    <!-- Modal Hapus -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">{{ __('Konfirmasi Hapus') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {{ __('Apakah Anda yakin ingin menghapus item ini?') }}
-                    <div class="mb-3">
-                        <label for="alasan" class="form-label">Alasan Penghapusan:</label>
-                        <input type="text" class="form-control" id="alasan" name="alasan" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Batal') }}</button>
-                    <form action="" method="POST" class="d-inline" id="deleteForm">
-                        @csrf
-                        @method('DELETE')
-                        <input type="hidden" name="alasan" id="hiddenAlasan">
-                        <button type="button" class="btn btn-danger"
-                            onclick="submitDeleteForm()">{{ __('Hapus') }}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 @endsection
 
@@ -192,18 +167,3 @@
         </div>
     @endif
 @endpush
-
-<script>
-    function openDeleteModal(barangId, barangMerek) {
-        document.getElementById('deleteModalLabel').innerText = `Hapus ${barangMerek}`;
-        document.getElementById('hiddenAlasan').value = ''; // Reset alasan
-        document.getElementById('deleteForm').action = `/barang/${barangId}`; // Ganti URL action form
-        $('#deleteModal').modal('show'); // Tampilkan modal
-    }
-
-    function submitDeleteForm() {
-        var alasan = document.getElementById('alasan').value;
-        document.getElementById('hiddenAlasan').value = alasan;
-        document.getElementById('deleteForm').submit();
-    }
-</script>

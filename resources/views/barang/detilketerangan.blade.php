@@ -40,13 +40,12 @@
                         @csrf
                         <input type="hidden" name="kode_barang" value="{{ $barang->kode_barang }}">
                         <div class="form-group">
-                            <label for="keterangan">{{ __('keterangan') }}</label>
+                            <label for="keterangan">{{ __('Keterangan') }}</label>
                             <input id = 'keterangan' type="text" class="form-control" name="keterangan" required>
                         </div>
                         <div class="form-group">
                             <label for="tanggal">{{ __('Tanggal') }}</label>
-                            <input id = 'tanggal' type="date" class="form-control" name="tanggal"
-                                min="{{ date('Y-m-d') }}" required>
+                            <input id = 'tanggal' type="date" class="form-control" name="tanggal" required>
                         </div>
                         <button type="submit" class="btn btn-primary">{{ __('Tambah Keterangan') }}</button>
                     </form>
@@ -59,7 +58,8 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">{{ __('Detail Keterangan untuk Barang') }}: {{ $barang->nama_barang }}</h5>
+                    <h5 class="card-title">{{ __('Detail Keterangan untuk Barang ') . $barang->merek_barang }}: </h5>
+
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered table-striped table-hover">
