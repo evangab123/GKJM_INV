@@ -28,7 +28,7 @@
                         <div class="form-group">
                             <label for="merek_barang">{{ __('Merek Barang') }}</label>
                             <input type="text" class="form-control" id="merek_barang" name="merek_barang"
-                            value="{{ old('harga_pembelian', $pengadaan->nama_barang ?? '') }}">
+                            value="{{ old('harga_pembelian', $pengadaan->merek_barang ?? '') }}">
                         </div>
                         <!-- Hidden input untuk mengirimkan status fromApprove jika tersedia -->
                         @if (isset($fromApprove))

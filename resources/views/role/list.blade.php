@@ -15,8 +15,18 @@
                 <div class="d-flex align-items-center">
                     {{-- Search Form --}}
                     <form action="{{ route('role.index') }}" method="GET" class="form-inline">
-                        <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
+                        <input type="text" name="search" class="form-control" placeholder="{{ __('Cari Role ...') }}"
                             value="{{ request('search') }}" style="max-width: 200px;">
+
+                        <select name="permission" class="form-control ml-2">
+                            <option value="">{{ __('Filter Permission') }}</option>
+                            @foreach ($permission as $perm)
+                                <option value="{{ $perm->name }}" {{ request('permission') == $perm->name ? 'selected' : '' }}>
+                                    {{ $perm->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
                         <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
                         <a href="{{ route('role.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
@@ -32,10 +42,10 @@
                     <table class="table table-bordered table-hover">
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Hak</th>
-                                <th scope="col">Aksi</th>
+                                <th scope="col">{{ __('No') }}</th>
+                                <th scope="col">{{ __('Nama') }}</th>
+                                <th scope="col">{{ __('Hak') }}</th>
+                                <th scope="col">{{ __('Aksi') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,7 +61,7 @@
                                                 @endforeach
                                             </ul>
                                         @else
-                                            <span class="text-muted">Tidak ada hak</span>
+                                            <span class="text-muted">{{ __('Tidak ada hak') }}</span>
                                         @endif
                                     </td>
                                     <td style="width: 200px">

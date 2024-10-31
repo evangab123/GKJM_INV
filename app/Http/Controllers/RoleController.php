@@ -21,7 +21,12 @@ class RoleController extends Controller
                 $q->where('name', 'LIKE', "%$search%");
             });
         }
-        $data = $query->paginate(7)->appends($request->only('search'));
+        if ($request->filled('permission')) {
+            $query->whereHas('permissions', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->permission . '%');
+            });
+        }
+        $data = $query->paginate(7)->appends($request->only('search'))->appends($request->only('permission'));
         return view('role.list', [
             'title' => 'Master Data Role',
             'Roles' => $data,

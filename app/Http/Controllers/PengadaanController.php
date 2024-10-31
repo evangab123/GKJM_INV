@@ -25,7 +25,7 @@ class PengadaanController extends Controller
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('nama_barang', 'LIKE', "%$search%")
+                $q->where('merek_barang', 'LIKE', "%$search%")
                     ->orWhere('tanggal_pengajuan', 'LIKE', "%$search%")
                     ->orWhere('jumlah', 'LIKE', "%$search%")
                     ->orWhere('status_pengajuan', 'LIKE', "%$search%")
@@ -50,7 +50,7 @@ class PengadaanController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $request->validate([
-            'nama_barang' => 'required|string|max:255',
+            'merek_barang' => 'required|string|max:255',
             'keterangan' => 'required|string|max:255',
             'referensi' => 'required|string|max:255',
             'jumlah' => 'required|numeric',
@@ -60,7 +60,7 @@ class PengadaanController extends Controller
             'tanggal_pengajuan' => now(),
             'pengaju_id' => Auth::user()->pengguna_id,
             'status_pengajuan' => "Diajukan",
-            'nama_barang' => $request->input('nama_barang'),
+            'merek_barang' => $request->input('merek_barang'),
             'jumlah' => $request->input('jumlah'),
             'referensi' => $request->input('referensi'),
             'keterangan' => $request->input('keterangan'),
@@ -122,7 +122,7 @@ class PengadaanController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $data = $request->validate([
-            'nama_barang' => 'required|string|max:255',
+            'merek_barang' => 'required|string|max:255',
             'keterangan' => 'required|string|max:255',
             'referensi' => 'required|string|max:255',
             'jumlah' => 'required|numeric',

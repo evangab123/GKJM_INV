@@ -16,6 +16,23 @@
                     <form action="{{ route('pengguna.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
                             value="{{ request('search') }}" style="max-width: 200px;">
+                        <select name="permission" class="form-control ml-2">
+                            <option value="">{{ __('Filter Hak') }}</option>
+                            @foreach ($permissions as $perm)
+                                <option value="{{ $perm->name }}"
+                                    {{ request('permission') == $perm->name ? 'selected' : '' }}>
+                                    {{ $perm->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <select name="roles" class="form-control ml-2">
+                            <option value="">{{ __('Filter Roles') }}</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->name }}" {{ request('roles') == $role->name ? 'selected' : '' }}>
+                                    {{ $role->name }}
+                                </option>
+                            @endforeach
+                        </select>
                         <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
                         <a href="{{ route('pengguna.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
@@ -42,7 +59,8 @@
                         <tbody>
                             @foreach ($pengguna as $user)
                                 <tr>
-                                    <td scope="row">{{ ($pengguna->currentPage() - 1) * $pengguna->perPage() + $loop->iteration }}</td>
+                                    <td scope="row">
+                                        {{ ($pengguna->currentPage() - 1) * $pengguna->perPage() + $loop->iteration }}</td>
                                     <td>{{ $user->nama_pengguna }}</td>
                                     <td>{{ $user->jabatan }}</td>
                                     <td>{{ $user->email }}</td>

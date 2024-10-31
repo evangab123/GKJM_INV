@@ -25,20 +25,43 @@ class PenggunaController extends Controller
      */
     public function index(Request $request): View|Factory
     {
-        $query = Pengguna::with('roles','permissions');
+        $query = Pengguna::with('roles', 'permissions');
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('nama_pengguna', 'LIKE', "%$search%")
                     ->orWhere('username', 'LIKE', "%$search%")
                     ->orWhere('jabatan', 'LIKE', "%$search%")
-                    ->orWhere('email', 'LIKE', "%$search%");
+                    ->orWhere('email', 'LIKE', "%$search%")
+                    ->orWhereHas('roles', function ($query) use ($search) {
+                        $query->where('name', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('permissions', function ($query) use ($search) {
+                        $query->where('name', 'LIKE', "%$search%");
+                    });
             });
         }
-        $data = $query->paginate(7)->appends($request->only('search'));
+
+        if ($request->filled('permission')) {
+            $query->whereHas('permissions', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->permission . '%');
+            });
+        }
+
+        if ($request->has('roles') && !empty($request->input('roles'))) {
+            $query->whereHas('roles', function ($q) use ($request) {
+                $q->where('name', $request->input('roles'));
+            });
+        }
+
+        $permissions = Permission::all();
+        $roles = Role::all();
+        $data = $query->paginate(7)->appends($request->only('search'))->appends($request->only('permission'))->appends($request->only('roles'));
         return view('pengguna.list', [
             'title' => 'Master Data Pengguna',
-            'pengguna' => $data
+            'pengguna' => $data,
+            'roles' => $roles,
+            'permissions' => $permissions,
         ]);
     }
 
@@ -68,7 +91,7 @@ class PenggunaController extends Controller
         $pengguna = Pengguna::create([
             'nama_pengguna' => $request->input('nama_pengguna'),
             'jabatan' => $request->input('jabatan'),
-            'username'=>$request->input('username'),
+            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
@@ -76,7 +99,7 @@ class PenggunaController extends Controller
         $logData = [
             'nama_pengguna' => $request->input('nama_pengguna'),
             'jabatan' => $request->input('jabatan'),
-            'username'=>$request->input('username'),
+            'username' => $request->input('username'),
             'email' => $request->input('email')
         ];
 
@@ -97,7 +120,7 @@ class PenggunaController extends Controller
             $pengguna->syncPermissions($permissionsToSync);
             $logData['permissions'] = $permissionsToSync;
         }
-        ActivityLogHelper::log('Buat Pengguna Baru "'.$request->input('username').'"', $logData);
+        ActivityLogHelper::log('Buat Pengguna Baru "' . $request->input('username') . '"', $logData);
 
         return redirect()->route('pengguna.index')->with('message', 'Pengguna berhasil ditambahkan!');
     }
@@ -136,7 +159,7 @@ class PenggunaController extends Controller
     {
         $prev = [
             'nama_pengguna' => $pengguna->nama_pengguna,
-            'username'=>$pengguna->username,
+            'username' => $pengguna->username,
             'email' => $pengguna->email,
             'jabatan' => $pengguna->jabatan,
             'roles' => $pengguna->roles->pluck('name')->toArray(),
@@ -165,14 +188,14 @@ class PenggunaController extends Controller
         }
         $new = [
             'nama_pengguna' => $pengguna->nama_pengguna,
-            'username'=>$pengguna->username,
+            'username' => $pengguna->username,
             'email' => $pengguna->email,
             'jabatan' => $pengguna->jabatan,
             'roles' => $pengguna->roles->pluck('name')->toArray(), // New roles
             'permissions' => $pengguna->permissions->pluck('name')->toArray() // New permissions
         ];
 
-        ActivityLogHelper::log('Perbarui Pengguna: "' . $pengguna->username.'"', $new, $prev);
+        ActivityLogHelper::log('Perbarui Pengguna: "' . $pengguna->username . '"', $new, $prev);
 
         return redirect()->route('pengguna.index')->with('message', 'Pengguna Berhasil Diperbaharui!');
     }
@@ -192,7 +215,7 @@ class PenggunaController extends Controller
         }
 
         $pengguna->delete();
-        ActivityLogHelper::log('Hapus Pengguna: "' . $pengguna->username.'", "' . $pengguna->email.'"');
+        ActivityLogHelper::log('Hapus Pengguna: "' . $pengguna->username . '", "' . $pengguna->email . '"');
         return redirect()->route('pengguna.index')->with('message', 'Pengguna Berhasil Dihapus!');
     }
     public function getPermissionsByUser(Request $request, Pengguna $pengguna)

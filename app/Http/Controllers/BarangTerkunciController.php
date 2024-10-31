@@ -10,10 +10,19 @@ use Illuminate\Http\Request;
 class BarangTerkunciController extends Controller
 {
     // Menampilkan daftar barang terkunci
-    public function index()
+    public function index(Request $request)
     {
-        $barangTerkunci = BarangTerkunci::paginate(7);
+        $query = BarangTerkunci::query();
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_barang', 'LIKE', "%$search%")
+                    ->orWhere('alasan_terkunci', 'LIKE', "%$search%");
+            });
+        }
+        $data = $query->paginate(7)->appends($request->only('search'));
         $barangs = Barang::all();
+        $barangTerkunci=$data;
         // $kodeBarangTerkunci = BarangTerkunci::pluck('kode_barang')->toArray();
         return view('barang.terkunci.list', compact('barangTerkunci', 'barangs'));
     }

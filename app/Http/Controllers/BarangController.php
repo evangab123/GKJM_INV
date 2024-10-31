@@ -35,13 +35,35 @@ class BarangController extends Controller
         if (!$accessResult['access']) {
             abort(403, 'Unauthorized action.');
         }
+        $ruangs=[];
         if (!empty($accessResult['room'])) {
             $query->whereIn('ruang_id', function ($q) use ($accessResult) {
                 $q->select('ruang_id')->from('ruang')->whereIn('nama_ruang', $accessResult['room']);
             });
+            $ruangs = Ruang::whereIn('nama_ruang', $accessResult['room'])->get();
+        }else{
+            $ruangs= Ruang::all();
         }
         $kondisi = KondisiBarang::all();
         $kategori = KategoriBarang::all();
+
+        if ($request->filled('ruang')) {
+            $query->whereHas('ruang', function ($q) use ($request) {
+                $q->where('nama_ruang', 'like', '%' . $request->ruang . '%');
+            });
+        }
+
+        if ($request->filled('kondisi')) {
+            $query->whereHas('kondisi', function ($q) use ($request) {
+                $q->where('deskripsi_kondisi', 'like', '%' . $request->kondisi . '%');
+            });
+        }
+
+        if ($request->filled('kategori')) {
+            $query->whereHas('kategori', function ($q) use ($request) {
+                $q->where('nama_kategori', 'like', '%' . $request->kategori . '%');
+            });
+        }
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -54,12 +76,13 @@ class BarangController extends Controller
             });
         }
 
-        $data = $query->paginate(7)->appends($request->only('search'));
+        $data = $query->paginate(7)->appends($request->only('search'))->appends($request->only('ketegori'))->appends($request->only('kondisi'))->appends($request->only('ruang'));
 
         return view('barang.listbarang', [
             'barang' => $data,
             'kondisi' => $kondisi,
             'kategori' => $kategori,
+            'ruangs' => $ruangs,
         ]);
     }
 
@@ -369,7 +392,7 @@ class BarangController extends Controller
 
         $pb = PenghapusanBarang::create([
             'kode_barang' => $barang->kode_barang,
-            'tanggal_penghapusan' => $request->input('tanggal_penghapusan'), 
+            'tanggal_penghapusan' => $request->input('tanggal_penghapusan'),
             'alasan_penghapusan' => $request->input('alasan'),
             'nilai_sisa' => $barang->nilai_ekonomis_barang,
         ]);

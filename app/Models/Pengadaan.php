@@ -15,7 +15,7 @@ class Pengadaan extends Model
     protected $primaryKey = 'pengadaan_id';
 
     protected $fillable = [
-        'nama_barang',
+        'merek_barang',
         'jumlah',
         'tanggal_pengajuan',
         'status_pengajuan',

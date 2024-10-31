@@ -41,7 +41,7 @@
                         <thead class="thead-dark">
                             <tr>
                                 <th scope="col">{{ __('No') }}</th>
-                                <th scope="col">{{ __('Nama Barang') }}</th>
+                                <th scope="col">{{ __('Merek Barang') }}</th>
                                 <th scope="col">{{ __('Jumlah') }}</th>
                                 <th scope="col">{{ __('Referensi') }}</th>
                                 <th scope="col">{{ __('Keterangan') }}</th>
@@ -63,7 +63,7 @@
                                     <td scope="row">
                                         {{ ($pengadaan->currentPage() - 1) * $pengadaan->perPage() + $loop->iteration }}
                                     </td>
-                                    <td>{{ $item->nama_barang }}</td>
+                                    <td>{{ $item->merek_barang }}</td>
                                     <td>{{ $item->jumlah }}</td>
                                     <td style="width:120px">
                                         <div class="d-flex">
@@ -126,7 +126,7 @@
                                                             </button>
                                                         </form>
                                                     @elseif ($item->status_pengajuan == 'Disetujui')
-                                                         <!-- Tombol Buat Barang -->
+                                                        <!-- Tombol Buat Barang -->
                                                         <form
                                                             action="{{ route('pengadaan.buatbarang', $item->pengadaan_id) }}"
                                                             method="POST" class="flex-fill" style="margin: 0;">
@@ -134,7 +134,7 @@
                                                             @method('PUT')
                                                             <button type="submit" class="btn btn-success"
                                                                 style="width: 100%; height: 40px;"
-                                                                @if ($item->kode_barang !== null||!(auth()->user()->hasRole("Super Admin"))) disabled @endif>
+                                                                @if ($item->kode_barang !== null || !auth()->user()->hasRole('Super Admin')) disabled @endif>
                                                                 <i class="fas fa-plus"></i> {{ __('Barang') }}
                                                             </button>
                                                         </form>
@@ -143,12 +143,13 @@
                                                 @if ($hasEdit['edit'])
                                                     <!-- Tombol Edit -->
                                                     <button class="btn btn-primary flex-fill"
-                                                        onclick="openEditModal({{ $item->pengadaan_id }}, '{{ $item->nama_barang }}', {{ $item->jumlah }}, '{{ $item->referensi }}', '{{ $item->keterangan }}')"
+                                                        onclick="openEditModal({{ $item->pengadaan_id }}, '{{ $item->merek_barang }}', {{ $item->jumlah }}, '{{ $item->referensi }}', '{{ $item->keterangan }}')"
                                                         style="width: 100%; height: 40px;"
-                                                        @if ($item->kode_barang !== null) disabled @endif>
+                                                        @if ($item->status_pengajuan == 'Disetujui') disabled @endif>
                                                         <i class="fas fa-edit"></i> {{ __('Edit') }}
                                                     </button>
                                                 @endif
+
                                                 @if ($hasDelete['delete'])
                                                     <!-- Tombol Hapus -->
                                                     <form action="{{ route('pengadaan.destroy', $item->pengadaan_id) }}"
@@ -158,11 +159,12 @@
                                                         <button type="submit" class="btn btn-danger"
                                                             onclick="return confirm('{{ __('Apakah Anda yakin ingin menghapus data ini?') }}')"
                                                             style="width: 100%; height: 40px;"
-                                                            @if ($item->kode_barang !== null) disabled @endif>
+                                                            @if ($item->status_pengajuan == 'Disetujui') disabled @endif>
                                                             <i class="fas fa-trash"></i> {{ __('Hapus') }}
                                                         </button>
                                                     </form>
                                                 @endif
+
                                             </div>
                                         </td>
                                     @endif
@@ -200,9 +202,9 @@
                     <form action="{{ route('pengadaan.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label for="nama_barang">{{ __('Merek Barang') }}</label>
-                            <input type="text" name="nama_barang" class="form-control" required
-                                placeholder="Masukkan Nama Barang" id="nama_barang">
+                            <label for="merek_barang">{{ __('Merek Barang') }}</label>
+                            <input type="text" name="merek_barang" class="form-control" required
+                                placeholder="Masukkan Nama Barang" id="merek_barang">
                         </div>
                         <div class="form-group">
                             <label for="jumlah">{{ __('Jumlah') }}</label>
@@ -249,8 +251,8 @@
                         @csrf
                         @method('PUT')
                         <div class="form-group">
-                            <label for="edit_nama_barang">{{ __('Nama Barang') }}</label>
-                            <input type="text" name="nama_barang" class="form-control" id="edit_nama_barang"
+                            <label for="edit_merek_barang">{{ __('Merek Barang') }}</label>
+                            <input type="text" name="merek_barang" class="form-control" id="edit_merek_barang"
                                 required>
                         </div>
                         <div class="form-group">
@@ -313,7 +315,7 @@
         // Mengisi data ke dalam modal
         document.getElementById('modalEditPengadaanLabel').textContent = 'Edit Pengadaan Barang ID: ' + id;
         document.getElementById('formEditPengadaan').action = '/pengadaan/' + id; // Update action form
-        document.getElementById('edit_nama_barang').value = nama; // Isi nama_barang di form
+        document.getElementById('edit_merek_barang').value = nama; // Isi merek_barang di form
         document.getElementById('edit_jumlah').value = jumlah; // Isi jumlah di form
         document.getElementById('edit_referensi').value = referensi; // Isi referensi di form
         document.getElementById('edit_keterangan').value = keterangan; // Isi keterangan di form

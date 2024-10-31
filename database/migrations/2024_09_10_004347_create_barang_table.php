@@ -64,7 +64,7 @@ return new class extends Migration {
         Schema::create('pengajuanpengadaan', function (Blueprint $table) {
             $table->id('pengadaan_id');
             $table->string('kode_barang', 50)->nullable();
-            $table->string('nama_barang');
+            $table->string('merek_barang');
             $table->integer('jumlah');
             $table->date('tanggal_pengajuan');
             $table->enum('status_pengajuan', ['Diajukan', 'Disetujui', 'Ditolak']);

@@ -19,6 +19,33 @@
                     <form action="{{ route('barang.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari Barang...') }}"
                             value="{{ request('search') }}">
+                        <select name="kondisi" class="form-control ml-2">
+                            <option value="">{{ __('Filter Kondisi') }}</option>
+                            @foreach ($kondisi as $kon)
+                                <option value="{{ $kon->deskripsi_kondisi }}"
+                                    {{ request('permission') == $kon->deskripsi_kondisi ? 'selected' : '' }}>
+                                    {{ $kon->deskripsi_kondisi }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <select name="kategori" class="form-control ml-2">
+                            <option value="">{{ __('Filter Kategori') }}</option>
+                            @foreach ($kategori as $kon)
+                                <option value="{{ $kon->nama_kategori }}"
+                                    {{ request('permission') == $kon->nama_kategori ? 'selected' : '' }}>
+                                    {{ $kon->nama_kategori }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <select name="ruang" class="form-control ml-2">
+                            <option value="">{{ __('Filter Ruang') }}</option>
+                            @foreach ($ruangs as $kon)
+                                <option value="{{ $kon->nama_ruang }}"
+                                    {{ request('permission') == $kon->nama_ruang ? 'selected' : '' }}>
+                                    {{ $kon->nama_ruang }}
+                                </option>
+                            @endforeach
+                        </select>
                         <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
                         <a href="{{ route('barang.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}

@@ -12,10 +12,15 @@
 
         <div class="card shadow mb-4">
             <div class="card-header pt-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">{{ __('Daftar Barang Terkunci') }}</h6>
-                {{-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">
-                    <i class="fa-solid fa-plus"></i> {{ __('Tambah Barang Terkunci!') }}
-                </button> --}}
+                {{-- Search Form --}}
+                <form action="{{ route('terkunci.index') }}" method="GET" class="form-inline">
+                    <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
+                        value="{{ request('search') }}" style="max-width: 200px;">
+                    <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
+                    <a href="{{ route('terkunci.index') }}" class="btn btn-secondary ml-2">
+                        <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
+                    </a>
+                </form>
             </div>
 
             <div class="card-body">
@@ -56,7 +61,17 @@
             </div>
         </div>
 
-        {{ $barangTerkunci->links() }}
+
+        <!-- Pagination and Info -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="show-info">
+                {{ __('Melihat') }} {{ $barangTerkunci->firstItem() }} {{ __('hingga') }} {{ $barangTerkunci->lastItem() }}
+                {{ __('dari total') }} {{ $barangTerkunci->total() }} {{ __('Barang') }}
+            </div>
+            <div class="pagination">
+                {{ $barangTerkunci->links() }}
+            </div>
+        </div>
     </div>
 
 @endsection
