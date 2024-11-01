@@ -220,17 +220,16 @@ class PenggunaController extends Controller
     }
     public function getPermissionsByUser(Request $request, Pengguna $pengguna)
     {
-        $roleId = $request->query('roleId'); // Get roleId from the query
+        $roleId = $request->query('roleId');
         $role = Role::find($roleId);
 
-        // Get permissions for the role
         $rolePermissions = $role ? $role->permissions : [];
-        // Get current permissions assigned to the user
+
         $userPermissions = $pengguna->permissions;
 
         return response()->json([
-            'permissions' => $rolePermissions, // Permissions based on the role
-            'userPermissions' => $userPermissions, // Current permissions assigned to the user
+            'permissions' => $rolePermissions,
+            'userPermissions' => $userPermissions,
             'pengguna' => $pengguna,
         ]);
     }

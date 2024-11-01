@@ -9,7 +9,7 @@ class KategoriBarang extends Model
 {
     use HasFactory;
 
-    protected $table = 'KategoriBarang';
+    protected $table = 'kategoribarang';
 
     protected $primaryKey = 'kategori_barang_id';
 

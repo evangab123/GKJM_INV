@@ -67,7 +67,8 @@ Route::get('/pengguna', [PenggunaController::class, 'index'])
     ->name('pengguna.index');
 
 Route::get('/pengguna/{pengguna}/edit/permissions', [PenggunaController::class, 'getPermissionsByUser'])
-    ->middleware('role:Super Admin');
+    ->middleware('role:Super Admin')
+    ->name('pengguna.permissions.edit');
 
 Route::get('/role', [RoleController::class, 'index'])
     ->middleware('role:Super Admin')

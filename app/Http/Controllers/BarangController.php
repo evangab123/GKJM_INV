@@ -107,7 +107,7 @@ class BarangController extends Controller
             'kondisi' => $kondisi,
             'kategori' => $kategori,
             'ruang' => $Ruang,
-            'barangTer  '=>$barangTerkunci,
+            'barangTerkunci'=>$barangTerkunci,
         ]);
     }
 

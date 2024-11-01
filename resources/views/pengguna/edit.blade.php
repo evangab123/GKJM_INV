@@ -1,10 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Edit Pengguna | Inventaris GKJM')
 @section('main-content')
-    {{-- <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">{{ $title ?? __('Blank Page') }}</h1> --}}
-
-    <!-- Main Content goes here -->
 
     <div class="card">
         <div class="card-body">
@@ -131,48 +127,39 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        haklist(); // Call the function to populate permissions on page load
+        haklist();
     });
 
     function haklist() {
         const roleId = document.getElementById('role_id').value;
-        const penggunaid = document.getElementById('pengguna_id').value; // Assume you have a user ID field
+        const penggunaid = document.getElementById('pengguna_id').value;
         const permissionsContainer = document.getElementById('permissions-container');
 
-        // Clear previous content
         permissionsContainer.innerHTML = '';
 
-        // Check if user exists
         if (penggunaid || roleId) {
             permissionsContainer.style.display = 'block';
+            const url = `{{ route('pengguna.permissions.edit', ['pengguna' => '__pengguna_id__']) }}`
+                .replace('__pengguna_id__', penggunaid) + `?roleId=${roleId}`;
 
-            // Fetch permissions from the role and user
-            fetch(
-                `/pengguna/${penggunaid}/edit/permissions?roleId=${roleId}`) // Adjust the endpoint to send both roleId and penggunaid
-
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    // Check if permissions are found for the role or user
                     if (data.permissions.length > 0) {
-                        // Create a heading for the permissions list
                         const heading = document.createElement('h6');
                         heading.classList.add('font-weight-bold', 'mb-3');
                         heading.textContent = 'Daftar Hak Akses untuk Pengguna Ini:';
                         permissionsContainer.appendChild(heading);
 
-                        // Create a list for permissions
                         const listGroup = document.createElement('div');
                         listGroup.classList.add('list-group');
 
-                        // Store user's existing permissions in an array for easy checking
                         const userPermissions = data.userPermissions.map(permission => permission.name);
 
-                        // Iterate over the role's permissions and create checkboxes
                         data.permissions.forEach(permission => {
                             const checkboxContainer = document.createElement('div');
-                            checkboxContainer.classList.add('form-check', 'mb-2'); // Add margin-bottom here
+                            checkboxContainer.classList.add('form-check', 'mb-2');
 
-                            // Check if the permission exists in the user's current permissions and check the box if true
                             const isChecked = userPermissions.includes(permission.name) ? 'checked' : '';
 
                             checkboxContainer.innerHTML = `
@@ -192,7 +179,6 @@
 
                         permissionsContainer.appendChild(listGroup);
                     } else {
-                        // Display a message if no permissions are found
                         const noPermissionsMessage = document.createElement('p');
                         noPermissionsMessage.classList.add('text-muted');
                         noPermissionsMessage.textContent = 'Tidak ada hak akses untuk pengguna atau role ini.';

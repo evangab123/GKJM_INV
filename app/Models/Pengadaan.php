@@ -10,7 +10,7 @@ class Pengadaan extends Model
 {
     use HasFactory;
 
-    protected $table = 'PengajuanPengadaan';
+    protected $table = 'pengajuanpengadaan';
 
     protected $primaryKey = 'pengadaan_id';
 

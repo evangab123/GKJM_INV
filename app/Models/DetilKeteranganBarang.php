@@ -9,7 +9,7 @@ class DetilKeteranganBarang extends Model
 {
     use HasFactory;
 
-    protected $table = 'DetilKeteranganBarang'; // Nama tabel
+    protected $table = 'detilketeranganbarang'; // Nama tabel
 
     protected $primaryKey = 'keterangan_id'; // Primary key
 
