@@ -294,7 +294,7 @@ class BarangController extends Controller
             'ruang_id' => 'required|exists:ruang,ruang_id',
             'kondisi_id' => 'required|exists:kondisibarang,kondisi_id',
             'kategori_barang_id' => 'required|exists:kategoribarang,kategori_barang_id',
-            'status_barang' => 'required|string',
+            // 'status_barang' => 'required|string',
             'foto_barang' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
         if ($validator->fails()) {
@@ -361,7 +361,7 @@ class BarangController extends Controller
             'ruang_id' => $request->input('ruang_id'),
             'kondisi_id' => $request->input('kondisi_id'),
             'kategori_barang_id' => $request->input('kategori_barang_id'),
-            'status_barang' => $request->input('status_barang'),
+            'status_barang' => "Ada",
             'path_gambar' => $pathFoto,
         ]);
 

@@ -83,7 +83,8 @@ Route::post('/role/{role}/givepermissions', [RoleController::class, 'givePermiss
     ->name('role.givepermissions');
 
 Route::get('/roles/{role}/permissions', [RoleController::class, 'getPermissionsByRole'])
-    ->middleware('role:Super Admin');
+    ->middleware('role:Super Admin')
+    ->name('role.permissions.edit');
 
 Route::delete('/roles/{role}/permissions/{permission}', [RoleController::class, 'removePermission'])
     ->middleware('role:Super Admin')

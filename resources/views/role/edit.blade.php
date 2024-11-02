@@ -1,6 +1,42 @@
 @extends('layouts.admin')
 @section('title', __('Edit Role dan Permissions | Inventaris GKJM'))
+@php
+    function formatHakAkses($hak)
+    {
+        $hakList = explode('-', $hak);
+        $hakFormatted = [];
+        $index = 0;
 
+        $deskripsiMap = [
+            'lihat' => 'Melihat',
+            'perbarui' => 'Memperbarui',
+            'buat' => 'Membuat',
+            'hapus' => 'Menghapus',
+            'peminjam' => 'Peminjaman',
+            'pengadaan' => 'Pengadaan',
+            'r.' => 'Ruangan',
+            'semua' => 'Semua'
+        ];
+
+        foreach ($hakList as $item) {
+            if ($item === 'semua' && $index === 0) {
+                $hakFormatted[] = 'Melihat, membuat, memperbarui, menghapus';
+            } elseif ($item === 'semua' && $index === 1) {
+                $hakFormatted[] = 'Pengadaan, Peminjaman, Barang, Penghapusan, dan Pemakaian';
+            } elseif ($item === 'semua' && $index === 2) {
+                $hakFormatted[] = 'Semua Ruangan';
+            } else {
+                $hakFormatted[] = $deskripsiMap[$item] ?? ucfirst($item);
+            }
+            $index += 1;
+        }
+
+        if (count($hakFormatted) > 1) {
+            $lastElement = array_pop($hakFormatted);
+            return implode(', ', $hakFormatted) . ' di ' . $lastElement;
+        }
+    }
+@endphp
 @section('main-content')
     <!-- Main Content -->
     <div class="card">
@@ -36,7 +72,7 @@
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger"
                             onclick="return confirm('{{ __('Apakah kamu yakin ingin menghapus permission ini dari role?') }}')">
-                            {{ $permission->name }} <i class="fas fa-times"></i>
+                            {{ formatHakAkses($permission->name) }} <i class="fas fa-times"></i>
                         </button>
                     </form>
                 @endforeach
@@ -54,15 +90,21 @@
                     <select name="permissions" id="permissions" class="form-control">
                         @foreach ($permissions as $permission)
                             <option value="{{ $permission->name }}">
-                                {{ $permission->name }}
+                                {{ formatHakAkses($permission->name) }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- Submit button untuk tambah permission -->
-                <button type="submit" class="btn btn-primary">{{ __('Tambah Hak Akses') }}</button>
+                <button type="submit" class="btn btn-primary">{{ __('Beri Izin Hak Akses') }}</button>
             </form>
+            <div class="mt-2">
+                <a href="{{ route('hak.create') }}" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> {{ __('Buat Hak!') }}
+                </a>
+                <small>{{ __('Jika hak belum ada klik tombol di bawah untuk membuat hak baru') }}</small>
+            </div>
         </div>
 
         <!-- Tombol kembali -->

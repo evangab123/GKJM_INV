@@ -9,7 +9,7 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="nama_pengguna">Nama Lengkap</label>
+                    <label for="nama_pengguna">{{ __('Nama Lengkap') }}</label>
                     <input type="text" class="form-control @error('nama_pengguna') is-invalid @enderror"
                         name="nama_pengguna" id="nama_pengguna" placeholder="Nama Lengkap..." autocomplete="off"
                         value="{{ old('nama_pengguna') }}">
@@ -17,9 +17,9 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">{{ __('Username') }}</label>
                     <input type="text" class="form-control @error('username') is-invalid @enderror" name="username"
                         id="username" placeholder="Username..." autocomplete="off" value="{{ old('username') }}">
                     @error('username')
@@ -29,7 +29,7 @@
 
 
                 <div class="form-group">
-                    <label for="jabatan">Jabatan</label>
+                    <label for="jabatan">{{ __('Jabatan') }}</label>
                     <input type="text" class="form-control @error('jabatan') is-invalid @enderror" name="jabatan"
                         id="jabatan" placeholder="Jabatan..." autocomplete="off" value="{{ old('jabatan') }}">
                     @error('jabatan')
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email">{{ __('Email') }}</label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror" name="email"
                         id="email" placeholder="Email..." autocomplete="off" value="{{ old('email') }}">
                     @error('email')
@@ -47,7 +47,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">{{ __('Password') }}</label>
                     <input type="password" class="form-control @error('password') is-invalid @enderror" name="password"
                         id="password" placeholder="Password" autocomplete="off">
                     @error('password')
@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password_confirmation">Password Konfirmasi</label>
+                    <label for="password_confirmation">{{ __('Password Konfirmasi') }}</label>
                     <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
                         name="password_confirmation" id="password_confirmation" placeholder="Password Konfirmasi"
                         autocomplete="off">
@@ -66,10 +66,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="role_id">Role</label>
+                    <label for="role_id">{{ __('Role') }}</label>
                     <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id"
                         onchange="haklist()">
-                        <option value="">Pilih Role Pengguna</option>
+                        <option value="">{{ __('Pilih Role Pengguna') }}</option>
                         @foreach ($roles as $role)
                             <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
                                 {{ $role->name }}
@@ -83,12 +83,12 @@
 
                 <!-- Permissions List -->
                 <div id="permissions-container" style="display: none;">
-                    <h5>Permissions</h5>
+                    <h5>{{ __('Permissions') }}</h5>
                     <div id="permissions-list"></div>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ route('pengguna.index') }}" class="btn btn-default">Kembali ke list</a>
+                <a href="{{ route('pengguna.index') }}" class="btn btn-default">{{ __('Kembali ke list') }}</a>
 
             </form>
         </div>
@@ -96,19 +96,50 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            haklist(); // Call the function to populate permissions on page load
+            haklist();
         });
+
+        function formatHakAkses(hak) {
+            const hakList = hak.split('-');
+            const deskripsiMap = {
+                'lihat': 'Melihat',
+                'perbarui': 'Memperbarui',
+                'buat': 'Membuat',
+                'hapus': 'Menghapus',
+                'peminjam': 'Peminjaman',
+                'pengadaan': 'Pengadaan',
+                'r.': 'Ruangan',
+                'semua': 'Semua'
+            };
+
+            let hakFormatted = [];
+            hakList.forEach((item, index) => {
+                if (item === "semua" && index === 0) {
+                    hakFormatted.push("Melihat, Membuat, Memperbarui, Menghapus");
+                } else if (item === "semua" && index === 1) {
+                    hakFormatted.push("Pengadaan, Peminjaman, Barang, Penghapusan, dan Pemakaian");
+                } else if (item === "semua" && index === 2) {
+                    hakFormatted.push("Semua Ruangan");
+                } else {
+                    hakFormatted.push(deskripsiMap[item] || item.charAt(0).toUpperCase() + item.slice(1));
+                }
+            });
+
+            return hakFormatted.join(', ');
+        }
 
         function haklist() {
             const roleId = document.getElementById('role_id').value;
             const permissionsContainer = document.getElementById('permissions-container');
 
+            const url = `{{ route('role.permissions.edit', ['role' => '__role_id__']) }}`
+                .replace('__role_id__', roleId);
             // Clear previous content
             permissionsContainer.innerHTML = '';
 
             if (roleId) {
                 permissionsContainer.style.display = 'block';
-                fetch(`/roles/${roleId}/permissions`)
+                fetch(url)
                     .then(response => response.json())
                     .then(data => {
                         if (data.permissions.length > 0) {
@@ -134,7 +165,7 @@
                                    value="${permission.name}"
                                    id="permission-${permission.id}">
                             <label class="form-check-label" for="permission-${permission.id}">
-                                ${permission.name}
+                                ${formatHakAkses(permission.name)}
                             </label>
                         `;
 

@@ -1,6 +1,42 @@
 @extends('layouts.admin')
 @section('title', __('Daftar Pengguna | Inventaris GKJM'))
+@php
+    function formatHakAkses($hak)
+    {
+        $hakList = explode('-', $hak);
+        $hakFormatted = [];
+        $index = 0;
 
+        $deskripsiMap = [
+            'lihat' => 'Melihat',
+            'perbarui' => 'Memperbarui',
+            'buat' => 'Membuat',
+            'hapus' => 'Menghapus',
+            'peminjam' => 'Peminjaman',
+            'pengadaan' => 'Pengadaan',
+            'r.' => 'Ruangan',
+            'semua' => 'Semua',
+        ];
+
+        foreach ($hakList as $item) {
+            if ($item === 'semua' && $index === 0) {
+                $hakFormatted[] = 'Melihat, membuat, memperbarui, menghapus';
+            } elseif ($item === 'semua' && $index === 1) {
+                $hakFormatted[] = 'Pengadaan, Peminjaman, Barang, Penghapusan, dan Pemakaian';
+            } elseif ($item === 'semua' && $index === 2) {
+                $hakFormatted[] = 'Semua Ruangan';
+            } else {
+                $hakFormatted[] = $deskripsiMap[$item] ?? ucfirst($item);
+            }
+            $index += 1;
+        }
+
+        if (count($hakFormatted) > 1) {
+            $lastElement = array_pop($hakFormatted);
+            return implode(', ', $hakFormatted) . ' di ' . $lastElement;
+        }
+    }
+@endphp
 @section('main-content')
 
     <div class="container-fluid">
@@ -16,12 +52,12 @@
                     <form action="{{ route('pengguna.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
                             value="{{ request('search') }}" style="max-width: 200px;">
-                        <select name="permission" class="form-control ml-2">
+                        <select name="permission" class="form-control ml-2" style="max-width: 200px;">
                             <option value="">{{ __('Filter Hak') }}</option>
                             @foreach ($permissions as $perm)
                                 <option value="{{ $perm->name }}"
                                     {{ request('permission') == $perm->name ? 'selected' : '' }}>
-                                    {{ $perm->name }}
+                                    {{ formatHakAkses($perm->name) }}
                                 </option>
                             @endforeach
                         </select>
@@ -51,7 +87,7 @@
                                 <th scope="col">{{ __('Nama') }}</th>
                                 <th scope="col">{{ __('Jabatan') }}</th>
                                 <th scope="col">{{ __('Email') }}</th>
-                                <th scope="col">{{ __('Role Pengguna') }}</th>
+                                <th scope="col">{{ __('Role') }}</th>
                                 <th scope="col">{{ __('Hak yang dimiliki') }}</th>
                                 <th scope="col">{{ __('Aksi') }}</th>
                             </tr>
@@ -69,7 +105,7 @@
                                         @if ($user->permissions->count())
                                             <ul>
                                                 @foreach ($user->permissions as $permission)
-                                                    <li>{{ $permission->name }}</li>
+                                                    <li>{{ formatHakAkses($permission->name) }}</li>
                                                 @endforeach
                                             </ul>
                                         @else

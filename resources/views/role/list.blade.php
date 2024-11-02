@@ -1,5 +1,43 @@
 @extends('layouts.admin')
 @section('title', 'Daftar Roles | Inventaris GKJM')
+@php
+    function formatHakAkses($hak)
+    {
+        $hakList = explode('-', $hak);
+        $hakFormatted = [];
+        $index = 0;
+
+        $deskripsiMap = [
+            'lihat' => 'Melihat',
+            'perbarui' => 'Memperbarui',
+            'buat' => 'Membuat',
+            'hapus' => 'Menghapus',
+            'peminjam' => 'Peminjaman',
+            'pengadaan' => 'Pengadaan',
+            'r.' => 'Ruangan',
+            'semua' => 'Semua',
+        ];
+
+        foreach ($hakList as $item) {
+            if ($item === 'semua' && $index === 0) {
+                $hakFormatted[] = 'Melihat, membuat, memperbarui, menghapus';
+            } elseif ($item === 'semua' && $index === 1) {
+                $hakFormatted[] = 'Pengadaan, Peminjaman, Barang, Penghapusan, dan Pemakaian';
+            } elseif ($item === 'semua' && $index === 2) {
+                $hakFormatted[] = 'Semua Ruangan';
+            } else {
+                $hakFormatted[] = $deskripsiMap[$item] ?? ucfirst($item);
+            }
+            $index += 1;
+        }
+
+        if (count($hakFormatted) > 1) {
+            $lastElement = array_pop($hakFormatted);
+            return implode(', ', $hakFormatted) . ' di ' . $lastElement;
+        }
+    }
+@endphp
+
 
 @section('main-content')
 
@@ -18,14 +56,18 @@
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari Role ...') }}"
                             value="{{ request('search') }}" style="max-width: 200px;">
 
-                        <select name="permission" class="form-control ml-2">
-                            <option value="">{{ __('Filter Permission') }}</option>
-                            @foreach ($permission as $perm)
-                                <option value="{{ $perm->name }}" {{ request('permission') == $perm->name ? 'selected' : '' }}>
-                                    {{ $perm->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="form-group">
+                            <select name="permission" class="form-control ml-2" style="max-width: 200px;">
+                                <!-- Sesuaikan lebar di sini -->
+                                <option value="">{{ __('Filter Hak') }}</option>
+                                @foreach ($permission as $perm)
+                                    <option value="{{ $perm->name }}"
+                                        {{ request('permission') == $perm->name ? 'selected' : '' }}>
+                                        {{ formatHakAkses($perm->name) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
                         <a href="{{ route('role.index') }}" class="btn btn-secondary ml-2">
@@ -51,13 +93,14 @@
                         <tbody>
                             @foreach ($Roles as $Role)
                                 <tr>
-                                    <td scope="row">{{ ($Roles->currentPage() - 1) * $Roles->perPage() + $loop->iteration }}</td>
+                                    <td scope="row">
+                                        {{ ($Roles->currentPage() - 1) * $Roles->perPage() + $loop->iteration }}</td>
                                     <td>{{ $Role->name }}</td>
                                     <td>
                                         @if ($Role->permissions->count())
                                             <ul>
                                                 @foreach ($Role->permissions as $permission)
-                                                    <li>{{ $permission->name }}</li>
+                                                    <li>{{ formatHakAkses($permission->name) }}</li>
                                                 @endforeach
                                             </ul>
                                         @else

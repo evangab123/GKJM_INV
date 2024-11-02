@@ -1,102 +1,92 @@
 @extends('layouts.admin')
 @section('title', 'Edit Pengguna | Inventaris GKJM')
+
 @section('main-content')
 
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('pengguna.update', $user->pengguna_id) }}" method="post">
-                @csrf
-                @method('put')
-                <input id= 'pengguna_id' type="hidden" name="pengguna_id" value="{{ $user->pengguna_id }}">
-                <div class="form-group">
-                    <label for="nama_pengguna">Nama Lengkap</label>
-                    <input type="text" class="form-control @error('nama_pengguna') is-invalid @enderror"
-                        name="nama_pengguna" id="nama_pengguna" placeholder="Nama Lengkap" autocomplete="off"
-                        value="{{ old('nama_pengguna') ?? $user->nama_pengguna }}">
-                    @error('nama_pengguna')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+<div class="card">
+    <div class="card-body">
+        <form action="{{ route('pengguna.update', $user->pengguna_id) }}" method="post">
+            @csrf
+            @method('put')
+            <input id='pengguna_id' type="hidden" name="pengguna_id" value="{{ $user->pengguna_id }}">
 
-                <div class="form-group">
-                    <label for="jabatan">Jabatan</label>
-                    <input type="text" class="form-control @error('jabatan') is-invalid @enderror" name="jabatan"
-                        id="jabatan" placeholder="Jabatan" autocomplete="off"
-                        value="{{ old('jabatan') ?? $user->jabatan }}">
-                    @error('jabatan')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+            <div class="form-group">
+                <label for="nama_pengguna">{{ __('Nama Lengkap') }}</label>
+                <input type="text" class="form-control @error('nama_pengguna') is-invalid @enderror" name="nama_pengguna" id="nama_pengguna" placeholder="Nama Lengkap" autocomplete="off" value="{{ old('nama_pengguna') ?? $user->nama_pengguna }}">
+                @error('nama_pengguna')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control @error('username') is-invalid @enderror" name="username"
-                        id="username" placeholder="Username..." autocomplete="off" value="{{ old('username')?? $user->username }}">
-                    @error('username')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+            <div class="form-group">
+                <label for="jabatan">{{ __('Jabatan') }}</label>
+                <input type="text" class="form-control @error('jabatan') is-invalid @enderror" name="jabatan" id="jabatan" placeholder="Jabatan" autocomplete="off" value="{{ old('jabatan') ?? $user->jabatan }}">
+                @error('jabatan')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control @error('email') is-invalid @enderror" name="email"
-                        id="email" placeholder="Email" autocomplete="off" value="{{ old('email') ?? $user->email }}">
-                    @error('email')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+            <div class="form-group">
+                <label for="username">{{ __('Username') }}</label>
+                <input type="text" class="form-control @error('username') is-invalid @enderror" name="username" id="username" placeholder="Username..." autocomplete="off" value="{{ old('username')?? $user->username }}">
+                @error('username')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control @error('password') is-invalid @enderror" name="password"
-                        id="password" placeholder="Password, Boleh Kosong..." autocomplete="off">
-                    @error('password')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+            <div class="form-group">
+                <label for="email">{{ __('Email') }}</label>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Email" autocomplete="off" value="{{ old('email') ?? $user->email }}">
+                @error('email')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
-                <div class="form-group">
-                    <label for="password_confirmation">Confirm Password</label>
-                    <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
-                        name="password_confirmation" id="password_confirmation" placeholder="Confirm Password"
-                        autocomplete="off">
-                    @error('password_confirmation')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+            <div class="form-group">
+                <label for="password">{{ __('Password') }}</label>
+                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Password, Boleh Kosong..." autocomplete="off">
+                @error('password')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
+            <div class="form-group">
+                <label for="password_confirmation">{{ __('Password Konfirmasi') }}</label>
+                <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" autocomplete="off">
+                @error('password_confirmation')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
-                <div class="form-group">
-                    <label for="role_id">Role</label>
-                    <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id"
-                        onchange="haklist()">
-                        <option value="" disabled>Pilih Role Pengguna</option>
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->id }}"
-                                {{ old('role_id') == $role->id || (isset($user) && $user->hasRole($role->name)) ? 'selected' : '' }}>
-                                {{ $role->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('role_id')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+            <div class="form-group">
+                <label for="role_id">{{ __('Role') }}</label>
+                <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id" onchange="haklist()">
+                    <option value="" disabled>{{ __('Pilih Role Pengguna') }}</option>
+                    @foreach ($roles as $role)
+                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id || (isset($user) && $user->hasRole($role->name)) ? 'selected' : '' }}>
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('role_id')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
-                <!-- Permissions List -->
-                <div id="permissions-container" style="display: none;">
-                    <h5>Permissions</h5>
-                    <div id="permissions-list"></div>
-                </div>
+            <!-- Permissions List -->
+            <div id="permissions-container" style="display: none;">
+                <h5>{{ __('Permissions') }}</h5>
+                <div id="permissions-list"></div>
+            </div>
 
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ route('pengguna.index') }}" class="btn btn-default">Kembali ke list</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{{ route('pengguna.index') }}" class="btn btn-default">{{ __('kembali') }}</a>
 
-            </form>
-        </div>
+        </form>
     </div>
+</div>
 
-    <!-- End of Main Content -->
+<!-- End of Main Content -->
 @endsection
 
 @push('notif')
@@ -129,6 +119,35 @@
     document.addEventListener('DOMContentLoaded', function() {
         haklist();
     });
+
+    function formatHakAkses(hak) {
+        const hakList = hak.split('-');
+        const deskripsiMap = {
+            'lihat': 'Melihat',
+            'perbarui': 'Memperbarui',
+            'buat': 'Membuat',
+            'hapus': 'Menghapus',
+            'peminjam': 'Peminjaman',
+            'pengadaan': 'Pengadaan',
+            'r.': 'Ruangan',
+            'semua': 'Semua'
+        };
+
+        let hakFormatted = [];
+        hakList.forEach((item, index) => {
+            if (item === "semua" && index === 0) {
+                hakFormatted.push("Melihat, Membuat, Memperbarui, Menghapus");
+            } else if (item === "semua" && index === 1) {
+                hakFormatted.push("Pengadaan, Peminjaman, Barang, Penghapusan, dan Pemakaian");
+            } else if (item === "semua" && index === 2) {
+                hakFormatted.push("Semua Ruangan");
+            } else {
+                hakFormatted.push(deskripsiMap[item] || item.charAt(0).toUpperCase() + item.slice(1));
+            }
+        });
+
+        return hakFormatted.join(', ');
+    }
 
     function haklist() {
         const roleId = document.getElementById('role_id').value;
@@ -170,7 +189,7 @@
                                    id="permission-${permission.id}"
                                    ${isChecked}>
                             <label class="form-check-label" for="permission-${permission.id}">
-                                ${permission.name}
+                                ${formatHakAkses(permission.name)}
                             </label>
                         `;
 

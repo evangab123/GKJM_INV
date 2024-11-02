@@ -5,7 +5,7 @@
 @section('main-content')
     <div class="row mb-3">
         <div class="d-flex">
-            <a href="{{ route('barang.index') }}" class="btn btn-secondary">
+            <a href="javascript:history.back()"class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
         </div>
@@ -98,7 +98,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="status_barang">{{ __('Status') }}</label>
                             <select class="form-control" name="status_barang" id="status_barang">
                                 <option value="Ada">{{ __('Ada') }}</option>
@@ -107,7 +107,7 @@
                                 <option value="Dihapus">{{ __('Dihapus') }}</option>
                                 <option value="Dipakai">{{ __('Dipakai') }}</option>
                             </select>
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <label for="foto_barang">{{ __('Foto Barang') }}</label>
                             <input type="file" class="form-control" name="path_gambar" accept="image/*"
