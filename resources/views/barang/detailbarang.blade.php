@@ -25,6 +25,10 @@
                 <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
 
+            <a href="{{ route('barang.index') }}" class="btn btn-success ml-2">
+                <i class="fa-solid fa-house"></i> {{ __('Barang') }}
+            </a>
+
             <!-- Button Edit/Close -->
             @if ($isEditing)
                 <!-- Tombol Tutup (keluar dari mode edit) -->

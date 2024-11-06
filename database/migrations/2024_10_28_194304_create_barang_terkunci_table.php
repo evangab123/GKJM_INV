@@ -18,7 +18,7 @@ class CreateBarangTerkunciTable extends Migration
             $table->string('kode_barang')->unique();
             $table->text('alasan_terkunci')->nullable();
             $table->timestamps();
-            $table->foreign('kode_barang')->references('kode_barang')->on('barang')->onDelete('cascade');
+            $table->foreign('kode_barang')->references('kode_barang')->on('barang')->onUpdate('cascade');
         });
     }
 
@@ -30,5 +30,5 @@ class CreateBarangTerkunciTable extends Migration
     public function down()
     {
         Schema::dropIfExists('barang_terkunci');
-    }   
+    }
 }

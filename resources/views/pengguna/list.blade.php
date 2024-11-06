@@ -51,8 +51,8 @@
                     {{-- Search Form --}}
                     <form action="{{ route('pengguna.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
-                            value="{{ request('search') }}" style="max-width: 200px;">
-                        <select name="permission" class="form-control ml-2" style="max-width: 200px;">
+                            value="{{ request('search') }}" style="max-width: 200px;" oninput="this.form.submit()">
+                        <select name="permission" class="form-control ml-2" style="max-width: 200px;" onchange="this.form.submit()">
                             <option value="">{{ __('Filter Hak') }}</option>
                             @foreach ($permissions as $perm)
                                 <option value="{{ $perm->name }}"
@@ -61,7 +61,7 @@
                                 </option>
                             @endforeach
                         </select>
-                        <select name="roles" class="form-control ml-2">
+                        <select name="roles" class="form-control ml-2" onchange="this.form.submit()">
                             <option value="">{{ __('Filter Roles') }}</option>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->name }}" {{ request('roles') == $role->name ? 'selected' : '' }}>
@@ -69,7 +69,6 @@
                                 </option>
                             @endforeach
                         </select>
-                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
                         <a href="{{ route('pengguna.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>

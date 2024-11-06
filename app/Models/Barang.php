@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\PengadaanController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -54,5 +55,10 @@ class Barang extends Model
     public function barangTerkunci()
     {
         return $this->hasOne(BarangTerkunci::class, 'kode_barang', 'kode_barang');
+    }
+
+    public function pengadaan()
+    {
+        return $this->hasOne(Pengadaan::class, 'kode_barang', 'kode_barang');
     }
 }

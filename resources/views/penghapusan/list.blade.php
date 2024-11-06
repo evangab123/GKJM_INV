@@ -22,8 +22,8 @@
                     {{-- Search Form --}}
                     <form action="{{ route('penghapusan.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
-                            value="{{ request('search') }}" style="max-width: 200px;">
-                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
+                            value="{{ request('search') }}" style="max-width: 200px;" oninput="this.form.submit()">
+
                         <a href="{{ route('penghapusan.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>
@@ -49,7 +49,9 @@
                         <tbody>
                             @foreach ($penghapusan as $item)
                                 <tr>
-                                    <td scope="row">{{ ($penghapusan->currentPage() - 1) * $penghapusan->perPage() + $loop->iteration }}</td>
+                                    <td scope="row">
+                                        {{ ($penghapusan->currentPage() - 1) * $penghapusan->perPage() + $loop->iteration }}
+                                    </td>
                                     <td>
                                         <a href="{{ route('barang.show', $item->kode_barang) }}">
                                             {{ $item->kode_barang ?? '-' }}
@@ -59,27 +61,27 @@
                                     <td>{{ $item->alasan_penghapusan }}</td>
                                     <td>{{ number_format($item->nilai_sisa, 2) }}</td>
                                     @if ($hasDelete['delete'])
-                                    <td style="width: 200px;">
-                                        <form action="{{ route('penghapusan.destroy', $item->penghapusan_id) }}"
-                                            method="POST" style="display:inline;"
-                                            onsubmit="return confirm('{{ __('Apakah Anda yakin ingin menghapus?') }}');">
-                                            @csrf
-                                            @method('DELETE')
+                                        <td style="width: 200px;">
+                                            <form action="{{ route('penghapusan.destroy', $item->penghapusan_id) }}"
+                                                method="POST" style="display:inline;"
+                                                onsubmit="return confirm('{{ __('Apakah Anda yakin ingin menghapus?') }}');">
+                                                @csrf
+                                                @method('DELETE')
 
-                                            @php
-                                                $dateDiff = \Carbon\Carbon::parse($item->created_at)->diffInDays(
-                                                    now(),
-                                                );
-                                            @endphp
+                                                @php
+                                                    $dateDiff = \Carbon\Carbon::parse($item->tanggal_penghapusan)->diffInDays(
+                                                        now(),
+                                                    );
+                                                @endphp
 
-                                            <button type="submit" class="btn btn-danger"
-                                                {{ $dateDiff > (int) env('DELETE_PERIOD_DAYS', 7) ? 'disabled' : '' }}>
-                                                <i class="fas fa-trash"></i> {{ __(' Hapus!') }}
-                                            </button>
+                                                <button type="submit" class="btn btn-danger"
+                                                    {{ $dateDiff > (int) env('DELETE_PERIOD_DAYS', 7) ? 'disabled' : '' }}>
+                                                    <i class="fas fa-trash"></i> {{ __(' Hapus!') }}
+                                                </button>
 
-                                        </form>
-                                    </td>
-                                @endif
+                                            </form>
+                                        </td>
+                                    @endif
 
                                 </tr>
                             @endforeach

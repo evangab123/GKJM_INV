@@ -16,8 +16,7 @@
                     {{-- Search Form --}}
                     <form action="{{ route('hak.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
-                            value="{{ request('search') }}" style="max-width: 200px;">
-                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
+                            value="{{ request('search') }}" style="max-width: 200px;" oninput="this.form.submit()">
                         <a href="{{ route('hak.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>

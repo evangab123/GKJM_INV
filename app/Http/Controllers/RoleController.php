@@ -116,14 +116,15 @@ class RoleController extends Controller
     }
     public function destroy($id)
     {
-        // Find the role by ID
         $role = Role::find($id);
+        if ($role->name === 'Super Admin') {
+            return redirect()->route('role.index')->with('warning', 'Role "Super Admin" tidak dapat dihapus.');
+        }
 
         if ($role) {
-            // Log the activity before deletion
+
             ActivityLogHelper::log('Hapus Role "'.$role->name.'"');
 
-            // Delete the role
             $role->delete();
 
             return redirect()->route('role.index')->with('success', 'Role berhasil dihapus.');

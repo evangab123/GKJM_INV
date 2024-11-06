@@ -54,10 +54,10 @@
                     {{-- Search Form --}}
                     <form action="{{ route('role.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari Role ...') }}"
-                            value="{{ request('search') }}" style="max-width: 200px;">
+                            value="{{ request('search') }}" style="max-width: 200px;" oninput="this.form.submit()">
 
                         <div class="form-group">
-                            <select name="permission" class="form-control ml-2" style="max-width: 200px;">
+                            <select name="permission" class="form-control ml-2" style="max-width: 200px;" onchange="this.form.submit()">
                                 <!-- Sesuaikan lebar di sini -->
                                 <option value="">{{ __('Filter Hak') }}</option>
                                 @foreach ($permission as $perm)
@@ -68,8 +68,6 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
                         <a href="{{ route('role.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>

@@ -19,6 +19,8 @@ use App\Models\KondisiBarang;
 use App\Models\Ruang;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\ActivityLogHelper;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 
 class BarangController extends Controller
@@ -35,14 +37,14 @@ class BarangController extends Controller
         if (!$accessResult['access']) {
             abort(403, 'Unauthorized action.');
         }
-        $ruangs=[];
+        $ruangs = [];
         if (!empty($accessResult['room'])) {
             $query->whereIn('ruang_id', function ($q) use ($accessResult) {
                 $q->select('ruang_id')->from('ruang')->whereIn('nama_ruang', $accessResult['room']);
             });
             $ruangs = Ruang::whereIn('nama_ruang', $accessResult['room'])->get();
-        }else{
-            $ruangs= Ruang::all();
+        } else {
+            $ruangs = Ruang::all();
         }
         $kondisi = KondisiBarang::all();
         $kategori = KategoriBarang::all();
@@ -65,6 +67,47 @@ class BarangController extends Controller
             });
         }
 
+        if ($request->filled('perolehan')) {
+            $query->where('perolehan_barang', $request->perolehan);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_barang', $request->status);
+        }
+
+        if ($request->filled('jumlah_min') && $request->filled('jumlah_max')) {
+            $query->whereBetween('jumlah', [
+                $request->input('jumlah_min'),
+                $request->input('jumlah_max')
+            ]);
+        } elseif ($request->filled('jumlah_min')) {
+            $query->where('jumlah', '>=', $request->input('jumlah_min'));
+        } elseif ($request->filled('jumlah_max')) {
+            $query->where('jumlah', '<=', $request->input('jumlah_max'));
+        }
+
+        if ($request->filled('harga_min') && $request->filled('harga_max')) {
+            $query->whereBetween('harga_pembelian', [
+                $request->input('harga_min'),
+                $request->input('harga_max')
+            ]);
+        } elseif ($request->filled('harga_min')) {
+            $query->where('harga_pembelian', '>=', $request->input('harga_min'));
+        } elseif ($request->filled('harga_max')) {
+            $query->where('harga_pembelian', '<=', $request->input('harga_max'));
+        }
+
+        if ($request->filled('tahun_perolehan_start') && $request->filled('tahun_perolehan_end')) {
+            $query->whereBetween('tahun_pembelian', [
+                $request->input('tahun_perolehan_start'),
+                $request->input('tahun_perolehan_end')
+            ]);
+        } elseif ($request->filled('tahun_perolehan_start')) {
+            $query->where('tahun_pembelian', '>=', $request->input('tahun_perolehan_start'));
+        } elseif ($request->filled('tahun_perolehan_end')) {
+            $query->where('tahun_pembelian', '<=', $request->input('tahun_perolehan_end'));
+        }
+
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -77,7 +120,7 @@ class BarangController extends Controller
         }
 
         $data = $query->paginate(7)->appends($request->only('search'))->appends($request->only('ketegori'))->appends($request->only('kondisi'))->appends($request->only('ruang'));
-
+        //dd($query->toSql());
         return view('barang.listbarang', [
             'barang' => $data,
             'kondisi' => $kondisi,
@@ -107,7 +150,7 @@ class BarangController extends Controller
             'kondisi' => $kondisi,
             'kategori' => $kategori,
             'ruang' => $Ruang,
-            'barangTerkunci'=>$barangTerkunci,
+            'barangTerkunci' => $barangTerkunci,
         ]);
     }
 
@@ -127,7 +170,7 @@ class BarangController extends Controller
             'title' => 'Detail Barang',
             'barang' => $barang,
             'isEditing' => false,
-            'barangTerkunci'=>$barangTerkunci,
+            'barangTerkunci' => $barangTerkunci,
             // 'qrCodeUrl' => $qrCodeUrl,
         ]);
     }
@@ -264,15 +307,15 @@ class BarangController extends Controller
             $kondisi = KondisiBarang::all();
             $kategori = KategoriBarang::all();
             return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
-        }else{
+        } else {
             $ruang = Ruang::all();
             $kondisi = KondisiBarang::all();
             $kategori = KategoriBarang::all();
             $fromApprove = $request->get('from') === 'approve';
             $idp = $request->get('idp');
-            if($fromApprove){
+            if ($fromApprove) {
                 $pengadaan = Pengadaan::findOrFail($idp);
-                return view('barang.create', compact('ruang', 'kondisi', 'kategori', 'fromApprove','idp','pengadaan'));
+                return view('barang.create', compact('ruang', 'kondisi', 'kategori', 'fromApprove', 'idp', 'pengadaan'));
             }
             return view('barang.create', compact('ruang', 'kondisi', 'kategori'));
         }
@@ -378,7 +421,7 @@ class BarangController extends Controller
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
 
-    public function penghapusanbarang(Request $request,$id)
+    public function penghapusanbarang(Request $request, $id)
     {
         $barang = Barang::findOrFail($id);
         if ($barang->status_barang !== 'Ada') {
@@ -399,27 +442,33 @@ class BarangController extends Controller
 
         $barang->status_barang = 'Dihapus';
         $barang->save();
-        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '" dengan id penghapusan "'.$pb->penghapusan_id.'"');
+        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '" dengan id penghapusan "' . $pb->penghapusan_id . '"');
 
         return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
     }
 
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request, $id)
     {
-        $barang = Barang::findOrFail($id);
-        if ($barang->status_barang !== 'Ada') {
-            return redirect()->route('barang.index')->with('warning', __('Barang tidak bisa dihapus karena statusnya bukan Ada.'));
+        try {
+            $barang = Barang::findOrFail($id);
+            $accessResult = PermissionHelper::AnyCanDeleteBarang();
+            if (!$accessResult['delete']) {
+                abort(403, 'Unauthorized action.');
+            }
+            if ($barang->status_barang !== 'Ada') {
+                return redirect()->route('barang.index')->with('warning', __('Barang tidak bisa dihapus karena statusnya bukan Ada.'));
+            }
+
+            $barang->delete();
+            ActivityLogHelper::log('Hapus Database Barang "' . $barang->kode_barang . '"');
+
+            return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
+        } catch (\Exception $e) {
+            if ($e instanceof QueryException && $e->getCode() === '23000') {
+                return redirect()->route('barang.index')->with('error', 'Tidak bisa menghapus barang karena ada data terkait di tabel lain.');
+            }
+            return redirect()->route('barang.index')->with('error', 'Terjadi kesalahan saat menghapus barang: ' . $e->getMessage());
         }
-        $accessResult = PermissionHelper::AnyCanDeleteBarang();
-
-        if (!$accessResult['delete']) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $barang->delete();
-        ActivityLogHelper::log('Hapus Database Barang "' . $barang->kode_barang . '"');
-
-        return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
     }
 
     public function delKeterangan($id)

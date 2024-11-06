@@ -18,7 +18,8 @@ class PengadaanController extends Controller
         if (!$accessResult['access']) {
             abort(403, 'Unauthorized action.');
         }
-        $query = Pengadaan::with('pengguna');
+
+        $query = Pengadaan::with('pengguna', 'barang');
         if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
             $query->where('pengaju_id', auth()->user()->pengguna_id);
         }
@@ -31,11 +32,63 @@ class PengadaanController extends Controller
                     ->orWhere('status_pengajuan', 'LIKE', "%$search%")
                     ->orWhereHas('pengguna', function ($q) use ($search) {
                         $q->where('nama_pengguna', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('barang', function ($q) use ($search) {
+                        $q->where('kode_barang', 'LIKE', "%$search%");
                     });
+                ;
             });
         }
-        $data = $query->paginate(4)->appends($request->only('search'));
+
+        if ($request->kode_barang_true == '1') {
+            $query->whereHas('barang', function ($q) use ($request) {
+                $q->where('kode_barang', 'like', '%' . $request->kode_barang_true . '%');
+            });
+        }
+
+        if ($request->kode_barang_false == '1') {
+            $query->whereDoesntHave('barang', function ($q) use ($request) {
+                $q->where('kode_barang', 'like', '%' . $request->kode_barang_false . '%');
+            });
+        }
+        if ($request->filled('status')) {
+            $query->where('status_pengajuan', $request->status);
+        }
+
+        if ($request->filled('jumlah_min') && $request->filled('jumlah_max')) {
+            $query->whereBetween('jumlah', [
+                $request->input('jumlah_min'),
+                $request->input('jumlah_max')
+            ]);
+        } elseif ($request->filled('jumlah_min')) {
+            $query->where('jumlah', '>=', $request->input('jumlah_min'));
+        } elseif ($request->filled('jumlah_max')) {
+            $query->where('jumlah', '<=', $request->input('jumlah_max'));
+        }
+
+        if ($request->filled('tanggal_pengajuan_start') && $request->filled('tanggal_pengajuan_end')) {
+            $query->whereBetween('tanggal_pengajuan', [
+                $request->input('tanggal_pengajuan_start'),
+                $request->input('tanggal_pengajuan_end')
+            ]);
+        }elseif ($request->filled('tanggal_pengajuan_start')) {
+            $query->where('tanggal_pengajuan', '>=', $request->input('tanggal_pengajuan_start'));
+        } elseif ($request->filled('tanggal_pengajuan_end')) {
+            $query->where('tanggal_pengajuan', '<=', $request->input('tanggal_pengajuan_end'));
+        }
+
+
+        $data = $query->paginate(4)
+            ->appends($request->only('search'))
+            ->appends($request->only('kode_barang_false'))
+            ->appends($request->only('kode_barang_true'))
+            ->appends($request->only('status'))
+            ->appends($request->only('jumlah_min'))
+            ->appends($request->only('jumlah_max'))
+            ->appends($request->only('tanggal_pengajuan_start'))
+            ->appends($request->only('tanggal_pengajuan_end'));
         $barang = Barang::all();
+        //dd($query->toSql());
 
         return view('pengadaan.list', [
             'pengadaan' => $data,
@@ -80,9 +133,10 @@ class PengadaanController extends Controller
         $pengadaan->status_pengajuan = 'Disetujui';
         $pengadaan->save();
         ActivityLogHelper::log('Setuju akan pengadaan "' . $pengadaan->pengadaan_id . '"');
-        return redirect()->route('pengadaan.index',[
+        return redirect()->route('pengadaan.index', [
             'from' => 'approve',
-            'idp' => $id,])
+            'idp' => $id,
+        ])
             ->with('message', 'Pengadaan barang berhasil disetujui. Lanjutkan untuk membuat barang.');
     }
 
@@ -96,9 +150,10 @@ class PengadaanController extends Controller
         if ($pengadaan->status_pengajuan !== 'Disetujui') {
             return redirect()->route('pengadaan.index')->with('warning', 'Pengadaan ini belum disetujui, tidak dapat membuat barang.');
         }
-        return redirect()->route('barang.create',[
+        return redirect()->route('barang.create', [
             'from' => 'approve',
-            'idp' => $id,])
+            'idp' => $id,
+        ])
             ->with('message', 'Membuat Barang dari Pengadaan yang sudah disetujui.');
     }
     // Metode untuk menolak pengadaan

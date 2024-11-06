@@ -209,11 +209,9 @@ class PenggunaController extends Controller
      */
     public function destroy(Pengguna $pengguna): RedirectResponse
     {
-
         if (Auth::id() == $pengguna->getKey()) {
             return redirect()->route('pengguna.index')->with('warning', 'Anda tidak dapat menghapus diri sendiri!');
         }
-
         $pengguna->delete();
         ActivityLogHelper::log('Hapus Pengguna: "' . $pengguna->username . '", "' . $pengguna->email . '"');
         return redirect()->route('pengguna.index')->with('message', 'Pengguna Berhasil Dihapus!');

@@ -9,6 +9,7 @@
         $hasAccess = PermissionHelper::AnyCanAccessPengadaan();
         $hasDelete = PermissionHelper::AnyCanDeletePengadaan();
     @endphp
+
     <div class="container-fluid">
         @if (session('message'))
             <div class="alert alert-success">
@@ -21,13 +22,16 @@
                     {{-- Search Form --}}
                     <form action="{{ route('pengadaan.index') }}" method="GET" class="form-inline">
                         <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
-                            value="{{ request('search') }}" style="max-width: 200px;">
-                        <button type="submit" class="btn btn-primary ml-2">{{ __('Cari') }}</button>
-                        <a href="{{ route('pengadaan.index') }}" class="btn btn-secondary ml-2">
+                            value="{{ request('search') }}" style="max-width: 200px;" oninput="this.form.submit()">
+                        <a href="#" class="btn btn-info mx-2" data-toggle="modal" data-target="#modalFilter">
+                            <i class="fa-solid fa-filter"></i> {{ __('Filter') }}
+                        </a>
+                        <a href="{{ route('pengadaan.index') }}" class="btn btn-secondary mr-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>
                     </form>
                 </div>
+
                 @if ($hasCreate['buat'])
                     <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPengadaan">
                         <i class="fa-solid fa-plus"></i> {{ __('Buat Pengadaan Barang!') }}
@@ -289,6 +293,85 @@
         </div>
     </div>
 
+    <!-- Modal Filter -->
+    <div class="modal fade" id="modalFilter" tabindex="-1" role="dialog" aria-labelledby="modalFilterLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFilterLabel">{{ __('Filter Pengadaan') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('pengadaan.index') }}" method="GET" class="form-inline" id="filterForm">
+                        {{-- Tanggal Pengajuan Filter --}}
+                        <div class="form-group mb-3">
+                            <label for="tanggal_pengajuan_start">{{ __('Tanggal Pengajuan') }}</label>
+                            <div class="d-flex">
+                                <input type="date" name="tanggal_pengajuan_start" class="form-control"
+                                    value="{{ request('tanggal_pengajuan_start') }}">
+                                <span class="mx-2">{{ __('s/d') }}</span>
+                                <input type="date" name="tanggal_pengajuan_end" class="form-control"
+                                    value="{{ request('tanggal_pengajuan_end') }}">
+                            </div>
+                        </div>
+
+                        {{-- Jumlah Filter --}}
+                        <div class="form-group mb-3">
+                            <label for="jumlah">{{ __('Jumlah ') }}</label>
+                            <div class="d-flex">
+                                <input type="number" name="jumlah_min" class="form-control"
+                                    value="{{ request('jumlah_min') }}" placeholder="{{ __('Min Jumlah') }}">
+                                <input type="number" name="jumlah_max" class="form-control ml-2"
+                                    value="{{ request('jumlah_max') }}" placeholder="{{ __('Max Jumlah') }}">
+                            </div>
+                        </div>
+
+                        {{-- Filter Status --}}
+                        <div class="form-group mb-3">
+                            <label for="status">{{ __('Status Pengajuan') }}</label>
+                            <select name="status" class="form-control">
+                                <option value="">{{ __('Filter Status') }}</option>
+                                <option value="Diajukan" {{ request('status') == 'Diajukan' ? 'selected' : '' }}>
+                                    {{ __('Diajukan') }}</option>
+                                <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>
+                                    {{ __('Disetujui') }}</option>
+                                <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>
+                                    {{ __('Ditolak') }}</option>
+                            </select>
+                        </div>
+
+                        {{-- Kode Barang Filter --}}
+                        <div class="form-group mb-3">
+                            <div class="d-flex">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="kode_barang_true"
+                                        id="kode_barang_true" value="1"
+                                        {{ request('kode_barang_true') == '1' ? 'checked' : '' }}>
+                                    <small class="form-check-label"
+                                        for="kode_barang_true">{{ __('Pengadaan Sudah dibuat') }}</small>
+                                </div>
+                                <div class="form-check ml-3">
+                                    <input type="checkbox" class="form-check-input" name="kode_barang_false"
+                                        id="kode_barang_false" value="1"
+                                        {{ request('kode_barang_false') == '1' ? 'checked' : '' }}>
+                                    <small class="form-check-label"
+                                        for="kode_barang_false">{{ __('Pengadaan Belum dibuat') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="submit" class="btn btn-primary"
+                        form="filterForm">{{ __('Terapkan Filter') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 @endsection
