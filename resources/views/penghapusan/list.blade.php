@@ -50,7 +50,11 @@
                             @foreach ($penghapusan as $item)
                                 <tr>
                                     <td scope="row">{{ ($penghapusan->currentPage() - 1) * $penghapusan->perPage() + $loop->iteration }}</td>
-                                    <td>{{ $item->kode_barang }}</td>
+                                    <td>
+                                        <a href="{{ route('barang.show', $item->kode_barang) }}">
+                                            {{ $item->kode_barang ?? '-' }}
+                                        </a>
+                                    </td>
                                     <td>{{ $item->tanggal_penghapusan }}</td>
                                     <td>{{ $item->alasan_penghapusan }}</td>
                                     <td>{{ number_format($item->nilai_sisa, 2) }}</td>

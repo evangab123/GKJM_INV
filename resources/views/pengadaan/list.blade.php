@@ -75,7 +75,16 @@
                                     <td>{{ $item->keterangan }}</td>
                                     <td>{{ $item->pengguna->nama_pengguna }}</td>
                                     <td>{{ $item->tanggal_pengajuan }}</td>
-                                    <td>{{ $item->kode_barang ?? 'Belum dibuat kode barang' }}</td>
+                                    <td>
+                                        @if ($item->kode_barang)
+                                            <a href="{{ route('barang.show', $item->kode_barang) }}">
+                                                {{ $item->kode_barang }}
+                                            </a>
+                                        @else
+                                            {{ __('Barang belum dibuat') }}
+                                        @endif
+                                    </td>
+
                                     <td>
                                         @if ($item->status_pengajuan == 'Diajukan')
                                             <span style="color: blue;">

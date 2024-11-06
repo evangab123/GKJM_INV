@@ -21,7 +21,7 @@
         <!-- Button Kembali -->
         <div>
             <!-- Tombol Kembali -->
-            <a href="{{ route('barang.index') }}" class="btn btn-secondary">
+            <a href="javascript:history.back()" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
 
@@ -135,10 +135,16 @@
                                             <th>{{ __('Perolehan') }}</th>
                                             <td>
                                                 <select class="form-control" id="perolehan_barang" name="perolehan_barang">
-                                                    <option value="Hibah"
-                                                        {{ $barang['perolehan_barang'] == 'Hibah' ? 'selected' : '' }}>
-                                                        {{ __('Hibah') }}
+                                                    <option value="Persembahan"
+                                                        {{ $barang['perolehan_barang'] == 'Persembahan' ? 'selected' : '' }}>
+                                                        {{ __('Persembahan') }}
                                                     </option>
+
+                                                    <option value="Pembuatan"
+                                                        {{ $barang['perolehan_barang'] == 'Pembuatan' ? 'selected' : '' }}>
+                                                        {{ __('Pembuatan') }}
+                                                    </option>
+
                                                     <option value="Pembelian"
                                                         {{ $barang['perolehan_barang'] == 'Pembelian' ? 'selected' : '' }}>
                                                         {{ __('Pembelian') }}
@@ -147,15 +153,16 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>{{ __('Harga Beli') }}</th>
+                                            <th>{{ __('Harga') }}</th>
                                             <td>
                                                 <input type="text" class="form-control" name="harga_pembelian"
                                                     value="{{ $barang->harga_pembelian }}"
-                                                    onchange="calculateNilaiEkonomis()">
+                                                    onchange="calculateNilaiEkonomis()" oninput="formatRupiah(this)"
+                                                    onblur="sanitizeInput(this)">
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>{{ __('Tahun Beli') }}</th>
+                                            <th>{{ __('Tahun') }}</th>
                                             <td>
                                                 <input type="text" class="form-control" name="tahun_pembelian"
                                                     value="{{ $barang->tahun_pembelian }}"
@@ -278,11 +285,11 @@
                                         <td>{{ $barang->perolehan_barang }}</td>
                                     </tr>
                                     <tr>
-                                        <th>{{ __('Harga Beli') }}</th>
+                                        <th>{{ __('Harga') }}</th>
                                         <td>Rp {{ number_format($barang->harga_pembelian, 2, ',', '.') }}</td>
                                     </tr>
                                     <tr>
-                                        <th>{{ __('Tahun Beli') }}</th>
+                                        <th>{{ __('Tahun') }}</th>
                                         <td>{{ $barang->tahun_pembelian }}</td>
                                     </tr>
                                     <tr>
@@ -414,24 +421,22 @@
     @endpush
     <script>
         function calculateNilaiEkonomis() {
-
             const hargaPembelianInput = document.querySelector('input[name="harga_pembelian"]');
             const tahunPembelianInput = document.querySelector('input[name="tahun_pembelian"]');
             const nilaiEkonomisInput = document.querySelector('input[name="nilai_ekonomis_barang"]');
 
-            const hargaPembelian = parseFloat(hargaPembelianInput.value) || 0;
-            const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
+            const hargaPembelianString = hargaPembelianInput.value.replace(/[^\d]/g, '');
+            const hargaPembelian = parseFloat(hargaPembelianString) || 0;
 
+            const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
 
             const umurEkonomis = 10;
             const nilaiSisa = 100;
-
 
             const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
 
             const currentYear = new Date().getFullYear();
             const yearsUsed = currentYear - tahunPembelian;
-
 
             let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed);
 
@@ -459,4 +464,34 @@
 
             $('#deleteForm').submit();
         }
+    </script>
+
+    <script>
+        function formatRupiah(input) {
+            let value = input.value.replace(/[^\d,]/g, '');
+            let parts = value.split('.');
+
+            if (parts[1] && parts[1] === '00') {
+                value = parts[0];
+            }
+
+            let numberFormat = new Intl.NumberFormat('id-ID');
+            let formattedValue = numberFormat.format(value.replace(/[^\d]/g, ''));
+
+            input.value = formattedValue;
+        }
+
+        function sanitizeInput(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+
+            input.value = value;
+        }
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            var hargaInput = document.getElementById('harga_pembelian');
+
+            var cleanValue = hargaInput.value.replace(/[^\d]/g, '');
+
+            hargaInput.value = cleanValue;
+        });
     </script>

@@ -48,12 +48,13 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="harga_pembelian">{{ __('Harga Beli') }}</label>
-                            <input type="number" class="form-control" id="harga_pembelian" name="harga_pembelian"
-                                onchange="calculateNilaiEkonomis()">
+                            <label for="harga_pembelian">{{ __('Harga') }}</label>
+                            <input type="text" class="form-control" id="harga_pembelian" name="harga_pembelian"
+                                onchange="calculateNilaiEkonomis()" oninput="formatRupiah(this)"
+                                onblur="sanitizeInput(this)">
                         </div>
                         <div class="form-group">
-                            <label for="tahun_pembelian">{{ __('Tahun Beli') }}</label>
+                            <label for="tahun_pembelian">{{ __('Tahun') }}</label>
                             <input type="text" class="form-control" id="tahun_pembelian" name="tahun_pembelian"
                                 onchange="calculateNilaiEkonomis()">
                         </div>
@@ -133,25 +134,59 @@
 @endpush
 
 <script>
-    function calculateNilaiEkonomis() {
-        const hargaPembelianInput = document.getElementById('harga_pembelian');
-        const tahunPembelianInput = document.getElementById('tahun_pembelian');
-        const nilaiEkonomisInput = document.getElementById('nilai_ekonomis_barang');
+        function calculateNilaiEkonomis() {
+            const hargaPembelianInput = document.querySelector('input[name="harga_pembelian"]');
+            const tahunPembelianInput = document.querySelector('input[name="tahun_pembelian"]');
+            const nilaiEkonomisInput = document.querySelector('input[name="nilai_ekonomis_barang"]');
 
-        const hargaPembelian = parseFloat(hargaPembelianInput.value) || 0;
-        const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
+            const hargaPembelianString = hargaPembelianInput.value.replace(/[^\d]/g, '');
+            const hargaPembelian = parseFloat(hargaPembelianString) || 0;
 
-        const umurEkonomis = 10;
-        const nilaiSisa = 100;
+            const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
 
-        const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
+            const umurEkonomis = 10;
+            const nilaiSisa = 100;
 
-        const currentYear = new Date().getFullYear();
-        const yearsUsed = currentYear - tahunPembelian;
+            const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
 
-        let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed);
-        nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
+            const currentYear = new Date().getFullYear();
+            const yearsUsed = currentYear - tahunPembelian;
 
-        nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
-    }
+            let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed);
+
+            nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
+
+            nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
+        }
 </script>
+
+<script>
+    function formatRupiah(input) {
+        let value = input.value.replace(/[^\d,]/g, '');
+        let parts = value.split('.');
+
+        if (parts[1] && parts[1] === '00') {
+            value = parts[0];
+        }
+
+        let numberFormat = new Intl.NumberFormat('id-ID');
+        let formattedValue = numberFormat.format(value.replace(/[^\d]/g, ''));
+
+        input.value = formattedValue;
+    }
+
+    function sanitizeInput(input) {
+        let value = input.value.replace(/[^\d]/g, '');
+
+        input.value = value;
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var hargaInput = document.getElementById('harga_pembelian');
+
+        var cleanValue = hargaInput.value.replace(/[^\d]/g, '');
+
+        hargaInput.value = cleanValue;
+    });
+</script>
+

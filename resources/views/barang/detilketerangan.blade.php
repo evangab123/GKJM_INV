@@ -12,7 +12,7 @@
     @endphp
     <div class="row mb-3">
         <div class="d-flex">
-            <a href="{{ route('barang.show', $barang->kode_barang) }}" class="btn btn-secondary">
+            <a href="javascript:history.back()" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> {{ __('Kembali') }}
             </a>
             <!-- Tombol Add Keterangan -->

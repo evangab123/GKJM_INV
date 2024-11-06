@@ -40,7 +40,12 @@
                                     <td scope="row">
                                         {{ ($barangTerkunci->currentPage() - 1) * $barangTerkunci->perPage() + $loop->iteration }}
                                     </td>
-                                    <td>{{ $item->kode_barang ?? '-' }}</td>
+                                    <td>
+                                        <a href="{{ route('barang.show', $item->kode_barang) }}">
+                                            {{ $item->kode_barang ?? '-' }}
+                                        </a>
+                                    </td>
+
                                     <td>{{ $item->alasan_terkunci ?? '-' }}</td>
                                     <td style="width: 200px;">
                                         <form action="{{ route('terkunci.destroy', $item->kode_barang) }}" method="POST"
