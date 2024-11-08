@@ -61,4 +61,9 @@ class Barang extends Model
     {
         return $this->hasOne(Pengadaan::class, 'kode_barang', 'kode_barang');
     }
+
+    public function peminjaman()
+    {
+        return $this->hasOne(Peminjaman::class, 'kode_barang', 'kode_barang');
+    }
 }

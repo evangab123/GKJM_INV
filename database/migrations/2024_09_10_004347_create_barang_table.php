@@ -72,7 +72,7 @@ return new class extends Migration {
             $table->string('referensi')->nullable();
             $table->string('keterangan');
             $table->foreign('pengaju_id')->references('pengguna_id')->on('pengguna')
-                ->onUpdate('cascade')->onDelete('cascade');
+                ->onUpdate('cascade');
             $table->foreign('kode_barang')->references('kode_barang')->on('Barang')
                 ->onUpdate('cascade');
             $table->timestamps();
@@ -84,7 +84,8 @@ return new class extends Migration {
             $table->date("tanggal_peminjaman");
             $table->date("tanggal_pengembalian")->nullable();
             $table->unsignedBigInteger('peminjam_id');
-            $table->enum('status_pengajuan', ['Dipinjam', 'Dikembalikan']);
+            $table->string("keterangan");
+            $table->enum('status_peminjaman', ['Dipinjam', 'Dikembalikan']);
             $table->foreign('kode_barang')->references('kode_barang')->on('Barang')
                 ->onUpdate('cascade');
             $table->foreign('peminjam_id')->references('pengguna_id')->on('Pengguna')

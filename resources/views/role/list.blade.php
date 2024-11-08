@@ -58,7 +58,6 @@
 
                         <div class="form-group">
                             <select name="permission" class="form-control ml-2" style="max-width: 200px;" onchange="this.form.submit()">
-                                <!-- Sesuaikan lebar di sini -->
                                 <option value="">{{ __('Filter Hak') }}</option>
                                 @foreach ($permission as $perm)
                                     <option value="{{ $perm->name }}"

@@ -67,7 +67,7 @@
                                     <td scope="row">
                                         {{ ($pengadaan->currentPage() - 1) * $pengadaan->perPage() + $loop->iteration }}
                                     </td>
-                                    <td>{{ $item->merek_barang }}</td>
+                                    <td>{{ $item->barang->merek_barang }}</td>
                                     <td>{{ $item->jumlah }}</td>
                                     <td style="width:120px">
                                         <div class="d-flex">
@@ -365,7 +365,6 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-
                     <button type="submit" class="btn btn-primary"
                         form="filterForm">{{ __('Terapkan Filter') }}</button>
                 </div>

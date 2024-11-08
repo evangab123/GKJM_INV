@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BarangTerkunciController;
 use App\Http\Controllers\PemakaianController;
+use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengadaanController;
 use App\Http\Controllers\PenghapusanBarangController;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +61,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('penghapusan', PenghapusanBarangController::class);
     Route::resource('pemakaian', PemakaianController::class);
     Route::resource('pengadaan', PengadaanController::class);
+    Route::resource('peminjaman', PeminjamanController::class);
 });
 
 Route::get('/pengguna', [PenggunaController::class, 'index'])

@@ -79,9 +79,9 @@
                                             <i class="fas fa-check-circle" aria-hidden="true"></i>
                                             {{ $bar['status_barang'] }}
                                         @elseif ($bar['status_barang'] == 'Dipinjam')
-                                            <i class="fas fa-user" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                                            <i class="fas fa-hand-paper" aria-hidden="true"></i> {{ $bar['status_barang'] }}
                                         @elseif ($bar['status_barang'] == 'Dipakai')
-                                            <i class="fas fa-cog" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                                            <i class="fas fa-user" aria-hidden="true"></i> {{ $bar['status_barang'] }}
                                         @elseif ($bar['status_barang'] == 'Diperbaiki')
                                             <i class="fas fa-wrench" aria-hidden="true"></i> {{ $bar['status_barang'] }}
                                         @endif

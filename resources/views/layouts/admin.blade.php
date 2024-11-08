@@ -120,6 +120,8 @@
                             href={{ route('penghapusan.index') }}>{{ __('Penghapusan Barang') }}</a>
                         <a class="collapse-item {{ Nav::isRoute('pemakaian.index') }}"
                             href={{ route('pemakaian.index') }}>{{ __('Pemakaian Barang') }}</a>
+                            <a class="collapse-item {{ Nav::isRoute('peminjaman.index') }}"
+                            href={{ route('peminjaman.index') }}>{{ __('Peminjaman Barang') }}</a>
                     </div>
                 </div>
             </li>
