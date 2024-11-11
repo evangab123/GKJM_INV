@@ -145,33 +145,39 @@
                                     <td>{{ $item->tanggal_peminjaman }}</td>
                                     <td>{{ $item->tanggal_pengembalian }}</td>
                                     <td>{{ $item->keterangan }}</td>
-                                    <td
-                                        class="
-                                    @if ($item->barang['status_barang'] == 'Dipinjam') text-warning
-                                    @elseif ($item->barang['status_barang'] == 'Dikembalikan')
-                                        text-success
+                                    <td class="
+                                    @if ($item->status_peminjaman == 'Dipinjam') text-warning
+                                    @elseif ($item->status_peminjaman == 'Dikembalikan') text-success
+                                    @else text-muted @endif">
+                                    @if ($item->status_peminjaman == 'Dipinjam')
+                                        <i class="fas fa-hand-paper" style="color: #f39c12;" title="Dipinjam"></i>
+                                        {{ __('Dipinjam') }}
+                                    @elseif ($item->status_peminjaman == 'Dikembalikan')
+                                        <i class="fas fa-undo" style="color: #28a745;" title="Dikembalikan"></i>
+                                        {{ __('Dikembalikan') }}
                                     @else
-                                        text-muted @endif">
-                                        @if ($item->status_peminjaman == 'Dipinjam')
-                                            <i class="fas fa-hand-paper" style="color: #f39c12;" title="Dipinjam"></i>
-                                            {{ __('Dipinjam') }}
-                                        @elseif ($item->status_peminjaman == 'Dikembalikan')
-                                            <i class="fas fa-undo" style="color: #28a745;" title="Dikembalikan"></i>
-                                            {{ __('Dikembalikan') }}
-                                        @else
-                                            <i class="fas fa-question-circle" style="color: #6c757d;"
-                                                title="Status Tidak Diketahui"></i> {{ __('Status Tidak Diketahui') }}
-                                        @endif
-                                    </td>
-
+                                        <i class="fas fa-question-circle" style="color: #6c757d;" title="Status Tidak Diketahui"></i>
+                                        {{ __('Status Tidak Diketahui') }}
+                                    @endif
+                                </td>
                                     <td style="width:120px">
                                         <div class="d-flex">
+                                            <form action="{{ route('peminjaman.kembalikan', $item->peminjaman_id) }}"
+                                                method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary"
+                                                    onclick="return confirm('{{ __('Apakah Anda yakin pengguna telah kembalikan peminjaman ini?') }}')"
+                                                    @if ($item->status_peminjaman != 'Dipinjam') disabled @endif>
+                                                    <i class="fas fa-undo"></i> {{ __('Selesai') }}
+                                                </button>
+                                            </form>
                                             <form action="{{ route('peminjaman.destroy', $item->peminjaman_id) }}"
                                                 method="post">
                                                 @csrf
                                                 @method('delete')
                                                 <button type="submit" class="btn btn-danger"
-                                                    onclick="return confirm('{{ __('Are you sure to delete this record?') }}')">
+                                                    onclick="return confirm('{{ __('Are you sure to delete this record?') }}')"
+                                                    @if ($item->status_peminjaman != 'Dipinjam') disabled @endif>
                                                     <i class="fas fa-trash"></i> {{ __('Hapus') }}
                                                 </button>
                                             </form>

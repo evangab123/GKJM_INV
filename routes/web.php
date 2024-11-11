@@ -131,5 +131,8 @@ Route::prefix('pengadaan')->group(function () {
     // Route::delete('{id}', [PengadaanController::class, 'destroy'])->name('pengadaan.destroy');
 });
 
+Route::post('/peminjaman/{id}/kembalikan', [PeminjamanController::class, 'kembalikan'])
+    ->name('peminjaman.kembalikan');
+
 
 

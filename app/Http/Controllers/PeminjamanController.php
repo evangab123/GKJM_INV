@@ -104,4 +104,20 @@ class PeminjamanController extends Controller
         ActivityLogHelper::log('Buat pemakaian "' . $peminjaman->peminjam_idd . '"');
         return redirect()->route('peminjaman.index')->with('message', __('Peminjaman berhasil dihapus.'));
     }
+
+    public function kembalikan($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+        if ($peminjaman->status_peminjaman == 'Dipinjam') {
+            $peminjaman->status_peminjaman = 'Dikembalikan';
+            $peminjaman->save();
+
+            $peminjaman->barang->status_barang = 'Ada';
+            $peminjaman->barang->save();
+            ActivityLogHelper::log('Kembalikan barang Pemakaian "' . $peminjaman->peminjam_id . '"');
+            return redirect()->route('peminjaman.index')->with('success', 'Status peminjaman berhasil diubah menjadi Dikembalikan.');
+        }
+        return redirect()->route('peminjaman.index')->with('warning', 'Status peminjaman tidak dapat diubah.');
+    }
+
 }
