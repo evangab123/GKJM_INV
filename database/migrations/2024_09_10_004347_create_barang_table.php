@@ -81,6 +81,7 @@ return new class extends Migration {
         Schema::create('PeminjamanBarang', function (Blueprint $table) {
             $table->id('peminjaman_id');
             $table->string('kode_barang', 50);
+            $table->integer('jumlah');
             $table->date("tanggal_peminjaman");
             $table->date("tanggal_pengembalian")->nullable();
             $table->unsignedBigInteger('peminjam_id');
@@ -96,10 +97,12 @@ return new class extends Migration {
         Schema::create('RiwayatPemakaiBarang', function (Blueprint $table) {
             $table->id('riwayat_id');
             $table->string('kode_barang', 50);
+            $table->integer('jumlah');
             $table->unsignedBigInteger('pengguna_id');
             $table->date("tanggal_mulai");
             $table->date("tanggal_selesai");
             $table->string("keterangan");
+            $table->enum('status_peminjaman', ['Dipakai', 'Dikembalikan']);
             $table->foreign('kode_barang')->references('kode_barang')->on('Barang')
                 ->onUpdate('cascade');
             $table->foreign('pengguna_id')->references('pengguna_id')->on('Pengguna')

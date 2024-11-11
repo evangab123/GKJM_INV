@@ -62,30 +62,43 @@
                                     <td>{{ $bar->ruang->nama_ruang ?? __('N/A') }}</td>
                                     <td
                                         class="
-                                            @if ($bar['status_barang'] == 'Dihapus') text-danger
-                                            @elseif ($bar['status_barang'] == 'Ada')
-                                                text-success
-                                            @elseif ($bar['status_barang'] == 'Dipinjam')
-                                                text-warning
-                                            @elseif ($bar['status_barang'] == 'Dipakai')
-                                                text-info
-                                            @elseif ($bar['status_barang'] == 'Diperbaiki')
-                                                text-primary
-                                            @else
-                                                text-muted @endif">
+                                                @if ($bar['status_barang'] == 'Dihapus') text-danger
+                                                @elseif ($bar['status_barang'] == 'Ada')
+                                                    text-success
+                                                @elseif ($bar['status_barang'] == 'Dipinjam')
+                                                    text-warning
+                                                @elseif ($bar['status_barang'] == 'Dipakai')
+                                                    text-info
+                                                @elseif ($bar['status_barang'] == 'Diperbaiki')
+                                                    text-primary
+                                                @else
+                                                    text-muted @endif
+                                            ">
                                         @if ($bar['status_barang'] == 'Dihapus')
                                             <i class="fas fa-trash" aria-hidden="true"></i> {{ $bar['status_barang'] }}
                                         @elseif ($bar['status_barang'] == 'Ada')
                                             <i class="fas fa-check-circle" aria-hidden="true"></i>
                                             {{ $bar['status_barang'] }}
                                         @elseif ($bar['status_barang'] == 'Dipinjam')
-                                            <i class="fas fa-hand-paper" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                                            <i class="fas fa-hand-paper" aria-hidden="true"></i>
+                                            {{ $bar['status_barang'] }}
+                                            @if ($bar['jumlah'] > 0 )
+                                                <span class="text-warning">Sebagian</span>
+                                            @endif
                                         @elseif ($bar['status_barang'] == 'Dipakai')
                                             <i class="fas fa-user" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                                            @if ($bar['jumlah'] > 0 )
+                                                <span class="text-warning">Sebagian</span>
+                                            @endif
                                         @elseif ($bar['status_barang'] == 'Diperbaiki')
                                             <i class="fas fa-wrench" aria-hidden="true"></i> {{ $bar['status_barang'] }}
+                                            @if ($bar['jumlah'] > 0)
+                                                <span class="text-warning">Sebagian</span>
+                                            @endif
                                         @endif
                                     </td>
+
+
                                     @if ($hasAccess['access'] || $hasDelete['delete'])
                                         <td style="width: 200px;">
                                             <div class="d-flex">

@@ -103,6 +103,7 @@
                                 <th scope="col">{{ __('Tanggal Mulai') }}</th>
                                 <th scope="col">{{ __('Tanggal Selesai') }}</th>
                                 <th scope="col">{{ __('Keterangan') }}</th>
+                                <th scope="col">{{ __('Status Peminjaman') }}</th>
                                 <th scope="col">{{ __('Aksi') }}</th>
                             </tr>
                         </thead>

@@ -71,7 +71,7 @@
                         </div>
                         <div class="form-group">
                             <label for="keterangan">{{ __('Keterangan') }}</label>
-                            <input type="text" class="form-control" id="keterangan" name="keterangan"
+                            <input type="textarea" class="form-control" id="keterangan" name="keterangan"
                                 value="{{ old('harga_pembelian', $pengadaan->keterangan ?? '') }}">
 
                         </div>

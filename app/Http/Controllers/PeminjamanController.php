@@ -54,12 +54,12 @@ class PeminjamanController extends Controller
     // Simpan peminjaman barang
     public function store(Request $request)
     {
-        //dd($request);
+        // dd($request);
         $validated = $request->validate([
             'kode_barang' => 'required|exists:barang,kode_barang',
-            'tanggal_peminjaman' => 'nullable|date|before_or_equal:tanggal_pengembalian',
-            'tanggal_pengembalian' => 'nullable|date|after_or_equal:tanggal_peminjaman',
-            // 'status_pengajuan' => 'required|in:Dipinjam,Dikembalikan',
+            'tanggal_peminjaman' => 'nullable|date',
+            // 'tanggal_pengembalian' => 'nullable|date|after_or_equal:tanggal_peminjaman',
+            'jumlah' => 'required|numeric|min:1',
             'keterangan' => 'nullable|string|max:255',
         ]);
         $barang = Barang::where('kode_barang', $validated['kode_barang'])->first();
@@ -68,14 +68,22 @@ class PeminjamanController extends Controller
             return redirect()->route('peminjaman.index')->withErrors(__('Barang tidak ditemukan.'));
         }
 
+        if ($validated['jumlah'] > $barang->jumlah) {
+            return redirect()->route('peminjaman.index')->withErrors(__('Jumlah yang dipinjam melebihi stok yang tersedia.'));
+        }
+        $jumlahBaru = $barang->jumlah - $validated['jumlah'];
+        // dd($jumlahBaru);
+        $barang->update(['jumlah' => $jumlahBaru]);
+
         $barang->update(['status_barang' => 'Dipinjam']);
 
         $peminjaman = Peminjaman::create([
             'kode_barang' => $validated['kode_barang'],
             'peminjam_id' => auth()->user()->pengguna_id,
             'tanggal_peminjaman' => $validated['tanggal_peminjaman'],
-            'tanggal_pengembalian' => $validated['tanggal_pengembalian'],
-            'status_peminjaman' => "Dipinjam",
+            'tanggal_pengembalian' => null,
+            'status_peminjaman' => 'Dipinjam',
+            'jumlah' => $validated['jumlah'],
             'keterangan' => $validated['keterangan'] ?? '',
         ]);
 
@@ -83,6 +91,7 @@ class PeminjamanController extends Controller
 
         return redirect()->route('peminjaman.index')->with('message', __('Peminjaman barang berhasil ditambahkan!'));
     }
+
 
     // Hapus peminjaman
     public function destroy($id)
@@ -98,7 +107,9 @@ class PeminjamanController extends Controller
         $barang = Barang::where('kode_barang', $peminjaman->kode_barang)->first();
 
         if ($barang) {
-            $barang->update(['status_barang' => 'Ada']);
+            $barang->jumlah += $peminjaman->jumlah;
+            $barang->status_barang = 'Ada';
+            $barang->save();
         }
 
         ActivityLogHelper::log('Buat pemakaian "' . $peminjaman->peminjam_idd . '"');
@@ -108,16 +119,22 @@ class PeminjamanController extends Controller
     public function kembalikan($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
+
         if ($peminjaman->status_peminjaman == 'Dipinjam') {
+
             $peminjaman->status_peminjaman = 'Dikembalikan';
             $peminjaman->save();
 
-            $peminjaman->barang->status_barang = 'Ada';
-            $peminjaman->barang->save();
+            $barang = $peminjaman->barang;
+            $barang->jumlah += $peminjaman->jumlah;
+            $barang->status_barang = 'Ada';
+            $barang->save();
             ActivityLogHelper::log('Kembalikan barang Pemakaian "' . $peminjaman->peminjam_id . '"');
-            return redirect()->route('peminjaman.index')->with('success', 'Status peminjaman berhasil diubah menjadi Dikembalikan.');
+
+            return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil dikembalikan!');
         }
-        return redirect()->route('peminjaman.index')->with('warning', 'Status peminjaman tidak dapat diubah.');
+        return redirect()->route('peminjaman.index')->with('warning', 'Peminjaman Error');
     }
+
 
 }

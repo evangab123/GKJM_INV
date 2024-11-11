@@ -21,8 +21,9 @@
                             <select class="form-control" id="kode_barang" name="kode_barang" required>
                                 <option value="">{{ __('Pilih Kode Barang') }}</option>
                                 @foreach ($barang as $item)
-                                    <option value="{{ $item->kode_barang }}">{{ $item->kode_barang }} -
-                                        {{ $item->merek_barang }}</option>
+                                <option value="{{ $item->kode_barang }}" data-jumlah="{{ $item->jumlah }}">
+                                    {{ $item->kode_barang }} - {{ $item->merek_barang }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -33,14 +34,22 @@
                                 required>
                         </div>
 
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="tanggal_pengembalian">{{ __('Tanggal Pengembalian') }}</label>
                             <input type="date" class="form-control" id="tanggal_pengembalian" name="tanggal_pengembalian"
                                 required>
+                        </div> --}}
+
+                        <div class="form-group">
+                            <label for="jumlah">{{ __('Jumlah/Stok') }}</label>
+                            <small id="stok-info" class="text-muted"></small>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" min="0">
                         </div>
+
 
                         <div class="form-group">
                             <label for="keterangan">{{ __('Keterangan') }}</label>
+                            <small id="keterangan" class="text-muted">{{ __("Isikan Nama atau infomasi yang sesuai") }}</small>
                             <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
                         </div>
 
@@ -121,9 +130,10 @@
                                 <th scope="col">{{ __('No') }}</th>
                                 <th scope="col">{{ __('Kode Barang') }}</th>
                                 <th scope="col">{{ __('Merek Barang') }}</th>
+                                <th scope="col">{{ __('Jumlah') }}</th>
                                 <th scope="col">{{ __('Pengguna Akun') }}</th>
-                                <th scope="col">{{ __('Tanggal Mulai') }}</th>
-                                <th scope="col">{{ __('Tanggal Selesai') }}</th>
+                                <th scope="col">{{ __('Tanggal Peminjaman') }}</th>
+                                <th scope="col">{{ __('Tanggal Pengembalian') }}</th>
                                 <th scope="col">{{ __('Keterangan') }}</th>
                                 <th scope="col">{{ __('Status Peminjaman') }}</th>
                                 <th scope="col">{{ __('Aksi') }}</th>
@@ -141,25 +151,28 @@
                                         </a>
                                     </td>
                                     <td>{{ $item->barang->merek_barang ?? 'Tidak tersedia' }}</td>
+                                    <td>{{ $item->jumlah}}</td>
                                     <td>{{ $item->pengguna->nama_pengguna ?? 'Tidak tersedia' }}</td>
                                     <td>{{ $item->tanggal_peminjaman }}</td>
-                                    <td>{{ $item->tanggal_pengembalian }}</td>
+                                    <td>{{ $item->tanggal_pengembalian ?? 'Belum dikembalikan/Masih dipinjam'}}</td>
                                     <td>{{ $item->keterangan }}</td>
-                                    <td class="
+                                    <td
+                                        class="
                                     @if ($item->status_peminjaman == 'Dipinjam') text-warning
                                     @elseif ($item->status_peminjaman == 'Dikembalikan') text-success
                                     @else text-muted @endif">
-                                    @if ($item->status_peminjaman == 'Dipinjam')
-                                        <i class="fas fa-hand-paper" style="color: #f39c12;" title="Dipinjam"></i>
-                                        {{ __('Dipinjam') }}
-                                    @elseif ($item->status_peminjaman == 'Dikembalikan')
-                                        <i class="fas fa-undo" style="color: #28a745;" title="Dikembalikan"></i>
-                                        {{ __('Dikembalikan') }}
-                                    @else
-                                        <i class="fas fa-question-circle" style="color: #6c757d;" title="Status Tidak Diketahui"></i>
-                                        {{ __('Status Tidak Diketahui') }}
-                                    @endif
-                                </td>
+                                        @if ($item->status_peminjaman == 'Dipinjam')
+                                            <i class="fas fa-hand-paper" style="color: #f39c12;" title="Dipinjam"></i>
+                                            {{ __('Dipinjam') }}
+                                        @elseif ($item->status_peminjaman == 'Dikembalikan')
+                                            <i class="fas fa-undo" style="color: #28a745;" title="Dikembalikan"></i>
+                                            {{ __('Dikembalikan') }}
+                                        @else
+                                            <i class="fas fa-question-circle" style="color: #6c757d;"
+                                                title="Status Tidak Diketahui"></i>
+                                            {{ __('Status Tidak Diketahui') }}
+                                        @endif
+                                    </td>
                                     <td style="width:120px">
                                         <div class="d-flex">
                                             <form action="{{ route('peminjaman.kembalikan', $item->peminjaman_id) }}"
@@ -229,3 +242,28 @@
         </div>
     @endif
 @endpush
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const kodeBarangSelect = document.getElementById('kode_barang');
+        const jumlahInput = document.getElementById('jumlah');
+        const stokInfo = document.getElementById('stok-info');
+
+        // Fungsi untuk update jumlah yang tersedia
+        kodeBarangSelect.addEventListener('change', function() {
+            const selectedOption = kodeBarangSelect.options[kodeBarangSelect.selectedIndex];
+            const availableStock = selectedOption.getAttribute('data-jumlah');
+
+            // Update informasi stok yang tersedia
+            stokInfo.textContent = `Stok tersedia: ${availableStock}`;
+
+            jumlahInput.setAttribute('max', availableStock);
+            jumlahInput.setAttribute('min', 0);
+
+            jumlahInput.value = 0;
+        });
+
+        // Trigger change event on load to set the initial stock
+        kodeBarangSelect.dispatchEvent(new Event('change'));
+    });
+</script>
