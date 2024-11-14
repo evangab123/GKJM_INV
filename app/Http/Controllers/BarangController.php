@@ -120,7 +120,7 @@ class BarangController extends Controller
         }
 
         $data = $query->paginate(7)->appends($request->only('search'))->appends($request->only('ketegori'))->appends($request->only('kondisi'))->appends($request->only('ruang'));
-        //dd($query->toSql());
+        // dd($query->toSql());
         return view('barang.listbarang', [
             'barang' => $data,
             'kondisi' => $kondisi,

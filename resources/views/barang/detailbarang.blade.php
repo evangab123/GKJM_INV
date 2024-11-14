@@ -305,6 +305,19 @@
                                         <td>{{ $barang->jumlah }}</td>
                                     </tr>
                                     <tr>
+                                        <th>{{ __('Jumlah/Stok dipinjam') }}</th>
+                                        @if ($barang->peminjaman)
+                                            {{-- {{ dd($barang->peminjaman) }} --}}
+                                            @foreach ($barang->peminjaman as $pemin)
+                                                @if ($pemin->status_peminjaman == 'Dipinjam')
+                                                <td>{{$pemin->jumlah}}</td>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                        <td>{{ 0}}</td>
+                                        @endif
+                                    </tr>
+                                    <tr>
                                         <th>{{ __('Keterangan') }}</th>
                                         <td>{{ $barang->keterangan }}</td>
                                     </tr>

@@ -141,6 +141,7 @@
                         </thead>
                         <tbody>
                             @foreach ($data as $item)
+                            {{-- {{ dd($item) }} --}}
                                 <tr>
                                     <td scope="row">
                                         {{ ($data->currentPage() - 1) * $data->perPage() + $loop->iteration }}

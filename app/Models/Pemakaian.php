@@ -17,10 +17,12 @@ class Pemakaian extends Model
 
     protected $fillable = [
         'kode_barang',
+        'jumlah',
         'pengguna_id',
         'tanggal_mulai',
         'tanggal_selesai',
-        'keterangan'
+        'keterangan',
+        'status_pemakaian',
     ];
 
     public function barang()

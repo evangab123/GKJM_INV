@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\PengadaanController;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -59,11 +59,11 @@ class Barang extends Model
 
     public function pengadaan()
     {
-        return $this->hasOne(Pengadaan::class, 'kode_barang', 'kode_barang');
+        return $this->hasMany(Pengadaan::class, 'kode_barang', 'kode_barang');
     }
 
     public function peminjaman()
     {
-        return $this->hasOne(Peminjaman::class, 'kode_barang', 'kode_barang');
+        return $this->hasMany(Peminjaman::class, 'kode_barang', 'kode_barang');
     }
 }

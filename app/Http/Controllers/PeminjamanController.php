@@ -71,9 +71,9 @@ class PeminjamanController extends Controller
         if ($validated['jumlah'] > $barang->jumlah) {
             return redirect()->route('peminjaman.index')->withErrors(__('Jumlah yang dipinjam melebihi stok yang tersedia.'));
         }
-        $jumlahBaru = $barang->jumlah - $validated['jumlah'];
-        // dd($jumlahBaru);
-        $barang->update(['jumlah' => $jumlahBaru]);
+        // $jumlahBaru = $barang->jumlah - $validated['jumlah'];
+        // // dd($jumlahBaru);
+        // $barang->update(['jumlah' => $jumlahBaru]);
 
         $barang->update(['status_barang' => 'Dipinjam']);
 
@@ -107,7 +107,7 @@ class PeminjamanController extends Controller
         $barang = Barang::where('kode_barang', $peminjaman->kode_barang)->first();
 
         if ($barang) {
-            $barang->jumlah += $peminjaman->jumlah;
+            // $barang->jumlah += $peminjaman->jumlah;
             $barang->status_barang = 'Ada';
             $barang->save();
         }
@@ -126,7 +126,7 @@ class PeminjamanController extends Controller
             $peminjaman->save();
 
             $barang = $peminjaman->barang;
-            $barang->jumlah += $peminjaman->jumlah;
+            // $barang->jumlah += $peminjaman->jumlah;
             $barang->status_barang = 'Ada';
             $barang->save();
             ActivityLogHelper::log('Kembalikan barang Pemakaian "' . $peminjaman->peminjam_id . '"');

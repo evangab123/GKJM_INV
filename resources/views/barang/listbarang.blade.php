@@ -82,19 +82,19 @@
                                         @elseif ($bar['status_barang'] == 'Dipinjam')
                                             <i class="fas fa-hand-paper" aria-hidden="true"></i>
                                             {{ $bar['status_barang'] }}
-                                            @if ($bar['jumlah'] > 0 )
-                                                <span class="text-warning">Sebagian</span>
-                                            @endif
+                                            {{-- @if ($bar['jumlah'] > 0 )
+                                                <span class="text-warning">{{ __("Sebagian") }}</span>
+                                            @endif --}}
                                         @elseif ($bar['status_barang'] == 'Dipakai')
                                             <i class="fas fa-user" aria-hidden="true"></i> {{ $bar['status_barang'] }}
-                                            @if ($bar['jumlah'] > 0 )
-                                                <span class="text-warning">Sebagian</span>
-                                            @endif
+                                            {{-- @if ($bar['jumlah'] > 0 )
+                                                <span class="text-warning">{{ __("Sebagian") }}</span>
+                                            @endif --}}
                                         @elseif ($bar['status_barang'] == 'Diperbaiki')
                                             <i class="fas fa-wrench" aria-hidden="true"></i> {{ $bar['status_barang'] }}
-                                            @if ($bar['jumlah'] > 0)
-                                                <span class="text-warning">Sebagian</span>
-                                            @endif
+                                            {{-- @if ($bar['jumlah'] > 0)
+                                                <span class="text-warning">{{ __("Sebagian") }}</span>
+                                            @endif --}}
                                         @endif
                                     </td>
 
