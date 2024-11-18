@@ -99,6 +99,7 @@
                                 <th scope="col">{{ __('No') }}</th>
                                 <th scope="col">{{ __('Kode Barang') }}</th>
                                 <th scope="col">{{ __('Merek Barang') }}</th>
+                                <th scope="col">{{ __('Jumlah') }}</th>
                                 <th scope="col">{{ __('Pengguna Akun') }}</th>
                                 <th scope="col">{{ __('Tanggal Mulai') }}</th>
                                 <th scope="col">{{ __('Tanggal Selesai') }}</th>

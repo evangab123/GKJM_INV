@@ -83,6 +83,7 @@ return new class extends Migration {
             $table->string('kode_barang', 50);
             $table->integer('jumlah');
             $table->date("tanggal_peminjaman");
+            $table->date("tanggal_kembali");
             $table->date("tanggal_pengembalian")->nullable();
             $table->unsignedBigInteger('peminjam_id');
             $table->string("keterangan");
@@ -100,7 +101,7 @@ return new class extends Migration {
             $table->integer('jumlah');
             $table->unsignedBigInteger('pengguna_id');
             $table->date("tanggal_mulai");
-            $table->date("tanggal_selesai");
+            $table->date("tanggal_selesai")->nullable();
             $table->string("keterangan");
             $table->enum('status_peminjaman', ['Dipakai', 'Dikembalikan']);
             $table->foreign('kode_barang')->references('kode_barang')->on('Barang')

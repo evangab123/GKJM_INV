@@ -17,51 +17,53 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="kode_barang">{{ __('Kode Barang') }}</label>
+                            <label for="kode_barang">
+                                {{ __('Kode Barang') }}
+                                <span class="text-danger">*</span>
+                            </label>
                             <select class="form-control" id="kode_barang" name="kode_barang" required>
                                 <option value="">{{ __('Pilih Kode Barang') }}</option>
                                 @foreach ($barang as $item)
-                                <option value="{{ $item->kode_barang }}" data-jumlah="{{ $item->jumlah }}">
-                                    {{ $item->kode_barang }} - {{ $item->merek_barang }}
-                                </option>
+                                    <option value="{{ $item->kode_barang }}" data-jumlah="{{ $item->jumlah }}">
+                                        {{ $item->kode_barang }} - {{ $item->merek_barang }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="tanggal_peminjaman">{{ __('Tanggal Peminjaman') }}</label>
+                            <label for="tanggal_peminjaman">
+                                {{ __('Tanggal Peminjaman') }}
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="date" class="form-control" id="tanggal_peminjaman" name="tanggal_peminjaman"
                                 required>
                         </div>
 
-                        {{-- <div class="form-group">
-                            <label for="tanggal_pengembalian">{{ __('Tanggal Pengembalian') }}</label>
-                            <input type="date" class="form-control" id="tanggal_pengembalian" name="tanggal_pengembalian"
-                                required>
-                        </div> --}}
-
                         <div class="form-group">
-                            <label for="jumlah">{{ __('Jumlah/Stok') }}</label>
-                            <small id="stok-info" class="text-muted"></small>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah" min="0">
+                            <label for="tanggal_kembali">
+                                {{ __('Tanggal Kembali') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" required>
                         </div>
 
+                        <div class="form-group">
+                            <label for="jumlah">
+                                {{ __('Jumlah/Stok') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <small id="stok-info" class="text-muted"></small>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" min="0"
+                                required>
+                        </div>
 
                         <div class="form-group">
                             <label for="keterangan">{{ __('Keterangan') }}</label>
-                            <small id="keterangan" class="text-muted">{{ __("Isikan Nama atau infomasi yang sesuai") }}</small>
+                            <small id="keterangan"
+                                class="text-muted">{{ __('Isikan Nama atau infomasi yang sesuai') }}</small>
                             <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
                         </div>
-
-                        {{-- <div class="form-group">
-                            <label for="status_peminjaman">{{ __('Status Peminjaman') }}</label>
-                            <select class="form-control" id="status_peminjaman" name="status_peminjaman" required>
-                                <option value="">{{ __('Pilih Status') }}</option>
-                                <option value="Dipinjam">{{ __('Dipinjam') }}</option>
-                                <option value="Dikembalikan">{{ __('Dikembalikan') }}</option>
-                            </select>
-                        </div> --}}
-
                     </div>
 
                     <div class="modal-footer">
@@ -72,6 +74,7 @@
             </div>
         </div>
     </div>
+
     <!-- End Modal Peminjaman -->
 
     <div class="container-fluid">
@@ -133,6 +136,7 @@
                                 <th scope="col">{{ __('Jumlah') }}</th>
                                 <th scope="col">{{ __('Pengguna Akun') }}</th>
                                 <th scope="col">{{ __('Tanggal Peminjaman') }}</th>
+                                <th scope="col">{{ __('Tanggal Kembali') }}</th>
                                 <th scope="col">{{ __('Tanggal Pengembalian') }}</th>
                                 <th scope="col">{{ __('Keterangan') }}</th>
                                 <th scope="col">{{ __('Status Peminjaman') }}</th>
@@ -141,7 +145,7 @@
                         </thead>
                         <tbody>
                             @foreach ($data as $item)
-                            {{-- {{ dd($item) }} --}}
+                                {{-- {{ dd($item) }} --}}
                                 <tr>
                                     <td scope="row">
                                         {{ ($data->currentPage() - 1) * $data->perPage() + $loop->iteration }}
@@ -152,11 +156,12 @@
                                         </a>
                                     </td>
                                     <td>{{ $item->barang->merek_barang ?? 'Tidak tersedia' }}</td>
-                                    <td>{{ $item->jumlah}}</td>
+                                    <td>{{ $item->jumlah }}</td>
                                     <td>{{ $item->pengguna->nama_pengguna ?? 'Tidak tersedia' }}</td>
                                     <td>{{ $item->tanggal_peminjaman }}</td>
-                                    <td>{{ $item->tanggal_pengembalian ?? 'Belum dikembalikan/Masih dipinjam'}}</td>
-                                    <td>{{ $item->keterangan }}</td>
+                                    <td>{{ $item->tanggal_kembali }}</td>
+                                    <td>{{ $item->tanggal_pengembalian ?? 'Belum dikembalikan/Masih dipinjam' }}</td>
+                                    <td>{{ $item->keterangan ?? 'Tidak ada Keterangan' }}</td>
                                     <td
                                         class="
                                     @if ($item->status_peminjaman == 'Dipinjam') text-warning

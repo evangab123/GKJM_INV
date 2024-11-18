@@ -54,23 +54,23 @@ class PeminjamanController extends Controller
     // Simpan peminjaman barang
     public function store(Request $request)
     {
-        // dd($request);
         $validated = $request->validate([
             'kode_barang' => 'required|exists:barang,kode_barang',
-            'tanggal_peminjaman' => 'nullable|date',
-            // 'tanggal_pengembalian' => 'nullable|date|after_or_equal:tanggal_peminjaman',
+            'tanggal_peminjaman' => 'required|date',
+            'tanggal_kembali' => 'required|date|after:tanggal_peminjaman',
             'jumlah' => 'required|numeric|min:1',
             'keterangan' => 'nullable|string|max:255',
         ]);
-        $barang = Barang::where('kode_barang', $validated['kode_barang'])->first();
 
+
+        $barang = Barang::where('kode_barang', $validated['kode_barang'])->first();
         if (!$barang) {
             return redirect()->route('peminjaman.index')->withErrors(__('Barang tidak ditemukan.'));
         }
-
         if ($validated['jumlah'] > $barang->jumlah) {
             return redirect()->route('peminjaman.index')->withErrors(__('Jumlah yang dipinjam melebihi stok yang tersedia.'));
         }
+
         // $jumlahBaru = $barang->jumlah - $validated['jumlah'];
         // // dd($jumlahBaru);
         // $barang->update(['jumlah' => $jumlahBaru]);
@@ -81,11 +81,13 @@ class PeminjamanController extends Controller
             'kode_barang' => $validated['kode_barang'],
             'peminjam_id' => auth()->user()->pengguna_id,
             'tanggal_peminjaman' => $validated['tanggal_peminjaman'],
+            'tanggal_kembali' => $validated['tanggal_kembali'],
             'tanggal_pengembalian' => null,
             'status_peminjaman' => 'Dipinjam',
             'jumlah' => $validated['jumlah'],
-            'keterangan' => $validated['keterangan'] ?? '',
+            'keterangan' => $validated['keterangan'] ?? null,
         ]);
+        //dd($request);
 
         ActivityLogHelper::log('Buat pemakaian "' . $peminjaman->peminjam_id . '"');
 
@@ -123,6 +125,7 @@ class PeminjamanController extends Controller
         if ($peminjaman->status_peminjaman == 'Dipinjam') {
 
             $peminjaman->status_peminjaman = 'Dikembalikan';
+            $peminjaman->tanggal_pengembalian = now();
             $peminjaman->save();
 
             $barang = $peminjaman->barang;
