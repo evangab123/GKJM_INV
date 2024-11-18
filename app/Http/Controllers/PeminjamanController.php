@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogHelper;
+use App\Helpers\PermissionHelper;
 use App\Models\Peminjaman;
 use App\Models\PeminjamanBarang;
 use App\Models\Barang;
@@ -14,6 +15,10 @@ class PeminjamanController extends Controller
     // Tampilkan daftar peminjaman
     public function index(Request $request)
     {
+        $accessResult = PermissionHelper::AnyCanAccessPeminjaman();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
         $query = Peminjaman::with('barang', 'pengguna');
         if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
             $query->where('pengguna_id', auth()->user()->pengguna_id);
@@ -54,6 +59,10 @@ class PeminjamanController extends Controller
     // Simpan peminjaman barang
     public function store(Request $request)
     {
+        $accessResult = PermissionHelper::AnyCanCreatePeminjaman();
+        if (!$accessResult['buat']) {
+            abort(403, 'Unauthorized action.');
+        }
         $validated = $request->validate([
             'kode_barang' => 'required|exists:barang,kode_barang',
             'tanggal_peminjaman' => 'required|date',
@@ -98,6 +107,10 @@ class PeminjamanController extends Controller
     // Hapus peminjaman
     public function destroy($id)
     {
+        $accessResult = PermissionHelper::AnyCanDeletePeminjaman();
+        if (!$accessResult['delete']) {
+            abort(403, 'Unauthorized action.');
+        }
         $peminjaman = Peminjaman::findOrFail($id);
         $peminjaman->delete();
 
@@ -120,6 +133,9 @@ class PeminjamanController extends Controller
 
     public function kembalikan($id)
     {
+        if (!auth()->user()->hasRole(['Super Admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
         $peminjaman = Peminjaman::findOrFail($id);
 
         if ($peminjaman->status_peminjaman == 'Dipinjam') {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogHelper;
+use App\Helpers\PermissionHelper;
 use App\Models\Barang;
 use App\Models\Pemakaian;
 use App\Models\Pengguna;
@@ -13,6 +14,10 @@ class PemakaianController extends Controller
 {
     public function index(Request $request)
     {
+        $accessResult = PermissionHelper::AnyCanAccessPemakaian();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
         $query = Pemakaian::with('barang', 'pengguna');
         if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
             $query->where('pengguna_id', auth()->user()->pengguna_id);
@@ -55,6 +60,10 @@ class PemakaianController extends Controller
 
     public function store(Request $request)
     {
+        $accessResult = PermissionHelper::AnyCanCreatePemakaian();
+        if (!$accessResult['buat']) {
+            abort(403, 'Unauthorized action.');
+        }
         $validated = $request->validate([
             'kode_barang' => 'required|exists:barang,kode_barang',
             'tanggal_mulai' => 'required|date|before_or_equal:tanggal_selesai',
@@ -91,6 +100,10 @@ class PemakaianController extends Controller
 
     public function destroy($id)
     {
+        $accessResult = PermissionHelper::AnyCanDeletePemakaian();
+        if (!$accessResult['delete']) {
+            abort(403, 'Unauthorized action.');
+        }
         $pemakaian = Pemakaian::find($id);
 
         if (!$pemakaian) {
@@ -112,6 +125,9 @@ class PemakaianController extends Controller
 
     public function kembalikan($id)
     {
+        if (!auth()->user()->hasRole(['Super Admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
         $pemakaian = Pemakaian::findOrFail($id);
 
         if ($pemakaian->status_pemakaian == 'Dipakai') {

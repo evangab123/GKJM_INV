@@ -2,6 +2,13 @@
 @section('title', __('Daftar Pemakaian | Inventaris GKJM'))
 
 @section('main-content')
+    @php
+        use App\Helpers\PermissionHelper;
+        $hasCreate = PermissionHelper::AnyCanCreatePemakaian();
+        $hasEdit = PermissionHelper::AnyCanEditPemakaian();
+        $hasAccess = PermissionHelper::AnyCanAccessPemakaian();
+        $hasDelete = PermissionHelper::AnyCanDeletePemakaian();
+    @endphp
     <!-- Modal Pemakaian -->
     <div class="modal fade" id="modalPemakaian" tabindex="-1" role="dialog" aria-labelledby="modalPemakaianLabel"
         aria-hidden="true">
@@ -47,8 +54,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <small id="stok-info" class="text-muted"></small>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah" min="0"
-                            >
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" min="0">
                         </div>
 
                         <div class="form-group">
@@ -100,9 +106,11 @@
                         </a>
                     </form>
                 </div>
-                <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPemakaian">
-                    <i class="fa-solid fa-plus"></i> {{ __('Buat pemakaian Barang!') }}
-                </a>
+                @if ($hasCreate['create'])
+                    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPemakaian">
+                        <i class="fa-solid fa-plus"></i> {{ __('Buat pemakaian Barang!') }}
+                    </a>
+                @endif
             </div>
 
             <div class="card-body">
@@ -156,29 +164,35 @@
                                             {{ __('Status Tidak Diketahui') }}
                                         @endif
                                     </td>
-                                    <td style="width:120px">
-                                        <div class="d-flex">
-                                            <form action="{{ route('pemakaian.kembalikan', $item->riwayat_id) }}"
-                                                method="POST">
-                                                @csrf
-                                                <button type="submit" class="btn btn-primary"
-                                                    onclick="return confirm('{{ __('Apakah Anda yakin pengguna telah kembalikan pemakaian ini?') }}')"
-                                                    @if ($item->status_pemakaian     != 'Dipakai') disabled @endif>
-                                                        <i class="fas fa-undo"></i> {{ __('Selesai') }}
-                                                </button>
-                                            </form>
-                                            <form action="{{ route('pemakaian.destroy', $item->riwayat_id) }}"
-                                                method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <button type="submit" class="btn btn-danger"
-                                                    onclick="return confirm('{{ __('Apakah anda yakin ini hapus/batalkan pemakaian ini?') }}')"
-                                                    @if ($item->status_pemakaian != 'Dipakai') disabled @endif>
-                                                    <i class="fas fa-trash"></i> {{ __('Hapus') }}
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    @if (auth()->user()->hasRole(['Super Admin']) || $hasDelete['delete'])
+                                        <td style="width:120px">
+                                            <div class="d-flex">
+                                                @if (auth()->user()->hasRole(['Super Admin']))
+                                                    <form action="{{ route('pemakaian.kembalikan', $item->riwayat_id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-primary"
+                                                            onclick="return confirm('{{ __('Apakah Anda yakin pengguna telah kembalikan pemakaian ini?') }}')"
+                                                            @if ($item->status_pemakaian != 'Dipakai') disabled @endif>
+                                                            <i class="fas fa-undo"></i> {{ __('Selesai') }}
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                @if ($hasDelete['delete'])
+                                                    <form action="{{ route('pemakaian.destroy', $item->riwayat_id) }}"
+                                                        method="post">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger"
+                                                            onclick="return confirm('{{ __('Apakah anda yakin ini hapus/batalkan pemakaian ini?') }}')"
+                                                            @if ($item->status_pemakaian != 'Dipakai') disabled @endif>
+                                                            <i class="fas fa-trash"></i> {{ __('Hapus') }}
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
@@ -250,4 +264,3 @@
         kodeBarangSelect.dispatchEvent(new Event('change'));
     });
 </script>
-

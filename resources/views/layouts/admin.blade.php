@@ -118,14 +118,25 @@
                             href={{ route('barang.index') }}>{{ __('List Barang') }}</a>
                         <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}"
                             href={{ route('penghapusan.index') }}>{{ __('Penghapusan Barang') }}</a>
-                        <a class="collapse-item {{ Nav::isRoute('pemakaian.index') }}"
-                            href={{ route('pemakaian.index') }}>{{ __('Pemakaian Barang') }}</a>
-                            <a class="collapse-item {{ Nav::isRoute('peminjaman.index') }}"
-                            href={{ route('peminjaman.index') }}>{{ __('Peminjaman Barang') }}</a>
                     </div>
                 </div>
             </li>
 
+            <!-- Nav Item - Pengadaan -->
+            <li class="nav-item {{ Nav::isRoute('pemakaian.index') }}">
+                <a class="nav-link" href="{{ route('pemakaian.index') }}">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>{{ __('Pemakaian Barang') }}</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Pengadaan -->
+            <li class="nav-item {{ Nav::isRoute('peminjaman.index') }}">
+                <a class="nav-link" href="{{ route('peminjaman.index') }}">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>{{ __('Peminjaman') }}</span>
+                </a>
+            </li>
             <!-- Nav Item - Pengadaan -->
             <li class="nav-item {{ Nav::isRoute('pengadaan.index') }}">
                 <a class="nav-link" href="{{ route('pengadaan.index') }}">

@@ -2,6 +2,13 @@
 @section('title', __('Daftar Peminjaman | Inventaris GKJM'))
 
 @section('main-content')
+    @php
+        use App\Helpers\PermissionHelper;
+        $hasCreate = PermissionHelper::AnyCanCreatePeminjaman();
+        $hasEdit = PermissionHelper::AnyCanEditPeminjaman();
+        $hasAccess = PermissionHelper::AnyCanAccessPeminjaman();
+        $hasDelete = PermissionHelper::AnyCanDeletePeminjaman();
+    @endphp
     <!-- Modal Peminjaman -->
     <div class="modal fade" id="modalPeminjaman" tabindex="-1" role="dialog" aria-labelledby="modalPeminjamanLabel"
         aria-hidden="true">
@@ -120,9 +127,11 @@
                         </a>
                     </form>
                 </div>
-                <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPeminjaman">
-                    <i class="fa-solid fa-plus"></i> {{ __('Buat Peminjaman Barang!') }}
-                </a>
+                @if ($hasCreate['buat'])
+                    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPeminjaman">
+                        <i class="fa-solid fa-plus"></i> {{ __('Buat Peminjaman Barang!') }}
+                    </a>
+                @endif
             </div>
 
             <div class="card-body">
@@ -179,29 +188,36 @@
                                             {{ __('Status Tidak Diketahui') }}
                                         @endif
                                     </td>
-                                    <td style="width:120px">
-                                        <div class="d-flex">
-                                            <form action="{{ route('peminjaman.kembalikan', $item->peminjaman_id) }}"
-                                                method="POST">
-                                                @csrf
-                                                <button type="submit" class="btn btn-primary"
-                                                    onclick="return confirm('{{ __('Apakah Anda yakin pengguna telah kembalikan peminjaman ini?') }}')"
-                                                    @if ($item->status_peminjaman != 'Dipinjam') disabled @endif>
-                                                    <i class="fas fa-undo"></i> {{ __('Selesai') }}
-                                                </button>
-                                            </form>
-                                            <form action="{{ route('peminjaman.destroy', $item->peminjaman_id) }}"
-                                                method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <button type="submit" class="btn btn-danger"
-                                                    onclick="return confirm('{{ __('Are you sure to delete this record?') }}')"
-                                                    @if ($item->status_peminjaman != 'Dipinjam') disabled @endif>
-                                                    <i class="fas fa-trash"></i> {{ __('Hapus') }}
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    @if (auth()->user()->hasRole(['Super Admin'])||$hasDelete['delete'])
+                                        <td style="width:120px">
+                                            <div class="d-flex">
+                                                @if (auth()->user()->hasRole(['Super Admin']))
+                                                    <form
+                                                        action="{{ route('peminjaman.kembalikan', $item->peminjaman_id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-primary"
+                                                            onclick="return confirm('{{ __('Apakah Anda yakin pengguna telah kembalikan peminjaman ini?') }}')"
+                                                            @if ($item->status_peminjaman != 'Dipinjam') disabled @endif>
+                                                            <i class="fas fa-undo"></i> {{ __('Selesai') }}
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                @if ($hasDelete['delete'])
+                                                    <form action="{{ route('peminjaman.destroy', $item->peminjaman_id) }}"
+                                                        method="post">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger"
+                                                            onclick="return confirm('{{ __('Are you sure to delete this record?') }}')"
+                                                            @if ($item->status_peminjaman != 'Dipinjam') disabled @endif>
+                                                            <i class="fas fa-trash"></i> {{ __('Hapus') }}
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
