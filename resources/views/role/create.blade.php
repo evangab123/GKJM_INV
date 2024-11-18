@@ -9,7 +9,7 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="nama_role">{{ __('Nama Role') }}</label>
+                    <label for="nama_role">{{ __('Nama Role') }} <span class="text-danger">*</span> </label>
                     <input type="text" class="form-control @error('nama_role') is-invalid @enderror" name="nama_role"
                         id="nama_role" placeholder="{{ __('Nama Role...') }}" autocomplete="off"
                         value="{{ old('nama_role') }}" onchange="generateSlug()">

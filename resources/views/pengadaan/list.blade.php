@@ -215,17 +215,17 @@
                     <form action="{{ route('pengadaan.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label for="merek_barang">{{ __('Merek Barang') }}</label>
+                            <label for="merek_barang">{{ __('Merek Barang') }} <span class="text-danger">*</span></label>
                             <input type="text" name="merek_barang" class="form-control" required
                                 placeholder="Masukkan Nama Barang" id="merek_barang">
                         </div>
                         <div class="form-group">
-                            <label for="jumlah">{{ __('Jumlah') }}</label>
+                            <label for="jumlah">{{ __('Jumlah') }} <span class="text-danger">*</span></label>
                             <input type="number" name="jumlah" class="form-control" required min="1"
                                 placeholder="Masukkan Jumlah Barang" id="jumlah">
                         </div>
                         <div class="form-group">
-                            <label for="referensi">{{ __('Referensi Barang') }}</label>
+                            <label for="referensi">{{ __('Referensi Barang') }} <span class="text-danger">*</span> </label>
                             <input type="url" name="referensi" id="referensi" class="form-control" required
                                 placeholder="Masukkan URL referensi">
                             <small class="form-text text-muted">
@@ -234,7 +234,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="keterangan">{{ __('Keterangan') }}</label>
+                            <label for="keterangan">{{ __('Keterangan') }} <span class="text-danger">*</span> </label>
                             <input type="text" name="keterangan" id="keterangan" class="form-control" required
                                 placeholder="Masukkan Keteragan barang" id="keterangan">
                             <small class="form-text text-muted">

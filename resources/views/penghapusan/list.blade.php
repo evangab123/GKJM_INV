@@ -69,14 +69,14 @@
                                                 @method('DELETE')
 
                                                 @php
-                                                    $dateDiff = \Carbon\Carbon::parse($item->tanggal_penghapusan)->diffInDays(
+                                                    $dateDiff = \Carbon\Carbon::parse($item->created_at)->diffInDays(
                                                         now(),
                                                     );
                                                 @endphp
 
                                                 <button type="submit" class="btn btn-danger"
                                                     {{ $dateDiff > (int) env('DELETE_PERIOD_DAYS', 7) ? 'disabled' : '' }}>
-                                                    <i class="fas fa-trash"></i> {{ __(' Hapus!') }}
+                                                    <i class="fas fa-trash"></i> {{ __(' Batalkan!') }}
                                                 </button>
 
                                             </form>

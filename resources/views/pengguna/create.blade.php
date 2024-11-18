@@ -9,7 +9,7 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="nama_pengguna">{{ __('Nama Lengkap') }}</label>
+                    <label for="nama_pengguna">{{ __('Nama Lengkap') }} <span class="text-danger">*</span> </label>
                     <input type="text" class="form-control @error('nama_pengguna') is-invalid @enderror"
                         name="nama_pengguna" id="nama_pengguna" placeholder="Nama Lengkap..." autocomplete="off"
                         value="{{ old('nama_pengguna') }}">
@@ -19,7 +19,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="username">{{ __('Username') }}</label>
+                    <label for="username">{{ __('Username') }} <span class="text-danger">*</span> </label>
                     <input type="text" class="form-control @error('username') is-invalid @enderror" name="username"
                         id="username" placeholder="Username..." autocomplete="off" value="{{ old('username') }}">
                     @error('username')
@@ -29,7 +29,7 @@
 
 
                 <div class="form-group">
-                    <label for="jabatan">{{ __('Jabatan') }}</label>
+                    <label for="jabatan">{{ __('Jabatan') }} <span class="text-danger">*</span> </label>
                     <input type="text" class="form-control @error('jabatan') is-invalid @enderror" name="jabatan"
                         id="jabatan" placeholder="Jabatan..." autocomplete="off" value="{{ old('jabatan') }}">
                     @error('jabatan')
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="email">{{ __('Email') }}</label>
+                    <label for="email">{{ __('Email') }} <span class="text-danger">*</span> </label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror" name="email"
                         id="email" placeholder="Email..." autocomplete="off" value="{{ old('email') }}">
                     @error('email')
@@ -47,7 +47,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">{{ __('Password') }}</label>
+                    <label for="password">{{ __('Password') }} <span class="text-danger">*</span></label>
                     <input type="password" class="form-control @error('password') is-invalid @enderror" name="password"
                         id="password" placeholder="Password" autocomplete="off">
                     @error('password')
@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password_confirmation">{{ __('Password Konfirmasi') }}</label>
+                    <label for="password_confirmation">{{ __('Password Konfirmasi') }} <span class="text-danger">*</span> </label>
                     <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
                         name="password_confirmation" id="password_confirmation" placeholder="Password Konfirmasi"
                         autocomplete="off">
@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="role_id">{{ __('Role') }}</label>
+                    <label for="role_id">{{ __('Role') }} <span class="text-danger">*</span></label>
                     <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id"
                         onchange="haklist()">
                         <option value="">{{ __('Pilih Role Pengguna') }}</option>

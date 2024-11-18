@@ -26,7 +26,7 @@
                     <form action="{{ route('barang.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <label for="merek_barang">{{ __('Merek Barang') }}</label>
+                            <label for="merek_barang">{{ __('Merek Barang') }} <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="merek_barang" name="merek_barang"
                             value="{{ old('harga_pembelian', $pengadaan->merek_barang ?? '') }}">
                         </div>
@@ -40,7 +40,7 @@
                         @endif
 
                         <div class="form-group">
-                            <label for="perolehan_barang">{{ __('Perolehan') }}</label>
+                            <label for="perolehan_barang">{{ __('Perolehan') }} <span class="text-danger">*</span></label>
                             <select class="form-control" id="perolehan_barang" name="perolehan_barang">
                                 <option value="Persembahan">{{ __('Persembahan') }}</option>
                                 <option value="Pembelian">{{ __('Pembelian') }}</option>
@@ -48,13 +48,13 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="harga_pembelian">{{ __('Harga') }}</label>
+                            <label for="harga_pembelian">{{ __('Harga') }} <span class="text-danger">*</span> </label>
                             <input type="text" class="form-control" id="harga_pembelian" name="harga_pembelian"
                                 onchange="calculateNilaiEkonomis()" oninput="formatRupiah(this)"
                                 onblur="sanitizeInput(this)">
                         </div>
                         <div class="form-group">
-                            <label for="tahun_pembelian">{{ __('Tahun') }}</label>
+                            <label for="tahun_pembelian">{{ __('Tahun') }} <span class="text-danger">*</span> </label>
                             <input type="text" class="form-control" id="tahun_pembelian" name="tahun_pembelian"
                                 onchange="calculateNilaiEkonomis()">
                         </div>
@@ -65,7 +65,7 @@
                                 name="nilai_ekonomis_barang" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="jumlah">{{ __('Jumlah/Stok') }}</label>
+                            <label for="jumlah">{{ __('Jumlah/Stok') }} <span class="text-danger">*</span> </label>
                             <input type="number" class="form-control" id="jumlah" name="jumlah"
                             value="{{ old('harga_pembelian', $pengadaan->jumlah ?? '') }}">
                         </div>
@@ -76,7 +76,7 @@
 
                         </div>
                         <div class="form-group">
-                            <label for="ruang_id">{{ __('Ruang') }}</label>
+                            <label for="ruang_id">{{ __('Ruang') }} <span class="text-danger">*</span></label>
                             <select class="form-control" name="ruang_id" id="ruang_id">
                                 @foreach ($ruang as $rua)
                                     <option value="{{ $rua->ruang_id }}">{{ $rua->nama_ruang }}</option>
@@ -84,7 +84,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="kondisi_id">{{ __('Kondisi') }}</label>
+                            <label for="kondisi_id">{{ __('Kondisi') }} <span class="text-danger">*</span></label>
                             <select class="form-control" name="kondisi_id" id="kondisi_id">
                                 @foreach ($kondisi as $kon)
                                     <option value="{{ $kon->kondisi_id }}">{{ $kon->deskripsi_kondisi }}</option>
@@ -92,7 +92,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="kategori_barang_id">{{ __('Kategori') }}</label>
+                            <label for="kategori_barang_id">{{ __('Kategori') }} <span class="text-danger">*</span></label>
                             <select class="form-control" name="kategori_barang_id" id="kategori_barang_id">
                                 @foreach ($kategori as $kat)
                                     <option value="{{ $kat->kategori_barang_id }}">{{ $kat->nama_kategori }}</option>

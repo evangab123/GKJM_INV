@@ -2,7 +2,43 @@
 @section('title', 'Daftar Hak | Inventaris GKJM')
 
 @section('main-content')
+    @php
+        function formatHakAkses($hak)
+        {
+            $hakList = explode('-', $hak);
+            $hakFormatted = [];
+            $index = 0;
 
+            $deskripsiMap = [
+                'lihat' => 'Melihat',
+                'perbarui' => 'Memperbarui',
+                'buat' => 'Membuat',
+                'hapus' => 'Menghapus',
+                'peminjam' => 'Peminjaman',
+                'pengadaan' => 'Pengadaan',
+                'r.' => 'Ruangan',
+                'semua' => 'Semua',
+            ];
+
+            foreach ($hakList as $item) {
+                if ($item === 'semua' && $index === 0) {
+                    $hakFormatted[] = 'Melihat, membuat, memperbarui, menghapus';
+                } elseif ($item === 'semua' && $index === 1) {
+                    $hakFormatted[] = 'Pengadaan, Peminjaman, Barang, Penghapusan, dan Pemakaian';
+                } elseif ($item === 'semua' && $index === 2) {
+                    $hakFormatted[] = 'Semua Ruangan';
+                } else {
+                    $hakFormatted[] = $deskripsiMap[$item] ?? ucfirst($item);
+                }
+                $index += 1;
+            }
+
+            if (count($hakFormatted) > 1) {
+                $lastElement = array_pop($hakFormatted);
+                return implode(', ', $hakFormatted) . ' di ' . $lastElement;
+            }
+        }
+    @endphp
     <div class="container-fluid">
 
         @if (session('message'))
@@ -32,16 +68,20 @@
                     <table class="table table-bordered table-hover">
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Aksi</th>
+                                <th scope="col">{{ __('No') }}</th>
+                                <th scope="col">{{ __('Nama') }}</th>
+                                <th scope="col">{{ __('Deskripsi') }}</th>
+                                <th scope="col">{{ __('Aksi') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($permissions as $permisi)
                                 <tr>
-                                    <td scope="row">{{ ($permissions->currentPage() - 1) * $permissions->perPage() + $loop->iteration }}</td>
+                                    <td scope="row">
+                                        {{ ($permissions->currentPage() - 1) * $permissions->perPage() + $loop->iteration }}
+                                    </td>
                                     <td>{{ $permisi->name }}</td>
+                                    <td>{{ formatHakAkses($permisi->name) }}</td>
                                     <td style="width:110px">
                                         <div class="d-flex">
                                             <form action="{{ route('hak.destroy', $permisi->id) }}" method="post">

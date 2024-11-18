@@ -5,15 +5,12 @@
 @section('main-content')
     <div class="card">
         <div class="card-body">
-            <h2 class="text-info mb-3">{{ __('Petunjuk: Nama yang disimpan adalah slug') }}</h2>
-            <p class="text-muted mb-4">{{ __('Silakan masukkan sesuai form. Slug akan otomatis dihasilkan berdasarkan pilihan Anda.') }}</p>
-
             <form action="{{ route('hak.store') }}" method="post">
                 @csrf
 
                 <!-- Select Tindakan -->
                 <div class="form-group">
-                    <label for="tindakan">{{ __('Tindakan') }}</label>
+                    <label for="tindakan">{{ __('Tindakan') }} <span class="text-danger">*</span> </label>
                     <select name="tindakan" id="tindakan" class="form-control" required onchange="generateSlug()">
                         <option value="">{{ __('Pilih Tindakan...') }}</option>
                         <option value="buat">{{ __('Buat') }}</option>
@@ -26,7 +23,7 @@
 
                 <!-- Select Entitas -->
                 <div class="form-group">
-                    <label for="entitas">{{ __('Entitas') }}</label>
+                    <label for="entitas">{{ __('Entitas') }} <span class="text-danger">*</span> </label>
                     <select name="entitas" id="entitas" class="form-control" required onchange="generateSlug()">
                         <option value="">{{ __('Pilih Entitas...') }}</option>
                         <option value="barang">{{ __('Barang') }}</option>
@@ -40,7 +37,7 @@
 
                 <!-- Select Ruangan -->
                 <div class="form-group">
-                    <label for="ruangan">{{ __('Ruang') }}</label>
+                    <label for="ruangan">{{ __('Ruang') }} <span class="text-danger">*</span> </label>
                     <select name="ruangan" id="ruangan" class="form-control" required onchange="generateSlug()">
                         <option disabled="true">{{ __('Pilih Ruang...') }}</option>
                         <option value="semua" style="color:rgb(214, 22, 22);">{{ __('Semua Ruangan') }}</option>
@@ -50,16 +47,23 @@
                     </select>
                 </div>
 
-                <!-- Input Slug Hak -->
+                {{-- <!-- Input Slug Hak -->
                 <div class="form-group">
                     <label for="nama_hak_slug">{{ __('Slug Hak') }}</label>
                     <input type="text" class="form-control @error('nama_hak_slug') is-invalid @enderror"
-                        name="nama_hak_slug" id="nama_hak_slug" placeholder="slug-hak..." autocomplete="off" readonly required>
+                        name="nama_hak_slug" id="nama_hak_slug" placeholder="slug-hak..." autocomplete="off" readonly
+                        required>
                     @error('nama_hak_slug')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
-                </div>
+                </div> --}}
+                <input type="hidden" class="form-control @error('nama_hak_slug') is-invalid @enderror" name="nama_hak_slug"
+                    id="nama_hak_slug" placeholder="slug-hak..." autocomplete="off" readonly required>
 
+                <div class="form-group">
+                    <label for="deskripsi_hak">{{ __('Deskripsi Hak Akses') }}</label>
+                    <p id="deskripsi_hak" class="form-control-static"></p>
+                </div>
                 <button type="submit" class="btn btn-primary">{{ __('Simpan') }}</button>
                 <a href="{{ route('hak.index') }}" class="btn btn-default">{{ __('Kembali ke list') }}</a>
             </form>
@@ -83,5 +87,48 @@
 
         // Memperbarui nilai input slug
         document.querySelector('#nama_hak_slug').value = finalSlug;
+
+        // Menghasilkan deskripsi hak akses berdasarkan slug
+        const deskripsi = formatHakAkses(finalSlug);
+        document.querySelector('#deskripsi_hak').innerText = deskripsi;
+    }
+
+    function formatHakAkses(slug) {
+        const hakList = slug.split('-');
+        const deskripsiMap = {
+            'lihat': 'Melihat',
+            'perbarui': 'Memperbarui',
+            'buat': 'Membuat',
+            'hapus': 'Menghapus',
+            'peminjam': 'Peminjaman',
+            'pengadaan': 'Pengadaan',
+            'barang': 'Barang',
+            'penghapusan': 'Penghapusan',
+            'pemakai': 'Pemakaian',
+            'semua': 'Semua',
+        };
+
+        let hakFormatted = [];
+        let index = 0;
+
+        hakList.forEach((item) => {
+            if (item === 'semua' && index === 0) {
+                hakFormatted.push('Melihat, Membuat, Memperbarui, Menghapus');
+            } else if (item === 'semua' && index === 1) {
+                hakFormatted.push('Pengadaan, Peminjaman, Barang, Penghapusan, dan Pemakaian');
+            } else if (item === 'semua' && index === 2) {
+                hakFormatted.push('Semua Ruangan');
+            } else {
+                hakFormatted.push(deskripsiMap[item] || item.charAt(0).toUpperCase() + item.slice(1));
+            }
+            index++;
+        });
+
+        if (hakFormatted.length > 1) {
+            const lastElement = hakFormatted.pop();
+            return hakFormatted.join(', ') + ' di ' + lastElement;
+        } else {
+            return hakFormatted.join(', ');
+        }
     }
 </script>

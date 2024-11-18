@@ -33,7 +33,6 @@
 </head>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -69,7 +68,11 @@
 
             @php
                 use App\Helpers\PermissionHelper;
-                $hasAccess = PermissionHelper::AnyHasAccessToBarang();
+                $hasAccess1 = PermissionHelper::AnyHasAccessToBarang();
+                $hasAccess2 = PermissionHelper::AnyCanAccessPengadaan();
+                $hasAccess3 = PermissionHelper::AnyCanAccessPemakaian();
+                $hasAccess4 = PermissionHelper::AnyCanAccessPenghapusan();
+                $hasAccess5 = PermissionHelper::AnyCanAccessPeminjaman();
             @endphp
 
             @if (Auth::check() && Auth::user()->hasRole('Super Admin'))
@@ -122,40 +125,51 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">{{ __('CRUD Barang') }}:</h6>
-                        <a class="collapse-item {{ Nav::isRoute('barang.index') }}" href={{ route('barang.index') }}>
-                            <i class="fas fa-th-list"></i> {{ __('List Barang') }}
-                        </a>
-                        <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}"
-                            href={{ route('penghapusan.index') }}>
-                            <i class="fas fa-trash-alt"></i> {{ __('Penghapusan Barang') }}
-                        </a>
+                        @if ($hasAccess1['access'])
+                            <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
+                                href={{ route('barang.index') }}>
+                                <i class="fas fa-th-list"></i> {{ __('List Barang') }}
+                            </a>
+                        @endif
+                        @if ($hasAccess4['access'])
+                            <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}"
+                                href={{ route('penghapusan.index') }}>
+                                <i class="fas fa-trash-alt"></i> {{ __('Penghapusan Barang') }}
+                            </a>
+                        @endif
                     </div>
                 </div>
             </li>
 
             <!-- Nav Item - Pemakaian Barang -->
-            <li class="nav-item {{ Nav::isRoute('pemakaian.index') }}">
-                <a class="nav-link" href="{{ route('pemakaian.index') }}">
-                    <i class="fas fa-fw fa-box-open"></i>
-                    <span>{{ __('Pemakaian Barang') }}</span>
-                </a>
-            </li>
+            @if ($hasAccess3['access'])
+                <li class="nav-item {{ Nav::isRoute('pemakaian.index') }}">
+                    <a class="nav-link" href="{{ route('pemakaian.index') }}">
+                        <i class="fas fa-fw fa-box-open"></i>
+                        <span>{{ __('Pemakaian Barang') }}</span>
+                    </a>
+                </li>
+            @endif
 
             <!-- Nav Item - Peminjaman -->
-            <li class="nav-item {{ Nav::isRoute('peminjaman.index') }}">
-                <a class="nav-link" href="{{ route('peminjaman.index') }}">
-                    <i class="fas fa-fw fa-handshake"></i>
-                    <span>{{ __('Peminjaman') }}</span>
-                </a>
-            </li>
+            @if ($hasAccess5['access'])
+                <li class="nav-item {{ Nav::isRoute('peminjaman.index') }}">
+                    <a class="nav-link" href="{{ route('peminjaman.index') }}">
+                        <i class="fas fa-fw fa-handshake"></i>
+                        <span>{{ __('Peminjaman') }}</span>
+                    </a>
+                </li>
+            @endif
 
             <!-- Nav Item - Pengadaan -->
-            <li class="nav-item {{ Nav::isRoute('pengadaan.index') }}">
-                <a class="nav-link" href="{{ route('pengadaan.index') }}">
-                    <i class="fas fa-fw fa-shopping-cart"></i>
-                    <span>{{ __('Pengadaan') }}</span>
-                </a>
-            </li>
+            @if ($hasAccess2['access'])
+                <li class="nav-item {{ Nav::isRoute('pengadaan.index') }}">
+                    <a class="nav-link" href="{{ route('pengadaan.index') }}">
+                        <i class="fas fa-fw fa-shopping-cart"></i>
+                        <span>{{ __('Pengadaan') }}</span>
+                    </a>
+                </li>
+            @endif
 
             <!-- Nav Item - Profile -->
             <li class="nav-item {{ Nav::isRoute('profile') }}">
