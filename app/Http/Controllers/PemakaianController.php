@@ -58,7 +58,8 @@ class PemakaianController extends Controller
         $validated = $request->validate([
             'kode_barang' => 'required|exists:barang,kode_barang',
             'tanggal_mulai' => 'required|date|before_or_equal:tanggal_selesai',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            // 'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'jumlah' => 'required|numeric|min:1',
             'keterangan' => 'nullable|string|max:255',
         ]);
 
@@ -67,6 +68,9 @@ class PemakaianController extends Controller
         if (!$barang) {
             return redirect()->route('pemakaian.index')->withErrors(__('Barang tidak ditemukan.'));
         }
+        if ($validated['jumlah'] > $barang->jumlah) {
+            return redirect()->route('pemakaian.index')->withErrors(__('Jumlah yang dipakai melebihi stok yang tersedia.'));
+        }
 
         $barang->update(['status_barang' => 'Dipakai']);
 
@@ -74,7 +78,9 @@ class PemakaianController extends Controller
             'kode_barang' => $validated['kode_barang'],
             'pengguna_id' => auth()->user()->pengguna_id,
             'tanggal_mulai' => $validated['tanggal_mulai'],
-            'tanggal_selesai' => $validated['tanggal_selesai'],
+            // 'tanggal_selesai' => $validated['tanggal_selesai'],
+            'status_pemakaian' => 'Dipakai',
+            'jumlah' => $validated['jumlah'],
             'keterangan' => $validated['keterangan'] ?? '',
         ]);
 
@@ -104,5 +110,22 @@ class PemakaianController extends Controller
         return redirect()->route('pemakaian.index')->with('message', __('Pemakaian barang berhasil dihapus!'));
     }
 
+    public function kembalikan($id)
+    {
+        $pemakaian = Pemakaian::findOrFail($id);
+
+        if ($pemakaian->status_pemakaian == 'Dipakai') {
+            $pemakaian->status_pemakaian = 'Dikembalikan';
+            $pemakaian->tanggal_selesai = now();
+            $pemakaian->save();
+            $barang = $pemakaian->barang;
+            $barang->status_barang = 'Ada';
+            $barang->save();
+            ActivityLogHelper::log('Kembalikan barang Pemakaian "' . $pemakaian->riwayat_id . '"');
+            return redirect()->route('pemakaian.index')->with('success', 'Pemakaian berhasil dikembalikan!');
+        }
+
+        return redirect()->route('pemakaian.index')->with('warning', 'Pemakaian Error');
+    }
 
 }

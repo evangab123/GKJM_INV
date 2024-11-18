@@ -138,6 +138,4 @@ class PeminjamanController extends Controller
         }
         return redirect()->route('peminjaman.index')->with('warning', 'Peminjaman Error');
     }
-
-
 }

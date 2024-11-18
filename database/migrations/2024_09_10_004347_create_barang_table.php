@@ -103,7 +103,7 @@ return new class extends Migration {
             $table->date("tanggal_mulai");
             $table->date("tanggal_selesai")->nullable();
             $table->string("keterangan");
-            $table->enum('status_peminjaman', ['Dipakai', 'Dikembalikan']);
+            $table->enum('status_pemakaian', ['Dipakai', 'Dikembalikan']);
             $table->foreign('kode_barang')->references('kode_barang')->on('Barang')
                 ->onUpdate('cascade');
             $table->foreign('pengguna_id')->references('pengguna_id')->on('Pengguna')

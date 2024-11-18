@@ -133,6 +133,8 @@ Route::prefix('pengadaan')->group(function () {
 
 Route::post('/peminjaman/{id}/kembalikan', [PeminjamanController::class, 'kembalikan'])
     ->name('peminjaman.kembalikan');
+Route::post('/pemakaian/{id}/kembalikan', [PemakaianController::class, 'kembalikan'])
+    ->name('pemakaian.kembalikan');
 
 
 

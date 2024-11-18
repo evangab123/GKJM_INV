@@ -17,24 +17,38 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="kode_barang">{{ __('Kode Barang') }}</label>
+                            <label for="kode_barang">
+                                {{ __('Kode Barang') }}
+                                <span class="text-danger">*</span>
+                            </label>
                             <select class="form-control" id="kode_barang" name="kode_barang" required>
                                 <option value="">{{ __('Pilih Kode Barang') }}</option>
                                 @foreach ($barang as $item)
-                                    <option value="{{ $item->kode_barang }}">{{ $item->kode_barang }} -
-                                        {{ $item->merek_barang }}</option>
+                                    <option value="{{ $item->kode_barang }}" data-jumlah="{{ $item->jumlah }}">
+                                        {{ $item->kode_barang }} - {{ $item->merek_barang }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="tanggal_mulai">{{ __('Tanggal Mulai') }}</label>
+                            <label for="tanggal_mulai">{{ __('Tanggal Mulai') }} <span class="text-danger">*</span> </label>
                             <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="tanggal_selesai">{{ __('Tanggal Selesai') }}</label>
+                        {{-- <div class="form-group">
+                            <label for="tanggal_selesai">{{ __('Tanggal Selesai') }} <span
+                                    class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai" required>
+                        </div> --}}
+                        <div class="form-group">
+                            <label for="jumlah">
+                                {{ __('Jumlah/Stok') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <small id="stok-info" class="text-muted"></small>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" min="0"
+                            >
                         </div>
 
                         <div class="form-group">
@@ -104,7 +118,7 @@
                                 <th scope="col">{{ __('Tanggal Mulai') }}</th>
                                 <th scope="col">{{ __('Tanggal Selesai') }}</th>
                                 <th scope="col">{{ __('Keterangan') }}</th>
-                                <th scope="col">{{ __('Status Peminjaman') }}</th>
+                                <th scope="col">{{ __('Status Pemakaian') }}</th>
                                 <th scope="col">{{ __('Aksi') }}</th>
                             </tr>
                         </thead>
@@ -120,22 +134,46 @@
                                         </a>
                                     </td>
                                     <td>{{ $item->barang->merek_barang ?? 'Tidak tersedia' }}</td>
+                                    <td>{{ $item->jumlah }}</td>
                                     <td>{{ $item->pengguna->nama_pengguna ?? 'Tidak tersedia' }}</td>
                                     <td>{{ $item->tanggal_mulai }}</td>
-                                    <td>{{ $item->tanggal_selesai }}</td>
-                                    <td>{{ $item->keterangan }}</td>
+                                    <td>{{ $item->tanggal_selesai ?? 'Belum dikembalikan/Masih dipinjam' }}</td>
+                                    <td>{{ $item->keterangan ?? 'Tidak ada Keterangan' }}</td>
+                                    <td
+                                        class="
+                                    @if ($item->status_pemakaian == 'Dipakai') text-warning
+                                    @elseif ($item->status_pemakaian == 'Dikembalikan') text-success
+                                    @else text-muted @endif">
+                                        @if ($item->status_pemakaian == 'Dipakai')
+                                            <i class="fas fa-hand-paper" style="color: #f39c12;" title="Dipakai"></i>
+                                            {{ __('Dipakai') }}
+                                        @elseif ($item->status_pemakaian == 'Dikembalikan')
+                                            <i class="fas fa-undo" style="color: #28a745;" title="Dikembalikan"></i>
+                                            {{ __('Dikembalikan') }}
+                                        @else
+                                            <i class="fas fa-question-circle" style="color: #6c757d;"
+                                                title="Status Tidak Diketahui"></i>
+                                            {{ __('Status Tidak Diketahui') }}
+                                        @endif
+                                    </td>
                                     <td style="width:120px">
                                         <div class="d-flex">
-                                            {{-- <a href="{{ route('pemakaian.edit', $item->riwayat_id) }}"
-                                                class="btn btn-primary mr-2">
-                                                <i class="fas fa-edit"></i> {{ __('Edit') }}
-                                            </a> --}}
+                                            <form action="{{ route('pemakaian.kembalikan', $item->riwayat_id) }}"
+                                                method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary"
+                                                    onclick="return confirm('{{ __('Apakah Anda yakin pengguna telah kembalikan pemakaian ini?') }}')"
+                                                    @if ($item->status_pemakaian     != 'Dipakai') disabled @endif>
+                                                        <i class="fas fa-undo"></i> {{ __('Selesai') }}
+                                                </button>
+                                            </form>
                                             <form action="{{ route('pemakaian.destroy', $item->riwayat_id) }}"
                                                 method="post">
                                                 @csrf
                                                 @method('delete')
                                                 <button type="submit" class="btn btn-danger"
-                                                    onclick="return confirm('{{ __('Are you sure to delete this record?') }}')">
+                                                    onclick="return confirm('{{ __('Apakah anda yakin ini hapus/batalkan pemakaian ini?') }}')"
+                                                    @if ($item->status_pemakaian != 'Dipakai') disabled @endif>
                                                     <i class="fas fa-trash"></i> {{ __('Hapus') }}
                                                 </button>
                                             </form>
@@ -187,3 +225,29 @@
         </div>
     @endif
 @endpush
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const kodeBarangSelect = document.getElementById('kode_barang');
+        const jumlahInput = document.getElementById('jumlah');
+        const stokInfo = document.getElementById('stok-info');
+
+        // Fungsi untuk update jumlah yang tersedia
+        kodeBarangSelect.addEventListener('change', function() {
+            const selectedOption = kodeBarangSelect.options[kodeBarangSelect.selectedIndex];
+            const availableStock = selectedOption.getAttribute('data-jumlah');
+
+            // Update informasi stok yang tersedia
+            stokInfo.textContent = `Stok tersedia: ${availableStock}`;
+
+            jumlahInput.setAttribute('max', availableStock);
+            jumlahInput.setAttribute('min', 0);
+
+            jumlahInput.value = 0;
+        });
+
+        // Trigger change event on load to set the initial stock
+        kodeBarangSelect.dispatchEvent(new Event('change'));
+    });
+</script>
+
