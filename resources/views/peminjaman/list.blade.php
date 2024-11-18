@@ -188,7 +188,7 @@
                                             {{ __('Status Tidak Diketahui') }}
                                         @endif
                                     </td>
-                                    @if (auth()->user()->hasRole(['Super Admin'])||$hasDelete['delete'])
+                                    @if (auth()->user()->hasRole(['Super Admin']) || $hasDelete['delete'] )
                                         <td style="width:120px">
                                             <div class="d-flex">
                                                 @if (auth()->user()->hasRole(['Super Admin']))

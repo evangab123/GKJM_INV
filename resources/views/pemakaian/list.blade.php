@@ -106,7 +106,7 @@
                         </a>
                     </form>
                 </div>
-                @if ($hasCreate['create'])
+                @if ($hasCreate['buat'])
                     <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPemakaian">
                         <i class="fa-solid fa-plus"></i> {{ __('Buat pemakaian Barang!') }}
                     </a>

@@ -76,7 +76,7 @@
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseData"
                         aria-expanded="true" aria-controls="collapseData">
-                        <i class="fas fa-fw fa-plus"></i>
+                        <i class="fas fa-fw fa-database"></i>
                         <span>{{ __('Master Data') }}</span>
                     </a>
                     <div id="collapseData" class="collapse" aria-labelledby="headingData"
@@ -84,25 +84,33 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">{{ __('Pengguna:') }}</h6>
                             <a class="collapse-item {{ Nav::isRoute('role.index') }}"
-                                href="{{ route('role.index') }}">{{ __('Role Pengguna') }}</a>
-                            <a class="collapse-item {{ Nav::isRoute('hak.index') }}"
-                                href="{{ route('hak.index') }}">{{ __('Hak Role ') }}</a>
+                                href="{{ route('role.index') }}">
+                                <i class="fas fa-user-shield"></i> {{ __('Role Pengguna') }}
+                            </a>
+                            <a class="collapse-item {{ Nav::isRoute('hak.index') }}" href="{{ route('hak.index') }}">
+                                <i class="fas fa-key"></i> {{ __('Hak Role') }}
+                            </a>
                             <a class="collapse-item {{ Nav::isRoute('pengguna.index') }}"
-                                href="{{ route('pengguna.index') }}">{{ __('Daftar Pengguna') }}</a>
+                                href="{{ route('pengguna.index') }}">
+                                <i class="fas fa-users"></i> {{ __('Daftar Pengguna') }}
+                            </a>
                         </div>
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">{{ __('Barang:') }}</h6>
                             <a class="collapse-item {{ Nav::isRoute('terkunci.index') }}"
-                                href="{{ route('terkunci.index') }}">{{ __('Barang Terkunci') }}</a>
-                            <a class="collapse-item {{ Nav::isRoute('#') }}"
-                                href="{{ '#' }}">{{ __('Tambah Kategori') }}</a>
-                            <a class="collapse-item {{ Nav::isRoute('#') }}"
-                                href="{{ '#' }}">{{ __('Tambah Ruang') }}</a>
+                                href="{{ route('terkunci.index') }}">
+                                <i class="fas fa-lock"></i> {{ __('Barang Terkunci') }}
+                            </a>
+                            <a class="collapse-item {{ Nav::isRoute('#') }}" href="{{ '#' }}">
+                                <i class="fas fa-tags"></i> {{ __('Tambah Kategori') }}
+                            </a>
+                            <a class="collapse-item {{ Nav::isRoute('#') }}" href="{{ '#' }}">
+                                <i class="fas fa-door-open"></i> {{ __('Tambah Ruang') }}
+                            </a>
                         </div>
                     </div>
                 </li>
             @endif
-
 
             <!-- Nav Item - Inventaris Collapse Menu -->
             <li class="nav-item">
@@ -114,37 +122,40 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">{{ __('CRUD Barang') }}:</h6>
-                        <a class="collapse-item {{ Nav::isRoute('barang.index') }}"
-                            href={{ route('barang.index') }}>{{ __('List Barang') }}</a>
+                        <a class="collapse-item {{ Nav::isRoute('barang.index') }}" href={{ route('barang.index') }}>
+                            <i class="fas fa-th-list"></i> {{ __('List Barang') }}
+                        </a>
                         <a class="collapse-item {{ Nav::isRoute('penghapusan.index') }}"
-                            href={{ route('penghapusan.index') }}>{{ __('Penghapusan Barang') }}</a>
+                            href={{ route('penghapusan.index') }}>
+                            <i class="fas fa-trash-alt"></i> {{ __('Penghapusan Barang') }}
+                        </a>
                     </div>
                 </div>
             </li>
 
-            <!-- Nav Item - Pengadaan -->
+            <!-- Nav Item - Pemakaian Barang -->
             <li class="nav-item {{ Nav::isRoute('pemakaian.index') }}">
                 <a class="nav-link" href="{{ route('pemakaian.index') }}">
-                    <i class="fas fa-fw fa-box"></i>
+                    <i class="fas fa-fw fa-box-open"></i>
                     <span>{{ __('Pemakaian Barang') }}</span>
                 </a>
             </li>
 
-            <!-- Nav Item - Pengadaan -->
+            <!-- Nav Item - Peminjaman -->
             <li class="nav-item {{ Nav::isRoute('peminjaman.index') }}">
                 <a class="nav-link" href="{{ route('peminjaman.index') }}">
-                    <i class="fas fa-fw fa-box"></i>
+                    <i class="fas fa-fw fa-handshake"></i>
                     <span>{{ __('Peminjaman') }}</span>
                 </a>
             </li>
+
             <!-- Nav Item - Pengadaan -->
             <li class="nav-item {{ Nav::isRoute('pengadaan.index') }}">
                 <a class="nav-link" href="{{ route('pengadaan.index') }}">
-                    <i class="fas fa-fw fa-box"></i>
+                    <i class="fas fa-fw fa-shopping-cart"></i>
                     <span>{{ __('Pengadaan') }}</span>
                 </a>
             </li>
-
 
             <!-- Nav Item - Profile -->
             <li class="nav-item {{ Nav::isRoute('profile') }}">
@@ -162,13 +173,14 @@
                 </a>
             </li>
 
-            <!-- Nav Item -->
+            <!-- Nav Item - Blank Page -->
             <li class="nav-item {{ Nav::isRoute('blank') }}">
                 <a class="nav-link" href="{{ route('blank') }}">
-                    <i class="fas fa-fw fa-book"></i>
+                    <i class="fas fa-fw fa-file"></i>
                     <span>{{ __('Blank Page') }}</span>
                 </a>
             </li>
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
