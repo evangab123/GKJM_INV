@@ -7,6 +7,8 @@ use App\Models\PenghapusanBarang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\ActivityLogHelper;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PenghapusanBarangExport;
 
 class PenghapusanBarangController extends Controller
 {
@@ -42,11 +44,29 @@ class PenghapusanBarangController extends Controller
             //                         ");
         }
 
+        if ($request->filled('tanggal_penghapusan')) {
+            $query->where('tanggal_penghapusan', $request->tanggal_penghapusan);
+        }
+
+        if ($request->filled('nilai_sisa_min') && $request->filled('nilai_sisa_max')) {
+            $query->whereBetween('nilai_sisa', [
+                $request->input('nilai_sisa_min'),
+                $request->input('nilai_sisa_max')
+            ]);
+        } elseif ($request->filled('nilai_sisa_min')) {
+            $query->where('nilai_sisa', '>=', $request->input('nilai_sisa_min'));
+        } elseif ($request->filled('nilai_sisa_max')) {
+            $query->where('nilai_sisa', '<=', $request->input('nilai_sisa_max'));
+        }
+
+
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('kode_barang', 'LIKE', "%$search%")
-                    ->orWhere('alasan_penghapusan', 'LIKE', "%$search%");
+                    ->orWhere('alasan_penghapusan', 'LIKE', "%$search%")
+                    ->orWhere('alasan_penghapusan', 'LIKE', "%$search%")
+                    ->orWhere('nilai_sisa', 'LIKE', "%$search%");
             });
         }
 
@@ -90,4 +110,54 @@ class PenghapusanBarangController extends Controller
         return redirect()->route('penghapusan.index')->with('success', __('Data berhasil dihapus.'));
     }
 
+    public function export(Request $request)
+    {
+        $query = PenghapusanBarang::with('barang');
+        $accessResult = PermissionHelper::AnyCanAccessPenghapusan();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if (!empty($accessResult['room'])) {
+            $query->whereIn('kode_barang', function ($q) use ($accessResult) {
+                $q->select('kode_barang')
+                    ->from('barang')
+                    ->whereIn('ruang_id', function ($subQuery) use ($accessResult) {
+                        $subQuery->select('ruang_id')->from('ruang')->whereIn('nama_ruang', $accessResult['room']);
+                    });
+            });
+
+        }
+
+        if ($request->filled('tanggal_penghapusan')) {
+            $query->where('tanggal_penghapusan', $request->tanggal_penghapusan);
+        }
+
+        if ($request->filled('nilai_sisa_min') && $request->filled('nilai_sisa_max')) {
+            $query->whereBetween('nilai_sisa', [
+                $request->input('nilai_sisa_min'),
+                $request->input('nilai_sisa_max')
+            ]);
+        } elseif ($request->filled('nilai_sisa_min')) {
+            $query->where('nilai_sisa', '>=', $request->input('nilai_sisa_min'));
+        } elseif ($request->filled('nilai_sisa_max')) {
+            $query->where('nilai_sisa', '<=', $request->input('nilai_sisa_max'));
+        }
+
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_barang', 'LIKE', "%$search%")
+                    ->orWhere('alasan_penghapusan', 'LIKE', "%$search%")
+                    ->orWhere('alasan_penghapusan', 'LIKE', "%$search%")
+                    ->orWhere('nilai_sisa', 'LIKE', "%$search%");
+            });
+        }
+
+
+        $data = $query->get();
+
+        return Excel::download(new PenghapusanBarangExport($data), 'penghapusan_'.now()->format('d-m-Y').'.xlsx');
+    }
 }

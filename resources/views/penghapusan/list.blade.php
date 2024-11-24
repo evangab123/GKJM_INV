@@ -21,13 +21,36 @@
                 <div class="d-flex align-items-center">
                     {{-- Search Form --}}
                     <form action="{{ route('penghapusan.index') }}" method="GET" class="form-inline">
-                        <input type="text" name="search" class="form-control" placeholder="{{ __('Cari ...') }}"
+                        <input type="text" name="search" class="form-control mr-2" placeholder="{{ __('Cari ...') }}"
                             value="{{ request('search') }}" style="max-width: 200px;" oninput="this.form.submit()">
 
+                        <!-- Filter Tanggal penghapusan -->
+                        <label for="tanggal_penghapusan">{{ __('Penghapusan:') }}</label>
+                        <input type="date" name="tanggal_penghapusan" class="form-control mr-2 ml-2"
+                            value="{{ request('tanggal_penghapusan') }}" placeholder="{{ __('Tanggal penghapusan') }}"
+                            style="max-width: 150px;" onchange="this.form.submit()">
+
+                        <input type="number" name="nilai_sisa_min" class="form-control"
+                            value="{{ request('nilai_sisa_min') }}" placeholder="{{ __('Min Nilai Sisa') }}"
+                            onchange="this.form.submit()">
+                        <input type="number" name="nilai_sisa_max" class="form-control ml-2"
+                            value="{{ request('nilai_sisa_max') }}" placeholder="{{ __('Max Nilai Sisa') }}"
+                            onchange="this.form.submit()">
                         <a href="{{ route('penghapusan.index') }}" class="btn btn-secondary ml-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>
                     </form>
+                    @if ($hasAccess['access'])
+                        <form action="{{ route('penghapusan.export') }}" method="GET" id="exportForm" class="ml-2">
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                            <input type="hidden" name="tanggal_penghapusan" value="{{ request('tanggal_penghapusan') }}">
+                            <input type="hidden" name="nilai_sisa_min" value="{{ request('nilai_sisa_min') }}">
+                            <input type="hidden" name="nilai_sisa_max" value="{{ request('nilai_sisa_max') }}">
+                            <button type="button" class="btn btn-primary" onclick="confirmExport()">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
 
@@ -121,3 +144,24 @@
         </div>
     @endif
 @endpush
+
+<script>
+    function confirmExport() {
+        var search = document.querySelector('input[name="search"]').value;
+        var tanggal_penghapusan = document.querySelector('input[name="tanggal_penghapusan"]').value;
+
+        var nilai_sisaMin = document.querySelector('input[name="nilai_sisa_min"]').value;
+        var nilai_sisaMax = document.querySelector('input[name="nilai_sisa_max"]').value;
+
+        if (search || tanggal_penghapusan || nilai_sisaMin || nilai_sisaMax) {
+            var confirmation = confirm(
+                "Apakah Anda yakin ingin mengekspor data? Data yang didownload adalah data hasil filter.");
+
+            if (confirmation) {
+                document.getElementById('exportForm').submit();
+            }
+        } else {
+            document.getElementById('exportForm').submit();
+        }
+    }
+</script>

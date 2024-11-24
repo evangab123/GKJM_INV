@@ -266,7 +266,7 @@ class PengadaanController extends Controller
         } elseif ($request->filled('tanggal_pengajuan_end')) {
             $query->where('tanggal_pengajuan', '<=', $request->input('tanggal_pengajuan_end'));
         }
-        
+
         $data = $query->get();
 
         return Excel::download(new PengadaanExport($data), 'pengadaan_'.now()->format('d-m-Y').'.xlsx');
