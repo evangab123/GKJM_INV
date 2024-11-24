@@ -101,19 +101,19 @@
                             placeholder="{{ __('Cari ...') }}" value="{{ request('search') }}" style="max-width: 200px;"
                             oninput="this.form.submit()">
                         <!-- Filter Tanggal Peminjaman -->
-                        <label for="tanggal_peminjaman">{{ __('Tanggal Peminjaman:') }}</label>
+                        <label for="tanggal_peminjaman">{{ __('Peminjaman:') }}</label>
                         <input type="date" name="tanggal_peminjaman" class="form-control mr-2 ml-2"
                             value="{{ request('tanggal_peminjaman') }}" placeholder="{{ __('Tanggal Peminjaman') }}"
                             style="max-width: 150px;" onchange="this.form.submit()">
-                        <!-- Filter Tanggal Selesai -->
-                        <label for="tanggal_pengembalian">{{ __('Tanggal Pengembalian:') }}</label>
-                        <input type="date" name="tanggal_pengembalian" class="form-control mr-2 ml-2"
-                            value="{{ request('tanggal_pengembalian') }}" placeholder="{{ __('Tanggal Pengembalian') }}"
+                        <!-- Filter Tanggal kembali -->
+                        <label for="tanggal_kembali">{{ __('Kembali:') }}</label>
+                        <input type="date" name="tanggal_kembali" class="form-control mr-2 ml-2"
+                            value="{{ request('tanggal_kembali') }}" placeholder="{{ __('Tanggal kembali') }}"
                             style="max-width: 150px;" onchange="this.form.submit()">
                         <!-- Filter Status -->
-                        <label for="status">{{ __('Status Barang') }}</label>
+                        <label for="status">{{ __('Status') }}</label>
                         <select name="status" class="form-control" onchange="this.form.submit()">
-                            <option value="">{{ __('Filter Status') }}</option>
+                            <option value="">{{ __('Status') }}</option>
                             <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>
                                 {{ __('Dipinjam') }}
                             </option>
@@ -126,6 +126,18 @@
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>
                     </form>
+                    @if ($hasAccess['access'])
+                    <form action="{{ route('peminjaman.export') }}" method="GET" id="exportForm">
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                        <input type="hidden" name="tanggal_peminjaman" value="{{ request('tanggal_peminjaman') }}">
+                        <input type="hidden" name="tanggal_pengembalian" value="{{ request('tanggal_pengembalian') }}">
+                        <input type="hidden" name="status" value="{{ request('status') }}">
+
+                        <button type="button" class="btn btn-primary" onclick="confirmExport()">
+                            <i class="fa-solid fa-file-excel"></i>
+                        </button>
+                    </form>
+                @endif
                 </div>
                 @if ($hasCreate['buat'])
                     <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPeminjaman">
@@ -143,7 +155,7 @@
                                 <th scope="col">{{ __('Kode Barang') }}</th>
                                 <th scope="col">{{ __('Merek Barang') }}</th>
                                 <th scope="col">{{ __('Jumlah') }}</th>
-                                <th scope="col">{{ __('Pengguna Akun') }}</th>
+                                {{-- <th scope="col">{{ __('Pengguna Akun') }}</th> --}}
                                 <th scope="col">{{ __('Tanggal Peminjaman') }}</th>
                                 <th scope="col">{{ __('Tanggal Kembali') }}</th>
                                 <th scope="col">{{ __('Tanggal Pengembalian') }}</th>
@@ -166,7 +178,7 @@
                                     </td>
                                     <td>{{ $item->barang->merek_barang ?? 'Tidak tersedia' }}</td>
                                     <td>{{ $item->jumlah }}</td>
-                                    <td>{{ $item->pengguna->nama_pengguna ?? 'Tidak tersedia' }}</td>
+                                    {{-- <td>{{ $item->pengguna->nama_pengguna ?? 'Tidak tersedia' }}</td> --}}
                                     <td>{{ $item->tanggal_peminjaman }}</td>
                                     <td>{{ $item->tanggal_kembali }}</td>
                                     <td>{{ $item->tanggal_pengembalian ?? 'Belum dikembalikan/Masih dipinjam' }}</td>
@@ -288,4 +300,23 @@
         // Trigger change event on load to set the initial stock
         kodeBarangSelect.dispatchEvent(new Event('change'));
     });
+</script>
+
+<script>
+    function confirmExport() {
+        var search = document.querySelector('input[name="search"]').value;
+        var tanggalMulai = document.querySelector('input[name="tanggal_peminjaman"]').value;
+        var tanggalSelesai = document.querySelector('input[name="tanggal_kembali"]').value;
+        var status = document.querySelector('input[name="status"]').value;
+
+        if (search || tanggalMulai || tanggalSelesai || status) {
+            var confirmation = confirm("Apakah Anda yakin ingin mengekspor data? data yang didownload adalah data hasil filter.");
+
+            if (confirmation) {
+                document.getElementById('exportForm').submit();
+            }
+        } else {
+            document.getElementById('exportForm').submit();
+        }
+    }
 </script>

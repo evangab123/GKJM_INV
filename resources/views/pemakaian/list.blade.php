@@ -90,16 +90,26 @@
                             placeholder="{{ __('Cari ...') }}" value="{{ request('search') }}" style="max-width: 200px;"
                             oninput="this.form.submit()">
                         <!-- Filter Tanggal Mulai -->
-                        <label for="tanggal_mulai">{{ __('Tanggal Mulai:') }}</label>
+                        <label for="tanggal_mulai">{{ __('Mulai:') }}</label>
                         <input type="date" name="tanggal_mulai" class="form-control mr-2 ml-2"
                             value="{{ request('tanggal_mulai') }}" placeholder="{{ __('Tanggal Mulai') }}"
                             style="max-width: 150px;" onchange="this.form.submit()">
                         <!-- Filter Tanggal Selesai -->
-                        <label for="tanggal_selesai">{{ __('Tanggal Selesai:') }}</label>
+                        <label for="tanggal_selesai">{{ __('Selesai:') }}</label>
                         <input type="date" name="tanggal_selesai" class="form-control mr-2 ml-2"
                             value="{{ request('tanggal_selesai') }}" placeholder="{{ __('Tanggal Selesai') }}"
                             style="max-width: 150px;" onchange="this.form.submit()">
-
+                         <!-- Filter Status -->
+                         <label for="status">{{ __('Status:') }}</label>
+                         <select name="status" class="form-control" onchange="this.form.submit()">
+                             <option value="">{{ __('Filter Status') }}</option>
+                             <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>
+                                 {{ __('Dipinjam') }}
+                             </option>
+                             <option value="Dikembalikan" {{ request('status') == 'Dikembalikan' ? 'selected' : '' }}>
+                                 {{ __('Dikembalikan') }}
+                             </option>
+                         </select>
                         <!-- Refresh-->
                         <a href="{{ route('pemakaian.index') }}" class="btn btn-secondary ml-2 mr-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
@@ -110,9 +120,10 @@
                             <input type="hidden" name="search" value="{{ request('search') }}">
                             <input type="hidden" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
                             <input type="hidden" name="tanggal_selesai" value="{{ request('tanggal_selesai') }}">
+                            <input type="hidden" name="status" value="{{ request('status') }}">
 
                             <button type="button" class="btn btn-primary" onclick="confirmExport()">
-                                <i class="fa-solid fa-file-excel"></i> {{ __('Export Data Pemakaian') }}
+                                <i class="fa-solid fa-file-excel"></i>
                             </button>
                         </form>
                     @endif
@@ -156,7 +167,7 @@
                                     <td>{{ $item->jumlah }}</td>
                                     <td>{{ $item->pengguna->nama_pengguna ?? 'Tidak tersedia' }}</td>
                                     <td>{{ $item->tanggal_mulai }}</td>
-                                    <td>{{ $item->tanggal_selesai ?? 'Belum dikembalikan/Masih dipinjam' }}</td>
+                                    <td>{{ $item->tanggal_selesai ?? 'Belum dikembalikan/Masih dipakai' }}</td>
                                     <td>{{ $item->keterangan ?? 'Tidak ada Keterangan' }}</td>
                                     <td
                                         class="
@@ -281,8 +292,9 @@
         var search = document.querySelector('input[name="search"]').value;
         var tanggalMulai = document.querySelector('input[name="tanggal_mulai"]').value;
         var tanggalSelesai = document.querySelector('input[name="tanggal_selesai"]').value;
+        var status = document.querySelector('input[name="status"]').value;
 
-        if (search || tanggalMulai || tanggalSelesai) {
+        if (search || tanggalMulai || tanggalSelesai || status) {
             var confirmation = confirm("Apakah Anda yakin ingin mengekspor data? data yang didownload adalah data hasil filter.");
 
             if (confirmation) {

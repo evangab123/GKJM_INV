@@ -50,6 +50,10 @@ class PemakaianController extends Controller
             $query->where('tanggal_selesai', $request->tanggal_mulai);
         }
 
+        if ($request->filled('status')) {
+            $query->where('status_peminjaman', $request->status);
+        }
+
         $barang = Barang::where('status_barang', 'Ada')
         ->whereNotIn('kode_barang', function ($query) {
             $query->select('kode_barang')->from('barang_terkunci');
@@ -183,10 +187,13 @@ class PemakaianController extends Controller
         if ($request->filled('tanggal_selesai')) {
             $query->where('tanggal_selesai', $request->tanggal_selesai);
         }
+        if ($request->filled('status')) {
+            $query->where('status_peminjaman', $request->status);
+        }
 
         $data = $query->get();
-        
-        return Excel::download(new PemakaianExport($data), 'pemakaian_'.now()->format('Y-m-d').'.xlsx');
+
+        return Excel::download(new PemakaianExport($data), 'pemakaian_'.now()->format('d-m-Y').'.xlsx');
     }
 
 

@@ -9,6 +9,8 @@ use App\Models\PeminjamanBarang;
 use App\Models\Barang;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PeminjamanExport;
 
 class PeminjamanController extends Controller
 {
@@ -26,20 +28,24 @@ class PeminjamanController extends Controller
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('kode_barang', 'LIKE', "%$search%")
-                    ->orWhereHas('barang', function ($q) use ($search) {
-                        $q->where('merek_barang', 'LIKE', "%$search%");
-                    })
+                $q->Where('tanggal_peminjaman', 'LIKE', "%$search%")
+                    ->orWhere('tanggal_kembali', 'LIKE', "%$search%")
+                    ->orWhere('tanggal_pengembalian', 'LIKE', "%$search%")
+                    ->orWhere('keterangan', 'LIKE', "%$search%")
                     ->orWhereHas('pengguna', function ($q) use ($search) {
                         $q->where('nama_pengguna', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('barang', function ($q) use ($search) {
+                        $q->where('kode_barang', 'LIKE', "%$search%")
+                            ->orWhere('merek_barang', 'LIKE', "%$search%");
                     });
             });
         }
         if ($request->filled('tanggal_peminjaman')) {
             $query->where('tanggal_peminjaman', $request->tanggal_peminjaman);
         }
-        if ($request->filled('tanggal_pengembalian')) {
-            $query->where('tanggal_pengembalian', $request->tanggal_pengembalian);
+        if ($request->filled('tanggal_kembali')) {
+            $query->where('tanggal_kembali', $request->tanggal_kembali);
         }
 
         if ($request->filled('status')) {
@@ -154,4 +160,50 @@ class PeminjamanController extends Controller
         }
         return redirect()->route('peminjaman.index')->with('warning', 'Peminjaman Error');
     }
+
+    public function export(Request $request)
+    {
+        $accessResult = PermissionHelper::AnyCanAccessPemakaian();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $query = Peminjaman::with('barang', 'pengguna');
+
+        if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
+            $query->where('pengguna_id', auth()->user()->pengguna_id);
+        }
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->Where('tanggal_peminjaman', 'LIKE', "%$search%")
+                    ->orWhere('tanggal_kembali', 'LIKE', "%$search%")
+                    ->orWhere('tanggal_pengembalian', 'LIKE', "%$search%")
+                    ->orWhere('keterangan', 'LIKE', "%$search%")
+                    ->orWhereHas('pengguna', function ($q) use ($search) {
+                        $q->where('nama_pengguna', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('barang', function ($q) use ($search) {
+                        $q->where('kode_barang', 'LIKE', "%$search%")
+                            ->orWhere('merek_barang', 'LIKE', "%$search%");
+                    });
+            });
+        }
+
+        if ($request->filled('tanggal_peminjaman')) {
+            $query->where('tanggal_peminjaman', $request->tanggal_peminjaman);
+        }
+        if ($request->filled('tanggal_kembali')) {
+            $query->where('tanggal_kembali', $request->tanggal_kembali);
+        }
+        if ($request->filled('status')) {
+            $query->where('status_peminjaman', $request->status);
+        }
+
+        $data = $query->get();
+
+        return Excel::download(new PeminjamanExport($data), 'peminjaman_'.now()->format('d-m-Y').'.xlsx');
+    }
+
 }
