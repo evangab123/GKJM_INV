@@ -136,5 +136,4 @@ Route::post('/peminjaman/{id}/kembalikan', [PeminjamanController::class, 'kembal
 Route::post('/pemakaian/{id}/kembalikan', [PemakaianController::class, 'kembalikan'])
     ->name('pemakaian.kembalikan');
 
-
-
+Route::get('pemakaian/export/excel',[PemakaianController::class, 'export'])->name('pemakaian.export');

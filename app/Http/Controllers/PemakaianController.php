@@ -9,6 +9,8 @@ use App\Models\Pemakaian;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PemakaianExport;
 
 class PemakaianController extends Controller
 {
@@ -53,6 +55,8 @@ class PemakaianController extends Controller
             $query->select('kode_barang')->from('barang_terkunci');
         })
         ->get();
+
+
 
         $data = $query->paginate(7);
         return view('pemakaian.list', compact('data', 'barang'));
@@ -143,5 +147,47 @@ class PemakaianController extends Controller
 
         return redirect()->route('pemakaian.index')->with('warning', 'Pemakaian Error');
     }
+
+    public function export(Request $request)
+    {
+        $accessResult = PermissionHelper::AnyCanAccessPemakaian();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $query = Pemakaian::with('barang', 'pengguna');
+
+        if (!auth()->user()->hasRole(['Super Admin', 'Majelis'])) {
+            $query->where('pengguna_id', auth()->user()->pengguna_id);
+        }
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->Where('tanggal_mulai', 'LIKE', "%$search%")
+                    ->orWhere('tanggal_selesai', 'LIKE', "%$search%")
+                    ->orWhere('keterangan', 'LIKE', "%$search%")
+                    ->orWhereHas('pengguna', function ($q) use ($search) {
+                        $q->where('nama_pengguna', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('barang', function ($q) use ($search) {
+                        $q->where('kode_barang', 'LIKE', "%$search%")
+                            ->orWhere('merek_barang', 'LIKE', "%$search%");
+                    });
+            });
+        }
+
+        if ($request->filled('tanggal_mulai')) {
+            $query->where('tanggal_mulai', $request->tanggal_mulai);
+        }
+        if ($request->filled('tanggal_selesai')) {
+            $query->where('tanggal_selesai', $request->tanggal_selesai);
+        }
+
+        $data = $query->get();
+        
+        return Excel::download(new PemakaianExport($data), 'pemakaian_'.now()->format('Y-m-d').'.xlsx');
+    }
+
 
 }

@@ -105,6 +105,17 @@
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>
                     </form>
+                    @if ($hasAccess['access'])
+                        <form action="{{ route('pemakaian.export') }}" method="GET" id="exportForm">
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                            <input type="hidden" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
+                            <input type="hidden" name="tanggal_selesai" value="{{ request('tanggal_selesai') }}">
+
+                            <button type="button" class="btn btn-primary" onclick="confirmExport()">
+                                <i class="fa-solid fa-file-excel"></i> {{ __('Export Data Pemakaian') }}
+                            </button>
+                        </form>
+                    @endif
                 </div>
                 @if ($hasCreate['buat'])
                     <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalPemakaian">
@@ -264,3 +275,22 @@
         kodeBarangSelect.dispatchEvent(new Event('change'));
     });
 </script>
+
+<script>
+    function confirmExport() {
+        var search = document.querySelector('input[name="search"]').value;
+        var tanggalMulai = document.querySelector('input[name="tanggal_mulai"]').value;
+        var tanggalSelesai = document.querySelector('input[name="tanggal_selesai"]').value;
+
+        if (search || tanggalMulai || tanggalSelesai) {
+            var confirmation = confirm("Apakah Anda yakin ingin mengekspor data? data yang didownload adalah data hasil filter.");
+
+            if (confirmation) {
+                document.getElementById('exportForm').submit();
+            }
+        } else {
+            document.getElementById('exportForm').submit();
+        }
+    }
+</script>
+
