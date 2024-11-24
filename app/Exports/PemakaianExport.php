@@ -27,7 +27,7 @@ class PemakaianExport implements FromCollection, WithHeadings
                 'Pengguna Akun' => $pemakaian->pengguna->nama_pengguna ?? 'N/A',
 
                 'Tanggal Mulai' => Carbon::parse($pemakaian->tanggal_mulai)->locale('id')->isoFormat('D MMMM YYYY') ?? 'N/A',
-                'Tanggal Selesai' => Carbon::parse($pemakaian->tanggal_selesai)->locale('id')->isoFormat('D MMMM YYYY') ?? 'N/A',
+                'Tanggal Selesai' => $pemakaian->tanggal_selesai ? Carbon::parse($pemakaian->tanggal_selesai)->locale('id')->isoFormat('D MMMM YYYY') : 'Belum dikembalikan/Masih dipakai',
 
                 'Keterangan' => $pemakaian->keterangan ?? 'N/A',
                 'Status Pemakaian' => $pemakaian->status_pemakaian ?? 'N/A',

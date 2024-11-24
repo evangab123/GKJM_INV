@@ -27,9 +27,11 @@ class PeminjamanExport implements FromCollection, WithHeadings
                 'Jumlah' => $peminjaman->jumlah ?? 0,
                 // 'Pengguna Akun' => $peminjaman->pengguna->nama_pengguna ?? 'N/A',
 
-                'Tanggal Peminjaman' => Carbon::parse($peminjaman->tanggal_mulai)->locale('id')->isoFormat('D MMMM YYYY') ?? 'N/A',
-                'Tanggal Kembali' => Carbon::parse($peminjaman->tanggal_selesai)->locale('id')->isoFormat('D MMMM YYYY') ?? 'N/A',
-                'Tanggal Pengembalian' => Carbon::parse($peminjaman->tanggal_selesai)->locale('id')->isoFormat('D MMMM YYYY') ?? 'N/A',
+                'Tanggal Peminjaman' => Carbon::parse($peminjaman->tanggal_peminjaman)->locale('id')->isoFormat('D MMMM YYYY') ?? 'N/A',
+                'Tanggal Kembali' => Carbon::parse($peminjaman->tanggal_kembali)->locale('id')->isoFormat('D MMMM YYYY') ?? 'N/A',
+                'Tanggal Pengembalian' => $peminjaman->tanggal_pengembalian ?
+                                            Carbon::parse($peminjaman->tanggal_pengembalian)->locale('id')->isoFormat('D MMMM YYYY') :
+                                            'Belum dikembalikan/Masih dipinjam',
 
                 'Keterangan' => $peminjaman->keterangan ?? 'N/A',
                 'Status peminjaman' => $peminjaman->status_peminjaman ?? 'N/A',

@@ -163,7 +163,7 @@ class PeminjamanController extends Controller
 
     public function export(Request $request)
     {
-        $accessResult = PermissionHelper::AnyCanAccessPemakaian();
+        $accessResult = PermissionHelper::AnyCanAccessPeminjaman();
         if (!$accessResult['access']) {
             abort(403, 'Unauthorized action.');
         }

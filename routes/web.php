@@ -140,3 +140,4 @@ Route::post('/pemakaian/{id}/kembalikan', [PemakaianController::class, 'kembalik
 
 Route::get('pemakaian/export/excel',[PemakaianController::class, 'export'])->name('pemakaian.export');
 Route::get('peminjaman/export/excel',[PeminjamanController::class, 'export'])->name('peminjaman.export');
+Route::get('pengadaan/export/excel',[PengadaanController::class, 'export'])->name('pengadaan.export');

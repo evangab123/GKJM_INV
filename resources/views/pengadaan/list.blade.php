@@ -29,7 +29,29 @@
                         <a href="{{ route('pengadaan.index') }}" class="btn btn-secondary mr-2">
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>
+
                     </form>
+                    @if ($hasAccess['access'])
+                            <form action="{{ route('pengadaan.export') }}" method="GET" id="exportForm">
+                                <input type="hidden" name="search" value="{{ request('search') }}">
+                                <input type="hidden" name="tanggal_pengajuan_start"
+                                    value="{{ request('tanggal_pengajuan_start') }}">
+                                <input type="hidden" name="tanggal_pengajuan_end"
+                                    value="{{ request('tanggal_pengajuan_end') }}">
+
+                                <input type="hidden" name="jumlah_min" value="{{ request('jumlah_min') }}">
+                                <input type="hidden" name="jumlah_max" value="{{ request('jumlah_max') }}">
+
+                                <input type="hidden" name="status" value="{{ request('status') }}">
+
+                                <input type="hidden" name="kode_barang_true" value="{{ request('kode_barang_true') }}">
+                                <input type="hidden" name="kode_barang_false" value="{{ request('kode_barang_false') }}">
+
+                                <button type="button" class="btn btn-primary" onclick="confirmExport()">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                </button>
+                            </form>
+                        @endif
                 </div>
 
                 @if ($hasCreate['buat'])
@@ -217,20 +239,33 @@
                         <div class="form-group">
                             <label for="merek_barang">{{ __('Merek Barang') }} <span class="text-danger">*</span></label>
                             <input type="text" name="merek_barang" class="form-control" required
-                                placeholder="Masukkan Nama Barang" id="merek_barang">
+                                placeholder="Masukkan Merek/Nama Barang" id="merek_barang">
                         </div>
                         <div class="form-group">
                             <label for="jumlah">{{ __('Jumlah') }} <span class="text-danger">*</span></label>
                             <input type="number" name="jumlah" class="form-control" required min="1"
                                 placeholder="Masukkan Jumlah Barang" id="jumlah">
+                            <small class="form-text text-muted">
+                                {{ __('Buat jumlah yang tepat agar dapat mudah di kerjakan oleh sistem, contoh: 1 gitar, 1 keyboard, 1 kotak (50pcs) gelas dan 1 komputer.') }}
+                            </small>
                         </div>
                         <div class="form-group">
-                            <label for="referensi">{{ __('Referensi Barang') }} <span class="text-danger">*</span> </label>
+                            <label for="referensi">{{ __('Referensi Barang') }} <span class="text-danger">*</span>
+                            </label>
                             <input type="url" name="referensi" id="referensi" class="form-control" required
                                 placeholder="Masukkan URL referensi">
                             <small class="form-text text-muted">
                                 {{ __('Silakan masukkan link yang valid (misalnya, https://contoh.com)') }}
                             </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tanggal_pengajuan">{{ __('Tanggal Pengajuan') }} <span
+                                    class="text-danger">*</span> </label>
+                            <input type="date" class="form-control" id="tanggal_pengajuan" name="tanggal_pengajuan"
+                                required>
+                            <small
+                                class="form-text text-muted">{{ 'Jika anda memasukan pengadaan secara online tanpa ke Admin, masukan pada tanggal saat anda membuat pengadaan ' }}</small>
                         </div>
 
                         <div class="form-group">
@@ -416,3 +451,27 @@
         modal.show();
     }
 </script>
+
+<script>
+    function confirmExport() {
+        var search = document.querySelector('input[name="search"]').value;
+        var tanggalPengajuanStart = document.querySelector('input[name="tanggal_pengajuan_start"]').value;
+        var tanggalPengajuanEnd = document.querySelector('input[name="tanggal_pengajuan_end"]').value;
+        var jumlahMin = document.querySelector('input[name="jumlah_min"]').value;
+        var jumlahMax = document.querySelector('input[name="jumlah_max"]').value;
+        var status = document.querySelector('select[name="status"]').value;
+        var kodeBarangTrue = document.querySelector('input[name="kode_barang_true"]').checked;
+        var kodeBarangFalse = document.querySelector('input[name="kode_barang_false"]').checked;
+
+        if (search ||  tanggalPengajuanStart || tanggalPengajuanEnd || jumlahMin || jumlahMax || status || kodeBarangTrue || kodeBarangFalse) {
+            var confirmation = confirm("Apakah Anda yakin ingin mengekspor data? Data yang didownload adalah data hasil filter.");
+
+            if (confirmation) {
+                document.getElementById('exportForm').submit();
+            }
+        } else {
+            document.getElementById('exportForm').submit();
+        }
+    }
+</script>
+
