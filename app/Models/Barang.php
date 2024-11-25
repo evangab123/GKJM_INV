@@ -47,9 +47,9 @@ class Barang extends Model
     {
         return $this->belongsTo(KategoriBarang::class, 'kategori_barang_id', 'kategori_barang_id');
     }
-    public function keterangan()
+    public function detilketerangan()
     {
-        return $this->belongsTo(DetilKeteranganBarang::class, 'kode_barang', 'kode_barang');
+        return $this->hasMany(DetilKeteranganBarang::class, 'kode_barang', 'kode_barang');
     }
 
     public function barangTerkunci()
@@ -65,5 +65,10 @@ class Barang extends Model
     public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'kode_barang', 'kode_barang');
+    }
+
+    public function pemakaian()
+    {
+        return $this->hasMany(pemakaian::class, 'kode_barang', 'kode_barang');
     }
 }

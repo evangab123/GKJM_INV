@@ -26,6 +26,28 @@
                             <i class="fa-solid fa-arrows-rotate"></i> {{ __('Refresh') }}
                         </a>
                     </form>
+                    @if ($hasAccess['access'])
+                        <form action="{{ route('barang.export') }}" method="GET" id="exportForm">
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                            <input type="hidden" name="kondisi" value="{{ request('kondisi') }}">
+                            <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+                            <input type="hidden" name="harga_min" value="{{ request('harga_min') }}">
+                            <input type="hidden" name="harga_max" value="{{ request('harga_max') }}">
+                            <input type="hidden" name="ruang" value="{{ request('ruang') }}">
+                            <input type="hidden" name="tahun_perolehan_start"
+                                value="{{ request('tahun_perolehan_start') }}">
+                            <input type="hidden" name="tahun_perolehan_end" value="{{ request('tahun_perolehan_end') }}">
+                            <input type="hidden" name="status" value="{{ request('status') }}">
+                            <input type="hidden" name="perolahan" value="{{ request('perolehan') }}">
+                            <input type="hidden" name="jumlah_min" value="{{ request('jumlah_min') }}">
+                            <input type="hidden" name="jumlah_max" value="{{ request('jumlah_max') }}">
+
+                            <!-- Tombol Ekspor -->
+                            <button type="button" class="btn btn-primary" onclick="confirmExport()">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </button>
+                        </form>
+                    @endif
                 </div>
                 <!-- Add New Item Button di kanan -->
                 @if ($hasCreate['buat'])
@@ -82,12 +104,12 @@
                                         @elseif ($bar['status_barang'] == 'Dipinjam')
                                             <i class="fas fa-hand-paper" aria-hidden="true"></i>
                                             {{ $bar['status_barang'] }}
-                                            {{-- @if ($bar['jumlah'] > 0 )
+                                            {{-- @if ($bar['jumlah'] > 0)
                                                 <span class="text-warning">{{ __("Sebagian") }}</span>
                                             @endif --}}
                                         @elseif ($bar['status_barang'] == 'Dipakai')
                                             <i class="fas fa-user" aria-hidden="true"></i> {{ $bar['status_barang'] }}
-                                            {{-- @if ($bar['jumlah'] > 0 )
+                                            {{-- @if ($bar['jumlah'] > 0)
                                                 <span class="text-warning">{{ __("Sebagian") }}</span>
                                             @endif --}}
                                         @elseif ($bar['status_barang'] == 'Diperbaiki')
@@ -259,7 +281,7 @@
                                 </option>
                             </select>
                         </div>
-
+                        <!-- Filter Perolehan -->
                         <div class="form-group mb-3">
                             <label for="perolehan">{{ __('Perolehan Barang') }}</label>
                             <select name="perolehan" class="form-control">
@@ -330,3 +352,37 @@
     @endif
 
 @endpush
+
+<script>
+    function confirmExport() {
+        // Ambil nilai input dari filter
+        var search = document.querySelector('input[name="search"]').value;
+        var kondisi = document.querySelector('input[name="kondisi"]').value;
+        var kategori = document.querySelector('input[name="kategori"]').value;
+        var hargaMin = document.querySelector('input[name="harga_min"]').value;
+        var hargaMax = document.querySelector('input[name="harga_max"]').value;
+        var ruang = document.querySelector('input[name="ruang"]').value;
+        var tahunPerolehanStart = document.querySelector('input[name="tahun_perolehan_start"]').value;
+        var tahunPerolehanEnd = document.querySelector('input[name="tahun_perolehan_end"]').value;
+        var status = document.querySelector('input[name="status"]').value;
+        var perolehan = document.querySelector('input[name="perolahan"]').value;
+        var jumlahMin = document.querySelector('input[name="jumlah_min"]').value;
+        var jumlahMax = document.querySelector('input[name="jumlah_max"]').value;
+
+        if (search || kondisi || kategori || hargaMin || hargaMax || ruang ||
+            tahunPerolehanStart || tahunPerolehanEnd || status || perolehan ||
+            jumlahMin || jumlahMax) {
+
+            var confirmation = confirm(
+                "Apakah Anda yakin ingin mengekspor data? Data yang didownload adalah data hasil filter."
+            );
+
+            if (confirmation) {
+                document.getElementById('exportForm').submit();
+            }
+        } else {
+            document.getElementById('exportForm').submit();
+        }
+    }
+</script>
+

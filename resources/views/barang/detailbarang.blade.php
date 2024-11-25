@@ -233,34 +233,41 @@
                                                 </select>
                                             </td>
                                         </tr>
-
                                         <tr>
                                             <th>{{ __('Status') }}</th>
                                             <td>
                                                 <select class="form-control" name="status_barang">
                                                     <option value="Ada"
-                                                        {{ $barang->status_barang == 'Ada' ? 'selected' : '' }}>
+                                                        {{ (old('status_barang', $barang->status_barang) == 'Ada') ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }}>
                                                         {{ __('Ada') }}
                                                     </option>
-                                                    {{-- <option value="Dipinjam"
-                                                        {{ $barang->status_barang == 'Dipinjam' ? 'selected' : '' }}>
+                                                    <option value="Dipinjam"
+                                                        {{ (old('status_barang', $barang->status_barang) == 'Dipinjam') ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }} disabled>
                                                         {{ __('Dipinjam') }}
-                                                    </option> --}}
+                                                    </option>
                                                     <option value="Diperbaiki"
-                                                        {{ $barang->status_barang == 'Diperbaiki' ? 'selected' : '' }}>
+                                                        {{ (old('status_barang', $barang->status_barang) == 'Diperbaiki') ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }}>
                                                         {{ __('Diperbaiki') }}
                                                     </option>
-                                                    {{-- <option value="Dihapus"
-                                                        {{ $barang->status_barang == 'Dihapus' ? 'selected' : '' }}>
+                                                    <option value="Dihapus"
+                                                        {{ (old('status_barang', $barang->status_barang) == 'Dihapus') ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }} disabled>
                                                         {{ __('Dihapus') }}
                                                     </option>
                                                     <option value="Dipakai"
-                                                        {{ $barang->status_barang == 'Dipakai' ? 'selected' : '' }}>
-                                                        {{ __('Dipakai') }} --}}
+                                                        {{ (old('status_barang', $barang->status_barang) == 'Dipakai') ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }} disabled>
+                                                        {{ __('Dipakai') }}
                                                     </option>
                                                 </select>
                                             </td>
                                         </tr>
+
+
+
                                         <tr>
                                             <th>{{ __('Foto Barang') }}</th>
                                             <td>
@@ -306,37 +313,45 @@
                                     </tr>
                                     <tr>
                                         <th>{{ __('Jumlah/Stok dipinjam') }}</th>
-                                        @if ($barang->peminjaman)
-                                            {{-- {{ dd($barang->peminjaman) }} --}}
-                                            @foreach ($barang->peminjaman as $pemin)
-                                                @if ($pemin->status_peminjaman == 'Dipinjam')
-                                                <td>{{$pemin->jumlah}}</td>
-                                                @endif
-                                            @endforeach
-                                        @else
-                                        <td>{{ 0}}</td>
-                                        @endif
+                                        <td>
+                                            @if ($barang->peminjaman)
+                                                {{ $barang->peminjaman->where('status_peminjaman', 'Dipinjam')->sum('jumlah') }}
+                                            @else
+                                                0
+                                            @endif
+                                        </td>
                                     </tr>
-                                    <tr>
-                                        <th>{{ __('Keterangan') }}</th>
-                                        <td>{{ $barang->keterangan }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Ruang') }}</th>
-                                        <td>{{ $barang->ruang->nama_ruang }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Kondisi') }}</th>
-                                        <td>{{ $barang->kondisi->deskripsi_kondisi }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Kategori') }}</th>
-                                        <td>{{ $barang->kategori->nama_kategori }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Status') }}</th>
-                                        <td>{{ $barang->status_barang }}</td>
-                                    </tr>
+                                    <<tr>
+                                        <th>{{ __('Jumlah/Stok dipakai') }}</th>
+                                        <td>
+                                            @if ($barang->pemakaian)
+                                                {{ $barang->pemakaian->where('status_pemakaian', 'Dipakai')->sum('jumlah') }}
+                                            @else
+                                                0
+                                            @endif
+                                        </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>{{ __('Keterangan') }}</th>
+                                            <td>{{ $barang->keterangan }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Ruang') }}</th>
+                                            <td>{{ $barang->ruang->nama_ruang }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Kondisi') }}</th>
+                                            <td>{{ $barang->kondisi->deskripsi_kondisi }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Kategori') }}</th>
+                                            <td>{{ $barang->kategori->nama_kategori }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Status') }}</th>
+                                            <td>{{ $barang->status_barang }}</td>
+                                        </tr>
                                 </tbody>
                             </table>
                         @endif

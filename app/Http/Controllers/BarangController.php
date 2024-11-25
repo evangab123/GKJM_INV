@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Helpers\ActivityLogHelper;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BarangExport;
 
 
 class BarangController extends Controller
@@ -486,4 +488,101 @@ class BarangController extends Controller
 
         return redirect()->back()->with('success', 'Keterangan telah dihapus.');
     }
+
+    public function export(Request $request)
+    {
+        // Load the query with necessary relationships.
+        $query = Barang::with('ruang', 'kondisi', 'kategori', 'detilketerangan');
+
+        // Check if the user has access to perform the export.
+        $accessResult = PermissionHelper::AnyHasAccessToBarang();
+        if (!$accessResult['access']) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Filter the data based on room access permissions.
+        if (!empty($accessResult['room'])) {
+            $query->whereIn('ruang_id', function ($q) use ($accessResult) {
+                $q->select('ruang_id')->from('ruang')->whereIn('nama_ruang', $accessResult['room']);
+            });
+        }
+
+        // Apply additional filters based on user input.
+        if ($request->filled('ruang')) {
+            $query->whereHas('ruang', function ($q) use ($request) {
+                $q->where('nama_ruang', 'like', '%' . $request->ruang . '%');
+            });
+        }
+
+        if ($request->filled('kondisi')) {
+            $query->whereHas('kondisi', function ($q) use ($request) {
+                $q->where('deskripsi_kondisi', 'like', '%' . $request->kondisi . '%');
+            });
+        }
+
+        if ($request->filled('kategori')) {
+            $query->whereHas('kategori', function ($q) use ($request) {
+                $q->where('nama_kategori', 'like', '%' . $request->kategori . '%');
+            });
+        }
+
+        if ($request->filled('perolehan')) {
+            $query->where('perolehan_barang', $request->perolehan);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_barang', $request->status);
+        }
+
+        if ($request->filled('jumlah_min') && $request->filled('jumlah_max')) {
+            $query->whereBetween('jumlah', [
+                $request->input('jumlah_min'),
+                $request->input('jumlah_max')
+            ]);
+        } elseif ($request->filled('jumlah_min')) {
+            $query->where('jumlah', '>=', $request->input('jumlah_min'));
+        } elseif ($request->filled('jumlah_max')) {
+            $query->where('jumlah', '<=', $request->input('jumlah_max'));
+        }
+
+        if ($request->filled('harga_min') && $request->filled('harga_max')) {
+            $query->whereBetween('harga_pembelian', [
+                $request->input('harga_min'),
+                $request->input('harga_max')
+            ]);
+        } elseif ($request->filled('harga_min')) {
+            $query->where('harga_pembelian', '>=', $request->input('harga_min'));
+        } elseif ($request->filled('harga_max')) {
+            $query->where('harga_pembelian', '<=', $request->input('harga_max'));
+        }
+
+        if ($request->filled('tahun_perolehan_start') && $request->filled('tahun_perolehan_end')) {
+            $query->whereBetween('tahun_pembelian', [
+                $request->input('tahun_perolehan_start'),
+                $request->input('tahun_perolehan_end')
+            ]);
+        } elseif ($request->filled('tahun_perolehan_start')) {
+            $query->where('tahun_pembelian', '>=', $request->input('tahun_perolehan_start'));
+        } elseif ($request->filled('tahun_perolehan_end')) {
+            $query->where('tahun_pembelian', '<=', $request->input('tahun_perolehan_end'));
+        }
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_barang', 'LIKE', "%$search%")
+                    ->orWhere('merek_barang', 'LIKE', "%$search%")
+                    ->orWhere('status_barang', 'LIKE', "%$search%")
+                    ->orWhere('perolehan_barang', 'LIKE', "%$search%")
+                    ->orWhere('tahun_pembelian', 'LIKE', "%$search%");
+            });
+        }
+
+        // Execute the query and get the data.
+        $data = $query->get();
+
+        // Return the download response with the formatted file.
+        return Excel::download(new BarangExport($data), 'barang_' . now()->format('d-m-Y') . '.xlsx');
+    }
+
 }
