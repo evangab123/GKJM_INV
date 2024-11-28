@@ -119,7 +119,14 @@ class PengadaanController extends Controller
             'referensi' => $request->input('referensi'),
             'keterangan' => $request->input('keterangan'),
         ]);
-        ActivityLogHelper::log('Buat Pengadaan "' . $pengadaan->pengadaan_id . '"');
+
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'pengadaan',
+            $pengadaan->pengadaan_id,
+        );
 
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil disimpan.');
     }
@@ -133,7 +140,13 @@ class PengadaanController extends Controller
         $pengadaan = Pengadaan::findOrFail($id);
         $pengadaan->status_pengajuan = 'Disetujui';
         $pengadaan->save();
-        ActivityLogHelper::log('Setuju akan pengadaan "' . $pengadaan->pengadaan_id . '"');
+        ActivityLogHelper::log(
+            'setuju',
+            null,
+            null,
+            'pengadaan',
+            $pengadaan->pengadaan_id
+        );
         return redirect()->route('pengadaan.index', [
             'from' => 'approve',
             'idp' => $id,
@@ -166,7 +179,13 @@ class PengadaanController extends Controller
         $pengadaan = Pengadaan::findOrFail($id);
         $pengadaan->status_pengajuan = 'Ditolak';
         $pengadaan->save();
-        ActivityLogHelper::log('Tolak akan pengadaan "' . $pengadaan->pengadaan_id . '"');
+        ActivityLogHelper::log(
+            'tolak',
+            null,
+            null,
+            'pengadaan',
+            $pengadaan->pengadaan_id
+        );
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil ditolak.');
     }
 
@@ -177,6 +196,8 @@ class PengadaanController extends Controller
         if (!$accessResult['edit']) {
             abort(403, 'Unauthorized action.');
         }
+        $pengadaan = Pengadaan::findOrFail($id);
+        $prev = $pengadaan->toArray();
         $data = $request->validate([
             'merek_barang' => 'required|string|max:255',
             'keterangan' => 'required|string|max:255',
@@ -184,9 +205,17 @@ class PengadaanController extends Controller
             'jumlah' => 'required|numeric',
         ]);
 
-        $pengadaan = Pengadaan::findOrFail($id);
+
         $pengadaan->update($data);
-        ActivityLogHelper::log('Perbarui akan pengadaan "' . $pengadaan->pengadaan_id . '"');
+        $new = $pengadaan->toArray();
+        ActivityLogHelper::log(
+            'perbarui',
+            $new,
+            $prev,
+            'pengadaan',
+            $pengadaan->pengadaan_id
+        );
+
 
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil diperbarui.');
     }
@@ -198,7 +227,13 @@ class PengadaanController extends Controller
         }
         $pengadaan = Pengadaan::findOrFail($id);
         $pengadaan->delete();
-        ActivityLogHelper::log('Hapus akan pengadaan "' . $pengadaan->pengadaan_id . '"');
+        ActivityLogHelper::log(
+            'hapus',
+            null,
+            null,
+            'pengadaan',
+            $pengadaan->pengadaan_id
+        );
 
         return redirect()->route('pengadaan.index')->with('message', 'Pengadaan barang berhasil dihapus.');
     }

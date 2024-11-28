@@ -74,7 +74,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger ml-2"
-                            onclick="return confirm('Apakah Anda yakin ingin melepas kunci barang ini?')">
+                            onclick="return confirm('Apakah Anda yakin ingin melepas \ ini?')">
                             <i class='fas fa-lock'></i> {{ __('Lepas Kunci') }}
                         </button>
                     </form>
@@ -160,9 +160,16 @@
                                             <th>{{ __('Harga') }}</th>
                                             <td>
                                                 <input type="text" class="form-control" name="harga_pembelian"
-                                                    value="{{ $barang->harga_pembelian }}"
+                                                    value="{{ intval($barang->harga_pembelian) }}"
                                                     onchange="calculateNilaiEkonomis()" oninput="formatRupiah(this)"
                                                     onblur="sanitizeInput(this)">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Tanggal Perolehan') }}</th>
+                                            <td>
+                                                <input type="date" class="form-control" name="tanggal_perolehan"
+                                                    value="{{ $barang->tanggal_perolehan }}" onchange="changeTahun()">
                                             </td>
                                         </tr>
                                         <tr>
@@ -170,7 +177,7 @@
                                             <td>
                                                 <input type="text" class="form-control" name="tahun_pembelian"
                                                     value="{{ $barang->tahun_pembelian }}"
-                                                    onchange="calculateNilaiEkonomis()">
+                                                    onchange="calculateNilaiEkonomis()" readonly>
                                             </td>
                                         </tr>
                                         <tr>
@@ -238,28 +245,31 @@
                                             <td>
                                                 <select class="form-control" name="status_barang">
                                                     <option value="Ada"
-                                                        {{ (old('status_barang', $barang->status_barang) == 'Ada') ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) == 'Ada' ? 'selected' : '' }}
                                                         {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }}>
                                                         {{ __('Ada') }}
                                                     </option>
                                                     <option value="Dipinjam"
-                                                        {{ (old('status_barang', $barang->status_barang) == 'Dipinjam') ? 'selected' : '' }}
-                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }} disabled>
+                                                        {{ old('status_barang', $barang->status_barang) == 'Dipinjam' ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }}
+                                                        disabled>
                                                         {{ __('Dipinjam') }}
                                                     </option>
                                                     <option value="Diperbaiki"
-                                                        {{ (old('status_barang', $barang->status_barang) == 'Diperbaiki') ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) == 'Diperbaiki' ? 'selected' : '' }}
                                                         {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }}>
                                                         {{ __('Diperbaiki') }}
                                                     </option>
                                                     <option value="Dihapus"
-                                                        {{ (old('status_barang', $barang->status_barang) == 'Dihapus') ? 'selected' : '' }}
-                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }} disabled>
+                                                        {{ old('status_barang', $barang->status_barang) == 'Dihapus' ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }}
+                                                        disabled>
                                                         {{ __('Dihapus') }}
                                                     </option>
                                                     <option value="Dipakai"
-                                                        {{ (old('status_barang', $barang->status_barang) == 'Dipakai') ? 'selected' : '' }}
-                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }} disabled>
+                                                        {{ old('status_barang', $barang->status_barang) == 'Dipakai' ? 'selected' : '' }}
+                                                        {{ old('status_barang', $barang->status_barang) != 'Ada' ? 'disabled' : '' }}
+                                                        disabled>
                                                         {{ __('Dipakai') }}
                                                     </option>
                                                 </select>
@@ -300,6 +310,10 @@
                                         <td>Rp {{ number_format($barang->harga_pembelian, 2, ',', '.') }}</td>
                                     </tr>
                                     <tr>
+                                        <th>{{ __('Tanggal Perolehan') }}</th>
+                                        <td>{{ $barang->tanggal_perolehan }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>{{ __('Tahun') }}</th>
                                         <td>{{ $barang->tahun_pembelian }}</td>
                                     </tr>
@@ -321,7 +335,7 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    <<tr>
+                                    <tr>
                                         <th>{{ __('Jumlah/Stok dipakai') }}</th>
                                         <td>
                                             @if ($barang->pemakaian)
@@ -330,28 +344,28 @@
                                                 0
                                             @endif
                                         </td>
-                                        </tr>
+                                    </tr>
 
-                                        <tr>
-                                            <th>{{ __('Keterangan') }}</th>
-                                            <td>{{ $barang->keterangan }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ __('Ruang') }}</th>
-                                            <td>{{ $barang->ruang->nama_ruang }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ __('Kondisi') }}</th>
-                                            <td>{{ $barang->kondisi->deskripsi_kondisi }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ __('Kategori') }}</th>
-                                            <td>{{ $barang->kategori->nama_kategori }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ __('Status') }}</th>
-                                            <td>{{ $barang->status_barang }}</td>
-                                        </tr>
+                                    <tr>
+                                        <th>{{ __('Keterangan') }}</th>
+                                        <td>{{ $barang->keterangan }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Ruang') }}</th>
+                                        <td>{{ $barang->ruang->nama_ruang }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Kondisi') }}</th>
+                                        <td>{{ $barang->kondisi->deskripsi_kondisi }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Kategori') }}</th>
+                                        <td>{{ $barang->kategori->nama_kategori }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Status') }}</th>
+                                        <td>{{ $barang->status_barang }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         @endif
@@ -514,9 +528,17 @@
         }
 
         function sanitizeInput(input) {
-            let value = input.value.replace(/[^\d]/g, '');
 
-            input.value = value;
+            let value = input.value;
+
+            // Hapus semua karakter selain angka
+            value = value.replace(/[^0-9]/g, '');
+
+            // Konversi ke integer
+            const integerValue = parseInt(value, 10) || 0;
+
+            // Set ulang nilai input dengan angka bulat
+            input.value = integerValue;
         }
 
         document.querySelector('form').addEventListener('submit', function(event) {
@@ -526,4 +548,17 @@
 
             hargaInput.value = cleanValue;
         });
+    </script>
+
+    <script>
+        function changeTahun() {
+            const tanggalPerolehanInput = document.querySelector('input[name="tanggal_perolehan"]').value;
+            const tahunPembelianInput = document.querySelector('input[name="tahun_pembelian"]');
+
+            tahunPembelianInput.value = new Date(tanggalPerolehanInput).getFullYear();
+
+            console.log(new Date(tanggalPerolehanInput).getFullYear())
+
+            calculateNilaiEkonomis();
+        }
     </script>

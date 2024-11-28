@@ -31,6 +31,7 @@ return new class extends Migration {
             $table->string('kode_barang', 50)->unique();
             $table->string('merek_barang', 100);
             $table->decimal('harga_pembelian', 15, 2)->nullable();
+            $table->date('tanggal_perolehan');
             $table->year('tahun_pembelian');
             $table->enum('perolehan_barang', ['Persembahan', 'Pembelian', 'Pembuatan']);
             $table->decimal('nilai_ekonomis_barang', 15, 2);

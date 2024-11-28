@@ -187,6 +187,7 @@ class BarangController extends Controller
             'merek_barang' => 'required|string|max:255',
             'perolehan_barang' => 'required|string',
             'harga_pembelian' => 'required|numeric',
+            'tanggal_perolehan' => 'required|date',
             'tahun_pembelian' => 'required|numeric',
             'nilai_ekonomis_barang' => 'required|numeric',
             'jumlah' => 'required|numeric',
@@ -199,6 +200,10 @@ class BarangController extends Controller
         ]);
 
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
+        // if ($barang->status_barang !== 'Ada') {
+        //     return redirect()->route('barang.show', $barang->kode_barang)
+        //         ->with('error', 'Barang hanya dapat diedit jika statusnya "Ada".');
+        // }
         $prev = $barang->toArray();
 
         if ($request->hasFile('path_gambar')) {
@@ -218,6 +223,7 @@ class BarangController extends Controller
             'merek_barang',
             'perolehan_barang',
             'harga_pembelian',
+            'tanggal_perolehan',
             'tahun_pembelian',
             'nilai_ekonomis_barang',
             'jumlah',
@@ -231,7 +237,13 @@ class BarangController extends Controller
         $barang->save();
 
         $new = $barang->toArray();
-        ActivityLogHelper::log('Perbarui Barang "' . $kode_barang . '"', $new, $prev);
+        ActivityLogHelper::log(
+            'perbarui',
+            $new,
+            $prev,
+            'barang',
+            $kode_barang
+        );
         return redirect()->route('barang.show', $barang->kode_barang)
             ->with('success', 'Detail barang berhasil diperbarui.');
     }
@@ -292,8 +304,13 @@ class BarangController extends Controller
             'keterangan' => $request->input('keterangan'),
             'tanggal' => $request->input('tanggal'),
         ]);
-
-        ActivityLogHelper::log('Buat Keterangan "' . $id . '"');
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'keterangan',
+            $id
+        );
         // Redirect back to the keterangan detail page for the specific barang
         return redirect()->route('barang.keterangan', $id)->with('message', 'Keterangan berhasil ditambahkan!');
     }
@@ -332,6 +349,7 @@ class BarangController extends Controller
             'merek_barang' => 'required|string|max:255',
             'perolehan_barang' => 'required|string',
             'harga_pembelian' => 'required|numeric',
+            'tanggal_perolehan' => 'required|date',
             'tahun_pembelian' => 'required|numeric|',
             'nilai_ekonomis_barang' => 'required|numeric',
             'jumlah' => 'required|numeric',
@@ -399,6 +417,7 @@ class BarangController extends Controller
             'merek_barang' => $request->input('merek_barang'),
             'perolehan_barang' => $request->input('perolehan_barang'),
             'harga_pembelian' => $request->input('harga_pembelian'),
+            'tanggal_perolehan' => $request->input('tanggal_perolehan'),
             'tahun_pembelian' => $request->input('tahun_pembelian'),
             'nilai_ekonomis_barang' => $request->input('nilai_ekonomis_barang'),
             'jumlah' => $request->input('jumlah'),
@@ -414,11 +433,23 @@ class BarangController extends Controller
             $pengadaan = Pengadaan::findOrFail($request->input('idp'));
             $pengadaan->kode_barang = $kodeBarang;
             $pengadaan->save();
-            ActivityLogHelper::log('Buat Barang "' . $kodeBarang . '"');
+            ActivityLogHelper::log(
+                'buat',
+                null,
+                null,
+                'barang',
+                $kodeBarang
+            );
             return redirect()->route('pengadaan.index')->with('message', 'Barang berhasil disimpan dari persetujuan.');
         }
 
-        ActivityLogHelper::log('Buat Barang "' . $kodeBarang . '"');
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'barang',
+            $kodeBarang
+        );
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
@@ -444,7 +475,13 @@ class BarangController extends Controller
 
         $barang->status_barang = 'Dihapus';
         $barang->save();
-        ActivityLogHelper::log('Hapus Barang "' . $barang->kode_barang . '" dengan id penghapusan "' . $pb->penghapusan_id . '"');
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'penghapusan',
+            $barang->kode_barang
+        );
 
         return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
     }
@@ -462,7 +499,13 @@ class BarangController extends Controller
             }
 
             $barang->delete();
-            ActivityLogHelper::log('Hapus Database Barang "' . $barang->kode_barang . '"');
+            ActivityLogHelper::log(
+                'Hapus',
+                null,
+                null,
+                'barang',
+                $barang->kode_barang
+            );
 
             return redirect()->route('barang.index')->with('success', 'Barang telah dihapus.');
         } catch (\Exception $e) {
@@ -485,6 +528,13 @@ class BarangController extends Controller
 
         $keterangan->delete();
         ActivityLogHelper::log('Hapus Keterangan "' . $id . '"');
+        ActivityLogHelper::log(
+            'hapus',
+            null,
+            null,
+            'keterangan',
+            $id
+        );
 
         return redirect()->back()->with('success', 'Keterangan telah dihapus.');
     }

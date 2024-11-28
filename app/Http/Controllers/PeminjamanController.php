@@ -104,7 +104,13 @@ class PeminjamanController extends Controller
         ]);
         //dd($request);
 
-        ActivityLogHelper::log('Buat pemakaian "' . $peminjaman->peminjam_id . '"');
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'peminjaman',
+            $barang->kode_barang
+        );
 
         return redirect()->route('peminjaman.index')->with('message', __('Peminjaman barang berhasil ditambahkan!'));
     }
@@ -132,8 +138,13 @@ class PeminjamanController extends Controller
             $barang->status_barang = 'Ada';
             $barang->save();
         }
-
-        ActivityLogHelper::log('Buat pemakaian "' . $peminjaman->peminjam_idd . '"');
+        ActivityLogHelper::log(
+            'hapus',
+            null,
+            null,
+            'peminjaman',
+            $barang->kode_barang
+        );
         return redirect()->route('peminjaman.index')->with('message', __('Peminjaman berhasil dihapus.'));
     }
 
@@ -154,7 +165,13 @@ class PeminjamanController extends Controller
             // $barang->jumlah += $peminjaman->jumlah;
             $barang->status_barang = 'Ada';
             $barang->save();
-            ActivityLogHelper::log('Kembalikan barang Pemakaian "' . $peminjaman->peminjam_id . '"');
+            ActivityLogHelper::log(
+                'kembalikan',
+                null,
+                null,
+                'peminjaman',
+                $barang->kode_barang
+            );
 
             return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil dikembalikan!');
         }

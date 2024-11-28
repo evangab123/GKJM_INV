@@ -100,8 +100,11 @@ class PemakaianController extends Controller
             'jumlah' => $validated['jumlah'],
             'keterangan' => $validated['keterangan'] ?? '',
         ]);
-
-        ActivityLogHelper::log('Buat pemakaian "' . $pemakaian->riwayat_id . '"');
+        ActivityLogHelper::log(
+            'buat',                // Activity description
+            'pemakaian',                       // Entity (in this case, it's 'barang')
+            $validated['kode_barang']             // ID of the object being updated
+        );
 
         return redirect()->route('pemakaian.index')->with('message', __('Pemakaian barang berhasil ditambahkan!'));
     }
@@ -126,7 +129,13 @@ class PemakaianController extends Controller
 
         $pemakaian->delete();
 
-        ActivityLogHelper::log('Hapus pemakaian "' . $pemakaian->riwayat_id . '"');
+        ActivityLogHelper::log(
+            'hapus',
+            null,
+            null,
+            'pemakaian',
+            $barang->kode_barang
+        );
 
         return redirect()->route('pemakaian.index')->with('message', __('Pemakaian barang berhasil dihapus!'));
     }
@@ -145,7 +154,13 @@ class PemakaianController extends Controller
             $barang = $pemakaian->barang;
             $barang->status_barang = 'Ada';
             $barang->save();
-            ActivityLogHelper::log('Kembalikan barang Pemakaian "' . $pemakaian->riwayat_id . '"');
+            ActivityLogHelper::log(
+                'kembalikan',
+                null,
+                null,
+                'pemakaian',
+                $barang->kode_barang
+            );
             return redirect()->route('pemakaian.index')->with('success', 'Pemakaian berhasil dikembalikan!');
         }
 

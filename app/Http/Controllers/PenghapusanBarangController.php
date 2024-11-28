@@ -105,7 +105,13 @@ class PenghapusanBarangController extends Controller
         // Hapus penghapusan
         $penghapusan->delete();
 
-        ActivityLogHelper::log('Barang"' . $barang->kode_barang . '" Penghapusan Dibatalkan');
+        ActivityLogHelper::log(
+            'batal',
+            null,
+            null,
+            'penghapusan',
+            $barang->kode_barang
+        );
 
         return redirect()->route('penghapusan.index')->with('success', __('Data berhasil dihapus.'));
     }

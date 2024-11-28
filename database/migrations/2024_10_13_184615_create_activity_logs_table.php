@@ -11,6 +11,8 @@ class CreateActivityLogsTable extends Migration
             $table->id();
             $table->string('username')->nullable();
             $table->string('activity');
+            $table->string('entitas');
+            $table->string('id_objek');
             $table->text('changess')->nullable(); // Store changes in a single field
             $table->string('ip_address')->nullable();
             $table->string('user_agent')->nullable();

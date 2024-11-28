@@ -24,6 +24,7 @@ class BarangTerkunciController extends Controller
         $barangs = Barang::all();
         $barangTerkunci=$data;
         // $kodeBarangTerkunci = BarangTerkunci::pluck('kode_barang')->toArray();
+
         return view('barang.terkunci.list', compact('barangTerkunci', 'barangs'));
     }
 
@@ -37,7 +38,13 @@ class BarangTerkunciController extends Controller
         ]);
 
         BarangTerkunci::create($request->all());
-        ActivityLogHelper::log('Buat Kunci untuk "' . $request->input('kode_barang') . '"');
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'kunci',
+            $request->input('kode_barang')
+        );
         return redirect()->back()->with('success', 'Barang berhasil dikunci silahkan liat di Master Data Barang Tekunci.');
     }
 
@@ -46,8 +53,13 @@ class BarangTerkunciController extends Controller
     {
         $barangTerkunci = BarangTerkunci::where('kode_barang', $kode_barang)->firstOrFail();
         $barangTerkunci->delete();
-
-        ActivityLogHelper::log('Hapus Kunci untuk "' . $kode_barang . '"');
+        ActivityLogHelper::log(
+            'hapus',
+            null,
+            null,
+            'kunci',                      
+            $kode_barang
+        );
 
         return redirect()->back()->with('sucess', 'Barang terkunci berhasil dilepas.');
     }

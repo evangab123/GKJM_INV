@@ -20,7 +20,9 @@ class BarangFactory extends Factory
         $ruang = Ruang::inRandomOrder()->first();
 
         // Membuat kode barang otomatis berdasarkan logika di store
-        $tahunBeli = $this->faker->year;
+
+        $tanggalPerolehan = $this->faker->date;
+        $tahunBeli = (new \DateTime($tanggalPerolehan))->format('Y');
         $kategoriNama = $kategoriBarang->nama_kategori;
 
         $kataArray = explode(' ', $kategoriNama);
@@ -70,6 +72,7 @@ class BarangFactory extends Factory
             'merek_barang' => $this->faker->word,
             'perolehan_barang' => $perolehanBarang,
             'harga_pembelian' => $hargaPembelian,
+            'tanggal_perolehan' => $tanggalPerolehan,
             'tahun_pembelian' => $tahunBeli,
             'nilai_ekonomis_barang' => $nilaiEkonomis, // Nilai ekonomis dihitung
             'jumlah' => $this->faker->randomDigitNotNull,

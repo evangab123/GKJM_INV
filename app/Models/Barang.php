@@ -22,6 +22,7 @@ class Barang extends Model
         'merek_barang',
         'perolehan_barang',
         'harga_pembelian',
+        'tanggal_perolehan',
         'tahun_pembelian',
         'nilai_ekonomis_barang',
         'jumlah',

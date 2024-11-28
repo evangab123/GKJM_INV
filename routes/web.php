@@ -58,6 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('barang', BarangController::class)
         ->middleware(['role:Super Admin||Admin Ruang||Majelis']);
 
+    Route::resource('ruang', RuangController::class)
+        ->middleware(['role:Super Admin']);
+
+    Route::resource('kategori', KategoriController::class)
+        ->middleware(['role:Super Admin']);
+
     Route::resource('penghapusan', PenghapusanBarangController::class);
     Route::resource('pemakaian', PemakaianController::class);
     Route::resource('pengadaan', PengadaanController::class);

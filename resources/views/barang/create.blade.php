@@ -28,7 +28,7 @@
                         <div class="form-group">
                             <label for="merek_barang">{{ __('Merek Barang') }} <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="merek_barang" name="merek_barang"
-                            value="{{ old('harga_pembelian', $pengadaan->merek_barang ?? '') }}">
+                                value="{{ old('harga_pembelian', $pengadaan->merek_barang ?? '') }}">
                         </div>
                         <!-- Hidden input untuk mengirimkan status fromApprove jika tersedia -->
                         @if (isset($fromApprove))
@@ -53,10 +53,18 @@
                                 onchange="calculateNilaiEkonomis()" oninput="formatRupiah(this)"
                                 onblur="sanitizeInput(this)">
                         </div>
+
                         <div class="form-group">
-                            <label for="tahun_pembelian">{{ __('Tahun') }} <span class="text-danger">*</span> </label>
+                            <label for="tanggal_perolehan">{{ __('Tanggal Perolehan') }} <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" class="form-control" id="tanggal_perolehan" name="tanggal_perolehan"
+                                onchange="changeTahun()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tahun_pembelian">{{ __('Tahun') }}</label>
                             <input type="text" class="form-control" id="tahun_pembelian" name="tahun_pembelian"
-                                onchange="calculateNilaiEkonomis()">
+                                onchange="calculateNilaiEkonomis()" readonly>
                         </div>
 
                         <div class="form-group">
@@ -67,7 +75,7 @@
                         <div class="form-group">
                             <label for="jumlah">{{ __('Jumlah/Stok') }} <span class="text-danger">*</span> </label>
                             <input type="number" class="form-control" id="jumlah" name="jumlah"
-                            value="{{ old('harga_pembelian', $pengadaan->jumlah ?? '') }}">
+                                value="{{ old('harga_pembelian', $pengadaan->jumlah ?? '') }}">
                         </div>
                         <div class="form-group">
                             <label for="keterangan">{{ __('Keterangan') }}</label>
@@ -134,30 +142,30 @@
 @endpush
 
 <script>
-        function calculateNilaiEkonomis() {
-            const hargaPembelianInput = document.querySelector('input[name="harga_pembelian"]');
-            const tahunPembelianInput = document.querySelector('input[name="tahun_pembelian"]');
-            const nilaiEkonomisInput = document.querySelector('input[name="nilai_ekonomis_barang"]');
+    function calculateNilaiEkonomis() {
+        const hargaPembelianInput = document.querySelector('input[name="harga_pembelian"]');
+        const tahunPembelianInput = document.querySelector('input[name="tahun_pembelian"]');
+        const nilaiEkonomisInput = document.querySelector('input[name="nilai_ekonomis_barang"]');
 
-            const hargaPembelianString = hargaPembelianInput.value.replace(/[^\d]/g, '');
-            const hargaPembelian = parseFloat(hargaPembelianString) || 0;
+        const hargaPembelianString = hargaPembelianInput.value.replace(/[^\d]/g, '');
+        const hargaPembelian = parseFloat(hargaPembelianString) || 0;
 
-            const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
+        const tahunPembelian = parseFloat(tahunPembelianInput.value) || new Date().getFullYear();
 
-            const umurEkonomis = 10;
-            const nilaiSisa = 100;
+        const umurEkonomis = 10;
+        const nilaiSisa = 100;
 
-            const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
+        const totalDepreciation = (hargaPembelian - nilaiSisa) / umurEkonomis;
 
-            const currentYear = new Date().getFullYear();
-            const yearsUsed = currentYear - tahunPembelian;
+        const currentYear = new Date().getFullYear();
+        const yearsUsed = currentYear - tahunPembelian;
 
-            let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed);
+        let nilaiEkonomis = hargaPembelian - (totalDepreciation * yearsUsed);
 
-            nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
+        nilaiEkonomis = nilaiEkonomis >= 0 ? nilaiEkonomis : 0;
 
-            nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
-        }
+        nilaiEkonomisInput.value = nilaiEkonomis.toFixed(2);
+    }
 </script>
 
 <script>
@@ -190,3 +198,15 @@
     });
 </script>
 
+<script>
+    function changeTahun() {
+        const tanggalPerolehanInput = document.querySelector('input[name="tanggal_perolehan"]').value;
+        const tahunPembelianInput = document.querySelector('input[name="tahun_pembelian"]');
+
+        tahunPembelianInput.value = new Date(tanggalPerolehanInput).getFullYear();
+
+        console.log(new Date(tanggalPerolehanInput).getFullYear())
+
+        calculateNilaiEkonomis();
+    }
+</script>
