@@ -50,7 +50,13 @@ class PermissionController extends Controller
 
         // Simpan permission ke database
         Permission::create(['name' => $request->nama_hak_slug]);
-        ActivityLogHelper::log('Buat Hak "'.$request->input('nama_hak_slug').'"');
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'hak',
+            $request->input('nama_hak_slug')
+        );
         return redirect()->route('hak.index')->with('success', 'Hak berhasil ditambahkan!');
     }
 
@@ -58,10 +64,14 @@ class PermissionController extends Controller
 
     public function destroy(Permission $hak)
     {
-        ActivityLogHelper::log('Hapus Hak "'.$hak->name.'"');
+        ActivityLogHelper::log(
+            'hapus',
+            null,
+            null,
+            'hak',
+            $hak->name
+        );
         $hak->delete();
-        ActivityLogHelper::log('Hapus Hak "' . $hak->name . '"');
-        // Redirect kembali ke halaman index dengan pesan sukses
         return redirect()->route('hak.index')->with('message', 'Hak/Permission berhasil dihapus!');
     }
 }

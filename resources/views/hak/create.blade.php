@@ -21,11 +21,11 @@
                     </select>
                 </div>
 
-                <!-- Select Entitas -->
+                <!-- Select modul -->
                 <div class="form-group">
-                    <label for="entitas">{{ __('Entitas') }} <span class="text-danger">*</span> </label>
-                    <select name="entitas" id="entitas" class="form-control" required onchange="generateSlug()">
-                        <option value="">{{ __('Pilih Entitas...') }}</option>
+                    <label for="modul">{{ __('Modul') }} <span class="text-danger">*</span> </label>
+                    <select name="modul" id="modul" class="form-control" required onchange="generateSlug()">
+                        <option value="">{{ __('Pilih modul...') }}</option>
                         <option value="barang">{{ __('Barang') }}</option>
                         <option value="pengadaan">{{ __('Pengadaan') }}</option>
                         <option value="penghapusan">{{ __('Penghapusan') }}</option>
@@ -74,16 +74,16 @@
 <script>
     function generateSlug() {
         const tindakan = document.querySelector('#tindakan').value;
-        const entitas = document.querySelector('#entitas').value;
+        const modul = document.querySelector('#modul').value;
         const ruangan = document.querySelector('#ruangan').value;
 
         // Membuat slug dari pilihan
         const slugTindakan = tindakan ? tindakan.toLowerCase() : '';
-        const slugEntitas = entitas ? entitas.toLowerCase() : '';
+        const slugmodul = modul ? modul.toLowerCase() : '';
         const slugRuang = ruangan ? ruangan.toLowerCase() : '';
 
         // Menggabungkan semua slug
-        const finalSlug = [slugTindakan, slugEntitas, slugRuang].filter(Boolean).join('-');
+        const finalSlug = [slugTindakan, slugmodul, slugRuang].filter(Boolean).join('-');
 
         // Memperbarui nilai input slug
         document.querySelector('#nama_hak_slug').value = finalSlug;

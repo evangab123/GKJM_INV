@@ -74,7 +74,7 @@ class PemakaianController extends Controller
         }
         $validated = $request->validate([
             'kode_barang' => 'required|exists:barang,kode_barang',
-            'tanggal_mulai' => 'required|date|before_or_equal:tanggal_selesai',
+            'tanggal_mulai' => 'required|date',
             // 'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'jumlah' => 'required|numeric|min:1',
             'keterangan' => 'nullable|string|max:255',
@@ -101,9 +101,11 @@ class PemakaianController extends Controller
             'keterangan' => $validated['keterangan'] ?? '',
         ]);
         ActivityLogHelper::log(
-            'buat',                // Activity description
-            'pemakaian',                       // Entity (in this case, it's 'barang')
-            $validated['kode_barang']             // ID of the object being updated
+            'buat',
+            null,
+            null,
+            'pemakaian',
+            $validated['kode_barang']
         );
 
         return redirect()->route('pemakaian.index')->with('message', __('Pemakaian barang berhasil ditambahkan!'));

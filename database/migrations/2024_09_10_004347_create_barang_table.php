@@ -124,19 +124,19 @@ return new class extends Migration {
         });
 
 
-        Schema::create('LogBarang', function (Blueprint $table) {
-            $table->id('log_id');
-            $table->string('kode_barang', 50);
-            $table->date("tanggal");
-            $table->enum('aksi', ['Pengadaan', 'Peminjaman', 'Pengembalian', 'Penghapusan', 'Perubahan Pemakai']);
-            $table->unsignedBigInteger('pengguna_id');
-            $table->string("keterangan");
-            $table->foreign('kode_barang')->references('kode_barang')->on('Barang')
-                ->onUpdate('cascade');
-            $table->foreign('pengguna_id')->references('pengguna_id')->on('Pengguna')
-                ->onUpdate('cascade');
-            $table->timestamps();
-        });
+        // Schema::create('LogBarang', function (Blueprint $table) {
+        //     $table->id('log_id');
+        //     $table->string('kode_barang', 50);
+        //     $table->date("tanggal");
+        //     $table->enum('aksi', ['Pengadaan', 'Peminjaman', 'Pengembalian', 'Penghapusan', 'Perubahan Pemakai']);
+        //     $table->unsignedBigInteger('pengguna_id');
+        //     $table->string("keterangan");
+        //     $table->foreign('kode_barang')->references('kode_barang')->on('Barang')
+        //         ->onUpdate('cascade');
+        //     $table->foreign('pengguna_id')->references('pengguna_id')->on('Pengguna')
+        //         ->onUpdate('cascade');
+        //     $table->timestamps();
+        // });
     }
 
     /**

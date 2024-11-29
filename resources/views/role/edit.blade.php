@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', __('Edit Role dan Permissions | Inventaris GKJM'))
+@section('title', __('Edit Role dan Hak | Inventaris GKJM'))
 @php
     function formatHakAkses($hak)
     {
@@ -61,7 +61,7 @@
                 <button type="submit" class="btn btn-primary">{{ __('Simpan Perubahan') }}</button>
             </form>
 
-            <!-- Daftar Permissions -->
+            <!-- Daftar Hak -->
             <div id="permissions-list" class="mt-4 md-4">
                 <h5>{{ __('Daftar Hak Akses yang dimiliki Role:') }}</h5>
 
@@ -86,7 +86,7 @@
 
                 <!-- Select Permissions -->
                 <div class="form-group">
-                    <label for="permissions">{{ __('Tambah Permission') }}</label>
+                    <label for="permissions">{{ __('Tambah Hak') }}</label>
                     <select name="permissions" id="permissions" class="form-control">
                         @foreach ($permissions as $permission)
                             <option value="{{ $permission->name }}">

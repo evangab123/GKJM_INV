@@ -48,7 +48,13 @@ class RoleController extends Controller
         ]);
 
         Role::create(['name' => $request->input('nama_role'),]);
-        ActivityLogHelper::log('Buat Role "'.$request->input('nama_role').'"');
+        ActivityLogHelper::log(
+            'buat',
+            null,
+            null,
+            'role',
+            $request->input('nama_role')
+        );
 
         return redirect()->route('role.index')->with('success', 'Role berhasil dibuat dengan permission.');
     }
@@ -72,7 +78,15 @@ class RoleController extends Controller
         $role->name = $request->nama_role;
         $role->save();
         $new = $role->toArray();
-        ActivityLogHelper::log('Role "'.$request->input('nama_role').'" Diperbaharui!',$new,$prev);
+        ActivityLogHelper::log(
+            'perbarui',
+            $new,
+            $prev,
+            'role',
+            $request->input('nama_role')
+        );
+
+
         return redirect()->route('role.index')->with('message', 'Role dan Hak/Permission berhasil diupdate!');
     }
 
@@ -85,7 +99,15 @@ class RoleController extends Controller
             return back()->with('warning', 'Sudah memiliki hak');
         }
         $role->givePermissionTo($request->permissions);
-        ActivityLogHelper::log('Beri Hak Akses Role "'.$role->name.'"', $request->permissions);
+        // ActivityLogHelper::log('Beri Hak Akses Role "'.$role->name.'"', $request->permissions);
+        ActivityLogHelper::log(
+            'beri '.$request->permissions,
+            null,
+            null,
+            'role',
+            $role->name
+        );
+
         return back()->with('success', 'Hak Role sudah diperbaharui');
     }
     public function removePermission($roleId, $permissionId)
@@ -96,7 +118,14 @@ class RoleController extends Controller
         if ($role && $permission) {
             $role->revokePermissionTo($permission); // Menghapus permission dari role
             event(new RolePermissionsUpdated($role, $permission));
-            ActivityLogHelper::log('Copot Hak Akeses Role "'.$role->name.'"', $permission->name);
+            // ActivityLogHelper::log('Copot Hak Akeses Role "'.$role->name.'"', $permission->name);
+            ActivityLogHelper::log(
+                'copot '.$permission->name,
+                null,
+                null,
+                'role',
+                $role->name
+            );
             return back()->with('success', 'Salah satu Hak Role berhasil dihapus');
 
         }
@@ -123,7 +152,14 @@ class RoleController extends Controller
 
         if ($role) {
 
-            ActivityLogHelper::log('Hapus Role "'.$role->name.'"');
+            ActivityLogHelper::log(
+                'hapus',
+                null,
+                null,
+                'role',
+                $role->name
+            );
+
 
             $role->delete();
 
